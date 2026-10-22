@@ -192,7 +192,7 @@ svg text{font-family:var(--f-body)}
         <li><label><input type="checkbox" id="k1"><span>電子票 QR＋截圖</span></label></li>
         <li><label><input type="checkbox" id="k2"><span>購票人護照</span></label></li>
         <li><label><input type="checkbox" id="k3"><span>IC 卡已儲值</span></label></li>
-        <li><label><input type="checkbox" id="k10"><span>貓巴士（ネコバス）車資 ¥2,500（現金或 QR）</span></label></li>
+        <li><label><input type="checkbox" id="k10"><span>貓巴士 ¥2,500：現金或街口支付（不收信用卡）</span></label></li>
         <li><label><input type="checkbox" id="k11"><span>前一晚：飯店 → 栄站電梯路線先走一次</span></label></li>
         <li><label><input type="checkbox" id="k4"><span>手機＋行動電源</span></label></li>
       </ul>
@@ -271,7 +271,7 @@ const STEPS = [
   {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",pts:["約 13–17 分","大人 ¥400、兒童 ¥200"],node:"park"},
   {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
   {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",flag:"買不到：E2 搭東線到 E7（約 14 分）"},
-  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"ネコバス",title:"搭ネコバス到森",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分，¥2,500（現金或 QR）"],node:"cat"},
+  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"ネコバス",title:"搭ネコバス到森",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分，¥2,500","現金或 QR（街口支付可），不收信用卡"],node:"cat"},
   {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"どんどこ森",title:"斜坡車上山看龍貓",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","Amber 進大龍貓，大人外面拍照"],node:"forest",timer:true},
   {s:H(10,40),e:H(11,10),kind:"do",g:"house",tag:"どんどこ森",title:"サツキとメイの家",pts:["搭斜坡車下山","參觀家與庭院"],node:"forest",timer:true},
   {s:H(11,10),e:H(11,20),kind:"move",g:"walk",tag:"準備",title:"廁所、補水 → E7",pts:["走到免費巴士 E7","不要回ネコバス站"],node:"forest"},

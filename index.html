@@ -578,11 +578,21 @@ setInterval(()=>{ if(isToday){ render(); } },60000);
 // 離線快取：只在 GitHub Pages 等 https 正式網址啟用
 try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("sw.js"); }catch(e){}
 
-// 門票連結：只存在這支手機（localStorage），不寫進網站原始碼
-// 也可用 #ticket=<網址> 開一次網頁來設定，設定後網址列會清掉
+// 門票連結：原始碼只放加密後的內容，輸入密碼才解密（PBKDF2 + AES-GCM）
+// 解開後存在這支手機（localStorage），下次不用再輸入
+// 備案：也可用 #ticket=<網址> 開一次網頁，或在「清單」頁手動貼上
+const TICKET_ENC = {"s":"BXlD0yRm6fMU3WkDJDwyYA==","i":"XKp0uriNjnmzBMqp","c":"o5hhd9I/H+ukkjlVzydCMzzl6CjAZW4wQFG00IdRYQH+Y5GHi5Zv+tOXOTLLrL7SlRycf69n4IV1de7uotL4QzZm2nk6/IXaxF66ERafrnc7Uqv+yEZlVoZpUw==","n":600000};
 (function(){
   const K="gp-ticket";
   try{ const h=location.hash; if(h.startsWith("#ticket=")){ const u=decodeURIComponent(h.slice(8)); if(/^https:\/\//.test(u)) store.set(K,u); history.replaceState(null,"",location.pathname+location.search); } }catch(e){}
+  const b64=x=>Uint8Array.from(atob(x),ch=>ch.charCodeAt(0));
+  async function unlock(pw){
+    const te=new TextEncoder(), c=crypto.subtle;
+    const base=await c.importKey("raw",te.encode(pw.trim().toUpperCase()),"PBKDF2",false,["deriveKey"]);
+    const key=await c.deriveKey({name:"PBKDF2",salt:b64(TICKET_ENC.s),iterations:TICKET_ENC.n,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+    return new TextDecoder().decode(await c.decrypt({name:"AES-GCM",iv:b64(TICKET_ENC.i)},key,b64(TICKET_ENC.c)));
+  }
+  function go(u){ const w=window.open(u,"_blank"); if(w){ try{w.opener=null}catch(e){} } else location.href=u; }
   function ask(){
     const cur=store.get(K)||"";
     const u=prompt("貼上門票連結（O-SANPO DAY PASS PREMIUM）\n只會存在這支手機，不會上傳。",cur);
@@ -592,7 +602,16 @@ try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\
     if(!/^https:\/\//.test(t)){ alert("請貼上 https:// 開頭的連結"); return null; }
     store.set(K,t); return t;
   }
-  $("#ticketBtn").onclick=()=>{ const u=store.get(K)||ask(); if(u) window.open(u,"_blank","noopener"); };
+  const btn=$("#ticketBtn");
+  btn.onclick=async ()=>{
+    const saved=store.get(K); if(saved) return go(saved);
+    if(!TICKET_ENC || !window.crypto || !crypto.subtle){ const u=ask(); if(u) go(u); return; }
+    const pw=prompt("輸入門票密碼"); if(!pw) return;
+    btn.disabled=true;
+    try{ const u=await unlock(pw); store.set(K,u); go(u); }
+    catch(e){ alert("密碼不對，再試一次"); }
+    finally{ btn.disabled=false; }
+  };
   const setBtn=$("#ticketSet"); if(setBtn) setBtn.onclick=()=>{ if(ask()) alert("已存好，按上方「門票」就能打開"); };
 })();
 </script>

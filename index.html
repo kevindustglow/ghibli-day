@@ -137,11 +137,18 @@ a{color:inherit}
 
 /* map */
 .mapbox{background:var(--card);border-radius:24px;overflow:hidden;position:relative;height:62vh;touch-action:none}
-.mapbox svg{width:100%;height:100%;display:block;transform-origin:0 0}
+
 .zoom{position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:8px}
 .zoom button{width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:1.4rem;line-height:1}
 .maphint{font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .maphint a{color:var(--forest)}
+.mapseg{grid-template-columns:repeat(3,1fr)}
+#mapzoom{width:100%;height:100%;transform-origin:0 0}
+#mapzoom svg{width:100%;height:100%;display:block}
+#mapzoom img{width:100%;height:100%;object-fit:contain;display:block;background:var(--card)}
+.mapfail{height:100%;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+.maplinks{display:grid;grid-template-columns:1fr;gap:8px}
+.maplinks .btn{min-height:48px;font-size:.95rem;flex:none}
 svg text{font-family:var(--f-body)}
 
 /* checklist */
@@ -200,15 +207,31 @@ svg text{font-family:var(--f-body)}
   <section id="all" hidden><ol class="list" id="list"></ol></section>
 
   <section id="map" hidden style="display:flex;flex-direction:column;gap:10px">
+    <div class="seg mapseg" role="group" aria-label="切換地圖">
+      <button data-map="route" aria-pressed="true">今日路線</button>
+      <button data-map="park" aria-pressed="false">園區地圖</button>
+      <button data-map="bus" aria-pressed="false">園內巴士</button>
+    </div>
     <div class="mapbox" id="mapbox">
-      <svg id="mapsvg" viewBox="0 0 360 760" aria-label="今日路線圖"></svg>
+      <div id="mapzoom">
+        <svg id="mapsvg" viewBox="0 0 360 760" aria-label="今日路線圖"></svg>
+        <img id="mapimg" alt="" hidden>
+        <div id="mapfail" class="mapfail" hidden>
+          <p>這裡無法直接顯示官方地圖圖檔，請用下面的按鈕開啟。</p>
+        </div>
+      </div>
       <div class="zoom">
         <button id="zin" aria-label="放大">+</button>
         <button id="zout" aria-label="縮小">−</button>
         <button id="zreset" aria-label="重設" style="font-size:.9rem">⤢</button>
       </div>
     </div>
-    <div class="maphint"><span>雙指或按鈕放大・路線示意，非實際比例</span><a href="https://www.aichi-koen.com/moricoro/riyouannai/parkmap/" target="_blank" rel="noopener">官方園區地圖 ↗</a></div>
+    <p class="maphint" id="maphint">雙指或按鈕放大・路線示意，非實際比例</p>
+    <div class="maplinks">
+      <a class="btn" href="https://www.aichi-koen.com/wp-content/uploads/2026/08/hangtai202604_compressed.pdf" target="_blank" rel="noopener">園區地圖 繁中 PDF ↗</a>
+      <a class="btn" href="https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97-2.pdf" target="_blank" rel="noopener">園內巴士路線 PDF ↗</a>
+      <a class="btn" href="https://www.aichi-koen.com/wp-content/uploads/2023/05/%E5%AD%90%E8%82%B2%E3%81%A6%E6%94%AF%E6%8F%B4%E3%83%9E%E3%83%83%E3%83%972023.pdf" target="_blank" rel="noopener">親子設施地圖 PDF ↗</a>
+    </div>
   </section>
 
   <section id="pack" hidden style="display:flex;flex-direction:column;gap:14px">
@@ -418,7 +441,7 @@ function renderMap(){
 }
 // zoom & pan
 let z=1, px=0, py=0; const pts=new Map(); let startD=0, startZ=1, last=null;
-function applyZ(){ z=Math.min(4,Math.max(1,z)); const b=$("#mapbox").getBoundingClientRect(); px=Math.min(0,Math.max(b.width*(1-z),px)); py=Math.min(0,Math.max(b.height*(1-z),py)); $("#mapsvg").style.transform=`translate(${px}px,${py}px) scale(${z})`; }
+function applyZ(){ z=Math.min(4,Math.max(1,z)); const b=$("#mapbox").getBoundingClientRect(); px=Math.min(0,Math.max(b.width*(1-z),px)); py=Math.min(0,Math.max(b.height*(1-z),py)); $("#mapzoom").style.transform=`translate(${px}px,${py}px) scale(${z})`; }
 function zoomAt(f,cx,cy){ const nz=Math.min(4,Math.max(1,z*f)); px=cx-(cx-px)*(nz/z); py=cy-(cy-py)*(nz/z); z=nz; applyZ(); }
 const mb=$("#mapbox");
 mb.addEventListener("pointerdown",e=>{ if(e.target.closest(".zoom")) return; mb.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(pts.size===2){const [a,b]=[...pts.values()]; startD=Math.hypot(a.x-b.x,a.y-b.y); startZ=z;} last={x:e.clientX,y:e.clientY}; });
@@ -433,20 +456,41 @@ $("#zin").onclick=()=>zoomAt(1.4,...center());
 $("#zout").onclick=()=>zoomAt(1/1.4,...center());
 $("#zreset").onclick=()=>{z=1;px=0;py=0;applyZ();};
 
+// ---- official maps (hotlinked from aichi-koen.com; falls back to PDF buttons) ----
+const MAPS = {
+  park: {src:"https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png", alt:"モリコロパーク 園區地圖", hint:"官方園區地圖（モリコロパーク）・雙指放大"},
+  bus:  {src:"https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg", alt:"園內巴士路線圖", hint:"官方園內巴士路線圖（2024/11 版）・以現場為準"}
+};
+let mapMode = "route";
+function showMap(m){
+  mapMode = m; z=1; px=0; py=0;
+  document.querySelectorAll(".mapseg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.map===m));
+  const img=$("#mapimg"), svg=$("#mapsvg");
+  $("#mapfail").hidden = true;
+  if(m==="route"){ svg.style.display=""; img.hidden=true; $("#maphint").textContent="雙指或按鈕放大・路線示意，非實際比例"; renderMap(); }
+  else {
+    svg.style.display="none"; img.hidden=false; img.alt=MAPS[m].alt; $("#maphint").textContent=MAPS[m].hint;
+    img.onerror=()=>{ img.hidden=true; $("#mapfail").hidden=false; };
+    if(img.getAttribute("src")!==MAPS[m].src) img.src=MAPS[m].src;
+  }
+  applyZ();
+}
+document.querySelectorAll(".mapseg button").forEach(b=>b.onclick=()=>showMap(b.dataset.map));
+
 // ---- views ----
 function setView(v){
   view=v;
   ["guide","all","map","pack"].forEach(id=>$("#"+id).hidden = id!==v);
-  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));
+  document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));
   $("#dock").hidden = v!=="guide";
   if(v==="all") renderList();
-  if(v==="map"){ renderMap(); applyZ(); }
+  if(v==="map"){ showMap(mapMode); }
   window.scrollTo(0,0);
 }
 function go(i){ idx=(i+steps.length)%steps.length; renderCard(); }
-function render(){ load(); renderCard(); if(view==="all") renderList(); if(view==="map") renderMap(); }
+function render(){ load(); renderCard(); if(view==="all") renderList(); if(view==="map" && mapMode==="route") renderMap(); }
 
-document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $("#prev").onclick=()=>go(idx-1);
 $("#next").onclick=()=>go(idx===steps.length-1?0:idx+1);
 $("#card").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const a=b.dataset.go;
@@ -458,7 +502,7 @@ $("#card").addEventListener("touchend",e=>{ if(sx===null) return; const dx=e.cha
 
 
 document.querySelectorAll(".chk input").forEach(i=>{ i.checked=store.get("gp-"+i.id)==="1"; i.onchange=()=>store.set("gp-"+i.id,i.checked?"1":"0"); });
-matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{ if(view==="map") renderMap(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{ if(view==="map" && mapMode==="route") renderMap(); });
 
 // ---- per-stop timer: each in-park stop counts down its planned minutes ----
 const timed = st => !!(st && st.timer);

@@ -11,6 +11,7 @@
 <style>
 /* Layout: left-hand phone guide. Top: running-timer + date chips, view switch. Middle: one big step card. Bottom-left (left thumb): next. */
 :root{
+  --sky-top:#CFE4F3; --grass:#8DBF7A; --acorn:#9A6A3C;
   --bg:#EEF3F7; --card:#FFFFFF; --ink:#18263A; --muted:#647387; --line:#D8E1EA;
   --forest:#3F7D5C; --forest-soft:#E1EFE6; --sky:#3C78B4; --sky-soft:#E0ECF7;
   --sun:#C9821C; --sun-soft:#FBEED6;
@@ -21,16 +22,16 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545;
   --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
-  --sun:#F0B455; --sun-soft:#33281A; color-scheme:dark}}
+  --sun:#F0B455; --sun-soft:#33281A; --sky-top:#16243A; --grass:#3E6B47; --acorn:#C79A6B; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545;
   --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
-  --sun:#F0B455; --sun-soft:#33281A; color-scheme:dark}
+  --sun:#F0B455; --sun-soft:#33281A; --sky-top:#16243A; --grass:#3E6B47; --acorn:#C79A6B; color-scheme:dark}
 
 [hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+body{background:linear-gradient(to bottom,var(--sky-top),var(--bg) 340px) no-repeat,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
 h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance}
@@ -43,9 +44,20 @@ a{color:inherit}
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:14px;padding-block:12px 120px}
 
 /* top */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);padding-block:6px 8px;display:flex;flex-direction:column;gap:10px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);margin-inline:-16px;padding-inline:16px;border-radius:0 0 20px 20px;padding-block:6px 8px;display:flex;flex-direction:column;gap:10px}
 .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.brand{font-family:var(--f-display);font-size:1.25rem}
+.brand{font-family:var(--f-display);font-size:1.35rem;display:flex;align-items:center;gap:8px}
+.brand svg{flex:none}
+.clouds{position:absolute;top:0;left:0;width:100%;height:120px;pointer-events:none;overflow:hidden;z-index:-1}
+.soot{display:flex;gap:10px;justify-content:center;padding-top:8px}
+.fare{display:flex;gap:10px;align-items:flex-start;background:var(--sky-soft);border-radius:16px;padding:10px 12px;font-size:.92rem}
+.fare svg{flex:none;color:var(--sky);margin-top:2px}
+.fare ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.fares{list-style:none;margin:0;padding:0 0 4px}
+.fares li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+.fares li:first-child{border-top:0}
+.fares li.sum{border-top:2px solid var(--ink);font-weight:700}
+.small-note{font-size:.84rem;color:var(--muted);padding-bottom:12px}
 .datechip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:40px;font-size:.92rem}
 .datechip i{width:8px;height:8px;border-radius:50%;background:var(--sun);display:inline-block}
 .datechip.set i{background:var(--forest)}
@@ -63,15 +75,16 @@ a{color:inherit}
 .tm .row{display:flex;gap:10px}
 .tm .row .btn{flex:1 1 0;min-height:48px}
 .tm>.btn{flex:none;min-height:52px}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
-.seg button{border:0;background:none;border-radius:10px;min-height:40px;font-size:.92rem;color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.seg button{border:0;background:none;border-radius:999px;min-height:40px;font-size:.92rem;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
 /* guide card */
 .progress{display:flex;gap:4px}
 .progress span{flex:1;height:4px;border-radius:2px;background:var(--line)}
-.progress span.on{background:var(--sun)}
-.card{background:var(--card);border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;gap:16px;min-height:52vh;box-shadow:0 1px 0 var(--line)}
+.progress span.on{background:var(--acorn)}
+.card{position:relative;background:var(--card);border-radius:28px;padding:22px 20px 28px;display:flex;flex-direction:column;gap:16px;min-height:52vh;box-shadow:0 2px 0 var(--line),0 10px 24px -18px rgba(24,38,58,.35);overflow:hidden}
+.card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:radial-gradient(circle at 10px 12px,var(--grass) 10px,transparent 11px) 0 0/20px 12px repeat-x;opacity:.55}
 .card .when{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .card .time{font-family:var(--f-mono);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
 .card .time small{font-size:1rem;color:var(--muted)}
@@ -79,7 +92,7 @@ a{color:inherit}
 .card.move .tag{background:var(--sky-soft);color:var(--sky)}
 .card.decide{background:var(--sun-soft)}
 .card.decide .tag{background:var(--card);color:var(--sun)}
-.card .glyph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--forest-soft);color:var(--forest)}
+.card .glyph{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--forest-soft);color:var(--forest)}
 .card.move .glyph{background:var(--sky-soft);color:var(--sky)}
 .card.decide .glyph{background:var(--card);color:var(--sun)}
 .card h2{font-size:2rem;line-height:1.2}
@@ -108,7 +121,8 @@ a{color:inherit}
   padding:18px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .dock-in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr;gap:10px}
 .dock button{min-height:60px;border-radius:18px;border:1px solid var(--line);background:var(--card);font-size:1.05rem}
-.dock .next{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:700}
+.dock .next{background:var(--forest);border-color:var(--forest);color:var(--card);font-weight:700;border-radius:999px}
+.dock button{border-radius:999px!important}
 .dock button:disabled{opacity:.4}
 
 /* overview */
@@ -158,10 +172,11 @@ svg text{font-family:var(--f-body)}
 <body>
 
 
-<div class="app">
+<div class="app" style="position:relative;isolation:isolate">
+  <svg class="clouds" viewBox="0 0 400 120" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><g fill="var(--card)" opacity=".7"><ellipse cx="300" cy="34" rx="46" ry="16"/><ellipse cx="275" cy="28" rx="22" ry="14"/><ellipse cx="322" cy="24" rx="26" ry="16"/><ellipse cx="70" cy="92" rx="36" ry="12"/><ellipse cx="90" cy="84" rx="20" ry="12"/></g></svg>
   <div class="top">
     <div class="top-row">
-      <div class="brand">吉卜力日</div>
+      <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10c0-3.5 3-6 7-6s7 2.5 7 6z" fill="var(--acorn)"/><path d="M12 4V2" stroke="var(--acorn)" stroke-width="2" stroke-linecap="round"/><path d="M6 10h12c0 6-3 11-6 11s-6-5-6-11z" fill="var(--sun)"/></svg>吉卜力日</div>
       <div style="display:flex;gap:8px">
       <button class="datechip timer" id="timerChip" aria-label="回到計時中的站點" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span id="timerText" class="mono">計時</span></button>
       <span class="datechip set" id="openSheet"><i></i><span id="chipText">11/12（四）· Premium</span></span>
@@ -218,6 +233,17 @@ svg text{font-family:var(--f-body)}
         <li><label><input type="checkbox" id="k9"><span>小零食、飯糰（區域外吃）</span></label></li>
       </ul>
     </div>
+    <div class="group farebox">
+      <h3>今天的車資（全家）</h3>
+      <ul class="fares">
+        <li><span>東山線 來回（大人 2 位）</span><b class="mono">約 ¥1,240</b></li>
+        <li><span>Linimo 來回（大人 2 位）</span><b class="mono">¥1,600</b></li>
+        <li><span>貓巴士 單程</span><b class="mono">¥2,500</b></li>
+        <li><span>園內 E 線巴士</span><b class="mono">¥0</b></li>
+        <li class="sum"><span>合計</span><b class="mono">約 ¥5,340</b></li>
+      </ul>
+      <p class="small-note">Amber 學齡前搭地鐵、Linimo 免費。地鐵、Linimo 刷 IC 卡最省事；貓巴士只收現金或 QR（街口可用）。地鐵票價為估計，以站內票價表為準。</p>
+    </div>
     <div class="rules">
       <div class="rule"><b>大倉庫 14:00</b><span>14:00–15:00 全員一起入場，不能提早</span></div>
       <div class="rule"><b>推車</b><span>進建築前停置場</span></div>
@@ -229,6 +255,7 @@ svg text{font-family:var(--f-body)}
     <div class="foot">
       <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。園內巴士站名、班次與貓巴士售票時間來自 Codex 行程，尚未逐一對官方核對；東山線、Linimo 分鐘數為估計值，Linimo 車資查自 linimo.jp。</span>
       <span>個人旅行筆記，非官方資訊。</span>
+      <div class="soot"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="var(--ink)"><circle cx="12" cy="12" r="8"/><path d="M12 12 L23.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 23.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L1.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 1.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/></g><circle cx="9.5" cy="11" r="2.4" fill="#fff"/><circle cx="14.5" cy="11" r="2.4" fill="#fff"/><circle cx="9.8" cy="11.3" r="1.1" fill="#000"/><circle cx="14.8" cy="11.3" r="1.1" fill="#000"/></svg><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><g fill="var(--ink)"><circle cx="12" cy="12" r="8"/><path d="M12 12 L23.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 23.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L1.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 1.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/></g><circle cx="9.5" cy="11" r="2.4" fill="#fff"/><circle cx="14.5" cy="11" r="2.4" fill="#fff"/><circle cx="9.8" cy="11.3" r="1.1" fill="#000"/><circle cx="14.8" cy="11.3" r="1.1" fill="#000"/></svg><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="var(--ink)"><circle cx="12" cy="12" r="8"/><path d="M12 12 L23.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 23.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 19.8" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L1.0 12.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L4.2 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L12.0 1.0" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/><path d="M12 12 L19.8 4.2" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/></g><circle cx="9.5" cy="11" r="2.4" fill="#fff"/><circle cx="14.5" cy="11" r="2.4" fill="#fff"/><circle cx="9.8" cy="11.3" r="1.1" fill="#000"/><circle cx="14.8" cy="11.3" r="1.1" fill="#000"/></svg></div>
     </div>
   </section>
 </div>
@@ -277,21 +304,21 @@ const DAY = { iso:"2026-11-12", label:"11/12（四）", ticket:"Premium" };
 const H = (h,m=0) => h*60+m;
 const STEPS = [
   {s:H(7,25),e:H(7,45),kind:"move",g:"walk",tag:"出發",title:"飯店 → 栄站月台",pts:["電梯下到剪票口","再搭電梯到東山線「往藤が丘」月台","前一晚先走一次"],node:"hotel",flag:"含找電梯 20 分",links:[["栄站",gm("栄駅 名古屋")]]},
-  {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 → 藤が丘",pts:["往藤が丘，坐到終點","約 21–25 分","推車停車廂兩端"],node:"sakae"},
+  {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 → 藤が丘",fare:["大人 約 ¥270–310（以站內票價表為準）","Amber 學齡前免費","IC 卡（Suica／manaca）或現金買票"],pts:["往藤が丘，坐到終點","約 21–25 分","推車停車廂兩端"],node:"sakae"},
   {s:H(8,15),e:H(8,35),kind:"move",g:"walk",tag:"轉乘",title:"東山線 → Linimo",pts:["電梯出地鐵剪票口","照「リニモ」指標走","電梯上 Linimo 月台，往八草"],node:"fuji",flag:"含找電梯 20 分"},
-  {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",pts:["約 13–17 分","大人 ¥400、兒童 ¥200"],node:"park"},
+  {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金，售票機不收信用卡"],pts:["約 13–17 分"],node:"park"},
   {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
-  {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",q:"售票機前會排隊；買不到 09:30–10:00 就改搭免費東線 E2 → E7（約 14 分）"},
-  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"貓巴士",title:"搭ネコバス到森",film:"《龍貓》的貓巴士・上車處在《魔法公主》的もののけの里",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分，¥2,500","現金或 QR（街口支付可），不收信用卡"],node:"cat"},
+  {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",fare:["免費園內巴士 E1 → E2：¥0"],pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",q:"售票機前會排隊；買不到 09:30–10:00 就改搭免費東線 E2 → E7（約 14 分）"},
+  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"貓巴士",title:"搭ネコバス到森",fare:["大人 ¥1,000 ×2、兒童 ¥500","合計 ¥2,500，吉卜力門票不含","現金或 QR（街口、PayPay…），不收信用卡、IC 卡"],film:"《龍貓》的貓巴士・上車處在《魔法公主》的もののけの里",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分"],node:"cat"},
   {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"咚咚可森林",title:"斜坡車上山看龍貓",film:"《龍貓》",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","山頂どんどこ堂限小學生以下，Amber 進去玩"],node:"forest",timer:true,q:"斜坡車排隊超過 20 分 → 跳過山頂，直接看小梅的家",flag:"山頂若要另購票（大人 ¥400、兒童 ¥200），現場確認"},
   {s:H(10,40),e:H(11,10),kind:"do",g:"house",tag:"咚咚可森林",title:"サツキとメイの家",film:"《龍貓》姊妹搬進的家",pts:["搭斜坡車下山","廚房、浴室、和室都能進去看"],q:"入屋排隊超過 20 分 → 只看外觀和庭院",node:"forest",timer:true},
   {s:H(11,10),e:H(11,20),kind:"move",g:"walk",tag:"準備",title:"廁所、補水 → E7",pts:["走到免費巴士 E7","不要回ネコバス站"],node:"forest"},
-  {s:H(11,20),e:H(11,50),kind:"move",g:"train",tag:"免費巴士",title:"E7 → E3 魔女の谷",film:"《魔女宅急便》《霍爾的移動城堡》《安雅與魔女》",pts:["搭往北口方向","經過 E4 大倉庫先不下車","E3 下車，約 12 分"],node:"majo"},
+  {s:H(11,20),e:H(11,50),kind:"move",g:"train",tag:"免費巴士",title:"E7 → E3 魔女の谷",fare:["免費園內巴士：¥0"],film:"《魔女宅急便》《霍爾的移動城堡》《安雅與魔女》",pts:["搭往北口方向","經過 E4 大倉庫先不下車","E3 下車，約 12 分"],node:"majo"},
   {s:H(11,50),e:H(12,25),kind:"do",g:"house",tag:"魔女之谷",title:"ハウルの城",film:"《霍爾的移動城堡》",pts:["推車停置場","票面若有指定時間，以票面為準"],q:"排隊超過 25 分 → 先吃午餐，下午不回頭",node:"majo",timer:true},
   {s:H(12,25),e:H(13,5),kind:"do",g:"food",tag:"午餐",title:"Hot Tin Roof 熱狗",pts:["坐下來好好吃","順便上廁所"],q:"排隊超過 15 分 → 到區域外吃自備，或換魔女の谷其他餐廳",node:"majo",timer:true},
   {s:H(13,5),e:H(13,5),kind:"decide",g:"ask",tag:"判斷點",title:"還看オキノ邸嗎？",pts:["有延誤就跳過，留時間給大倉庫"],node:"majo",choice:[["去オキノ邸","next"],["跳過，去搭車","skip"]]},
   {s:H(13,5),e:H(13,30),kind:"do",g:"house",tag:"魔女之谷",title:"オキノ邸",film:"《魔女宅急便》琪琪的老家",pts:["看完往出口，不再排長隊"],q:"排隊超過 15 分 → 跳過",node:"majo",timer:true},
-  {s:H(13,30),e:H(14,10),kind:"move",g:"walk",tag:"移動",title:"E3 → E4 大倉庫",pts:["搭往 E4／西口方向，不要往北口","一站，約 2 分","廁所、停推車、備好 QR"],node:"soko",flag:"14:00–15:00 全員入場，不能提早"},
+  {s:H(13,30),e:H(14,10),kind:"move",g:"walk",tag:"移動",title:"E3 → E4 大倉庫",fare:["免費園內巴士：¥0"],pts:["搭往 E4／西口方向，不要往北口","一站，約 2 分","廁所、停推車、備好 QR"],node:"soko",flag:"14:00–15:00 全員入場，不能提早"},
   {s:H(14,10),e:H(16,50),kind:"do",g:"house",tag:"大倉庫",title:"ジブリの大倉庫",film:"多部吉卜力作品的室內展館",pts:["推車停入口，最後取","先去貓巴士房，人少時再看名場景"],q:"貓巴士房、名場景展、牛奶吧、商店結帳都會排隊；單點超過 20 分就換下一個",must:[
     ["ネコバスルーム","可以爬上去玩（限 12 歲以下）・排隊熱點","《龍貓》"],
     ["天空の庭","等待主人的機器人兵","《天空之城》"],
@@ -303,10 +330,10 @@ const STEPS = [
     ["ミルクスタンド","西伯利亞蛋糕＋鮮奶，賣完為止・排隊熱點","《風起》"],
     ["冒険飛行団","園區最大商店，結帳會排隊，16:20 前開始買","伴手禮"]
   ],node:"soko",timer:true},
-  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
-  {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"公園 → 藤が丘",pts:["電梯進站","約 13–17 分，坐到終點"],node:"park",q:"閉園人潮：電梯和月台都可能排隊，已含在時間內"},
+  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",fare:["免費園內巴士：¥0"],pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
+  {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"公園 → 藤が丘",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金"],pts:["電梯進站","約 13–17 分，坐到終點"],node:"park",q:"閉園人潮：電梯和月台都可能排隊，已含在時間內"},
   {s:H(17,40),e:H(18),kind:"move",g:"walk",tag:"轉乘",title:"Linimo → 東山線",pts:["電梯下樓，走到地鐵藤が丘","起點站：可多等一班坐著回","往高畑方向"],node:"fuji",flag:"含找電梯 20 分"},
-  {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 → 栄",pts:["約 21–25 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
+  {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 → 栄",fare:["大人 約 ¥270–310","Amber 學齡前免費","IC 卡或現金"],pts:["約 21–25 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
   {s:H(18,30),e:H(18,40),kind:"move",g:"walk",tag:"抵達",title:"栄站 → オアシス21",pts:["月台電梯上剪票口","往オアシス21方向"],node:"sakae"},
   {s:H(18,40),e:H(19,40),kind:"do",g:"food",tag:"晚餐",title:"上海湯包小館",pts:["オアシス21 內","小孩累了就外帶"],q:"排隊超過 15 分 → 大戸屋 栄店",node:"sakae",timer:true},
   {s:H(19,40),e:H(20),kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["KOKO HOTEL 名古屋栄","今天辛苦了"],node:"hotel"}
@@ -340,6 +367,7 @@ function renderCard(){
     ${s.film?`<p class="film">出自 ${s.film}</p>`:""}
     <ul class="points">${s.pts.map(p=>`<li>${zh(p)}</li>`).join("")}</ul>
     ${s.must?`<div class="must"><b>必看</b><ol>${s.must.map(([n,d,f])=>`<li><span class="mn">${zh(n)}</span><span class="md">${d}${f?`・${f}`:""}</span></li>`).join("")}</ol></div>`:""}
+    ${s.fare?`<div class="fare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 8l3.5 5 3.5-5M12 13v5M9 13.5h6M9 16h6"/></svg><ul>${s.fare.map(f=>`<li>${f}</li>`).join("")}</ul></div>`:""}
     ${s.q?`<p class="queue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg><span>${zh(s.q)}</span></p>`:""}
     ${s.flag?`<p class="flag">${zh(s.flag)}</p>`:""}
     ${timed(s)?`<div class="tm" id="tm"></div>`:""}

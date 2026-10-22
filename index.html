@@ -456,17 +456,17 @@ $("#zreset").onclick=()=>{z=1;px=0;py=0;applyZ();};
 
 // ---- official maps (hotlinked from aichi-koen.com; falls back to PDF buttons) ----
 const MAPS = {
-  park: {src:"https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png", alt:"モリコロパーク 園區地圖", label:"官方園區地圖", hint:"官方園區地圖（モリコロパーク）・雙指放大"},
-  north:   {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/north.webp",    alt:"貓巴士北端", label:"貓巴士 上車／售票", hint:"貓巴士北端：售票機與上車處"},
-  catroute:{src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/catroute.webp", alt:"貓巴士路線", label:"貓巴士 路線", hint:"貓巴士行車路線"},
-  south:   {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/south.webp",    alt:"貓巴士森林端", label:"貓巴士 下車", hint:"貓巴士森林端下車處"},
-  catall:  {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/catall.webp",   alt:"貓巴士兩端", label:"貓巴士 總覽", hint:"貓巴士兩端位置總覽"},
-  forest:  {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/forest.webp",   alt:"咚咚可森林", label:"森林・斜坡車", hint:"咚咚可森林：斜坡車上下站與小梅的家"},
-  ebus:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/bus.webp",      alt:"免費園內巴士站位", label:"E1–E7 站位", hint:"免費園內巴士 E1～E7 站位"},
-  east:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/east.webp",     alt:"東路線時刻表", label:"東線 時刻表", hint:"東路線中文時刻表（今天搭這條）"},
-  west:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/west.webp",     alt:"西路線時刻表", label:"西線 時刻表", hint:"西路線中文時刻表（今天用不到）"},
-  all:     {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/all.webp",      alt:"全園總覽", label:"全園總覽", hint:"全園總覽地圖（PlusWei 繪）"},
-  bus:  {src:"https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg", alt:"園內巴士路線圖", label:"官方巴士路線", hint:"官方園內巴士路線圖（2024/11 版）・以現場為準"}
+  park: {src:"maps/park.webp", alt:"モリコロパーク 園區地圖", label:"官方園區地圖", hint:"官方園區地圖（モリコロパーク）・雙指放大"},
+  north:   {src:"maps/north.webp",    alt:"貓巴士北端", label:"貓巴士 上車／售票", hint:"貓巴士北端：售票機與上車處"},
+  catroute:{src:"maps/catroute.webp", alt:"貓巴士路線", label:"貓巴士 路線", hint:"貓巴士行車路線"},
+  south:   {src:"maps/south.webp",    alt:"貓巴士森林端", label:"貓巴士 下車", hint:"貓巴士森林端下車處"},
+  catall:  {src:"maps/catall.webp",   alt:"貓巴士兩端", label:"貓巴士 總覽", hint:"貓巴士兩端位置總覽"},
+  forest:  {src:"maps/forest.webp",   alt:"咚咚可森林", label:"森林・斜坡車", hint:"咚咚可森林：斜坡車上下站與小梅的家"},
+  ebus:    {src:"maps/ebus.webp",      alt:"免費園內巴士站位", label:"E1–E7 站位", hint:"免費園內巴士 E1～E7 站位"},
+  east:    {src:"maps/east.webp",     alt:"東路線時刻表", label:"東線 時刻表", hint:"東路線中文時刻表（今天搭這條）"},
+  west:    {src:"maps/west.webp",     alt:"西路線時刻表", label:"西線 時刻表", hint:"西路線中文時刻表（今天用不到）"},
+  all:     {src:"maps/all.webp",      alt:"全園總覽", label:"全園總覽", hint:"全園總覽地圖（PlusWei 繪）"},
+  bus:  {src:"maps/busmap.jpg", alt:"園內巴士路線圖", label:"官方巴士路線", hint:"官方園內巴士路線圖（2024/11 版）・以現場為準"}
 };
 let mapMode = "route";
 function showMap(m){
@@ -560,6 +560,9 @@ const hv = location.hash.slice(1);
 render();
 setView(["guide","all","map","pack"].includes(hv)?hv:"guide");
 setInterval(()=>{ if(isToday){ render(); } },60000);
+
+// 離線快取：只在 GitHub Pages 等 https 正式網址啟用
+try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("sw.js"); }catch(e){}
 </script>
 
 </body>

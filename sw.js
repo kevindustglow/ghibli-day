@@ -1,8 +1,8 @@
 // 離線快取：第一次開啟後，頁面與地圖存在手機裡，園區沒網路也能看
-const V = "gp-v1";
+const V = "gp-v2";
 const FILES = ["./", "index.html",
   "maps/park.webp","maps/north.webp","maps/catroute.webp","maps/south.webp","maps/catall.webp",
-  "maps/forest.webp","maps/ebus.webp","maps/east.webp","maps/west.webp","maps/all.webp","maps/busmap.jpg"];
+  "maps/forest.webp","maps/ebus.webp","maps/east.webp","maps/west.webp","maps/all.webp"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(V).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))));

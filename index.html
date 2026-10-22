@@ -259,11 +259,11 @@ svg text{font-family:var(--f-body)}
     <div class="group farebox">
       <h3>今天的車資（全家）</h3>
       <ul class="fares">
-        <li><span>東山線 來回（大人 2 位）</span><b class="mono">約 ¥1,240</b></li>
+        <li><span>東山線 來回（大人 2 位）</span><b class="mono">¥1,240</b></li>
         <li><span>Linimo 來回（大人 2 位）</span><b class="mono">¥1,600</b></li>
         <li><span>貓巴士 單程</span><b class="mono">¥2,500</b></li>
         <li><span>園內 E 線巴士</span><b class="mono">¥0</b></li>
-        <li class="sum"><span>合計</span><b class="mono">約 ¥5,340</b></li>
+        <li class="sum"><span>合計</span><b class="mono">¥5,340</b></li>
       </ul>
       <p class="small-note">Amber 學齡前搭地鐵、Linimo 免費。地鐵、Linimo 刷 IC 卡最省事；貓巴士只收現金或 QR（街口可用）。地鐵票價為估計，以站內票價表為準。</p>
     </div>
@@ -326,11 +326,11 @@ const GLYPH = {
 const DAY = { iso:"2026-11-12", label:"11/12（四）", ticket:"Premium" };
 const H = (h,m=0) => h*60+m;
 const STEPS = [
-  {s:H(7,25),e:H(7,45),kind:"move",g:"walk",tag:"出發",title:"飯店 → 栄站月台",pts:["電梯下到剪票口","再搭電梯到東山線「往藤が丘」月台","前一晚先走一次"],node:"hotel",flag:"含找電梯 20 分",links:[["栄站",gm("栄駅 名古屋")]]},
-  {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 → 藤が丘",fare:["大人 約 ¥270–310（以站內票價表為準）","Amber 學齡前免費","IC 卡（Suica／manaca）或現金買票"],pts:["往藤が丘，坐到終點","約 21–25 分","推車停車廂兩端"],node:"sakae"},
-  {s:H(8,15),e:H(8,35),kind:"move",g:"walk",tag:"轉乘",title:"東山線 → Linimo",pts:["電梯出地鐵剪票口","照「リニモ」指標走","電梯上 Linimo 月台，往八草"],node:"fuji",flag:"含找電梯 20 分"},
-  {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金，售票機不收信用卡"],pts:["約 13–17 分"],node:"park"},
-  {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",map:"ebus",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
+  {s:H(7,25),e:H(7,45),kind:"move",g:"walk",tag:"出發",title:"飯店 → 栄站 H10・1號月台",pts:["飯店旁就是栄站 2號出口（步行 1 分）","推車走電梯：サンシャインサカエ、オアシス21、中日ビル 這三處電梯可到剪票口","進站後搭電梯到東山線 1號月台「往藤が丘」"],node:"hotel",flag:"後兩處電梯限設施營業時間，07:30 能不能用待確認；前一晚先走一次",links:[["栄站",gm("栄駅 名古屋")]]},
+  {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 H10 → 藤が丘 H22",fare:["大人 ¥310（IC 卡、車票同價）","Amber 學齡前免費","IC 卡（manaca／Suica）或現金買票"],pts:["1號月台・往藤が丘方向","坐到終點藤が丘 H22，不會坐過頭","約 23 分","推車停車廂兩端"],node:"sakae"},
+  {s:H(8,15),e:H(8,35),kind:"move",g:"walk",tag:"轉乘",title:"藤が丘 H22 → Linimo L01",map:"stfuji",pts:["地下鐵出剪票口，照「リニモ」指標走","Linimo 藤が丘站：2–4號電梯到大廳，1號電梯下月台","目標 08:35 班車，錯過就搭 08:43"],node:"fuji",flag:"地下鐵藤が丘站的電梯位置待確認；含找電梯 20 分"},
+  {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 L01 → 愛・地球博記念公園 L07",map:"linigo",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金，售票機不收信用卡"],pts:["往八草方向（藤が丘是起點，每班都對）","第 7 站「愛・地球博記念公園」L07 下車","約 17 分：08:35 發，約 08:52 到","平日早上約 5–8 分一班"],node:"park"},
+  {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"L07 出站 → E1 巴士站",map:"stpark",pts:["月台搭 1號或 2號電梯下到大廳","出剪票口，走 5號出口「往愛・地球博紀念公園」（平路）","跟「北口」指標進公園","找 E1 地球市民交流中心 站牌"],node:"park"},
   {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",map:"north",fare:["免費園內巴士 E1 → E2：¥0"],pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",q:"售票機前會排隊；買不到 09:30–10:00 就改搭免費東線 E2 → E7（約 14 分）"},
   {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"貓巴士",title:"搭ネコバス到森",map:"catroute",fare:["大人 ¥1,000 ×2、兒童 ¥500","合計 ¥2,500，吉卜力門票不含","現金或 QR（街口、PayPay…），不收信用卡、IC 卡"],film:"《龍貓》的貓巴士・上車處在《魔法公主》的もののけの里",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分"],node:"cat"},
   {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"咚咚可森林",title:"斜坡車上山看龍貓",map:"forest",film:"《龍貓》",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","山頂どんどこ堂限小學生以下，Amber 進去玩"],node:"forest",timer:true,q:"斜坡車排隊超過 20 分 → 跳過山頂，直接看小梅的家",flag:"山頂若要另購票（大人 ¥400、兒童 ¥200），現場確認"},
@@ -353,13 +353,13 @@ const STEPS = [
     ["ミルクスタンド","西伯利亞蛋糕＋鮮奶，賣完為止・排隊熱點","《風起》"],
     ["冒険飛行団","園區最大商店，結帳會排隊，16:20 前開始買","伴手禮"]
   ],node:"soko",timer:true},
-  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",map:"east",fare:["免費園內巴士：¥0"],pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
-  {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"公園 → 藤が丘",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金"],pts:["電梯進站","約 13–17 分，坐到終點"],node:"park",q:"閉園人潮：電梯和月台都可能排隊，已含在時間內"},
-  {s:H(17,40),e:H(18),kind:"move",g:"walk",tag:"轉乘",title:"Linimo → 東山線",pts:["電梯下樓，走到地鐵藤が丘","起點站：可多等一班坐著回","往高畑方向"],node:"fuji",flag:"含找電梯 20 分"},
-  {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 → 栄",fare:["大人 約 ¥270–310","Amber 學齡前免費","IC 卡或現金"],pts:["約 21–25 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
-  {s:H(18,30),e:H(18,40),kind:"move",g:"walk",tag:"抵達",title:"栄站 → オアシス21",pts:["月台電梯上剪票口","往オアシス21方向"],node:"sakae"},
+  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",map:"east",fare:["免費園內巴士：¥0"],pts:["免費巴士往北口，約 6 分","推車收折","E1 下車後走回 L07 站 5號出口","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
+  {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"愛・地球博記念公園 L07 → 藤が丘 L01",map:"liniback",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金，售票機不收信用卡"],pts:["5號出口進站，搭電梯上「藤が丘方面」月台","發車 17:12／17:20／17:28，約 8 分一班","坐到終點藤が丘 L01，約 17 分"],node:"park",q:"閉園人潮：電梯和月台都可能排隊，已含在時間內",flag:"哪一支電梯通往藤が丘方面月台待確認，看現場指標"},
+  {s:H(17,40),e:H(18),kind:"move",g:"walk",tag:"轉乘",title:"Linimo L01 → 藤が丘 H22",map:"stfuji",pts:["1號電梯上大廳，出剪票口","2–4號電梯上地面，照「地下鉄」指標","藤が丘是起點站，可多等一班坐著回"],node:"fuji",flag:"地下鐵藤が丘站的電梯位置待確認；含找電梯 20 分"},
+  {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 H22 → 栄 H10",fare:["大人 ¥310（IC 卡、車票同價）","Amber 學齡前免費","IC 卡（manaca／Suica）或現金買票"],pts:["往高畑方向，第 12 站栄 H10 下車","約 23 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
+  {s:H(18,30),e:H(18,40),kind:"move",g:"walk",tag:"抵達",title:"栄 H10 → オアシス21",pts:["在 2號月台下車，搭電梯上剪票口","照「オアシス21」指標，用オアシス21 電梯上地面"],node:"sakae"},
   {s:H(18,40),e:H(19,40),kind:"do",g:"food",tag:"晚餐",title:"上海湯包小館",pts:["オアシス21 內","小孩累了就外帶"],q:"排隊超過 15 分 → 大戸屋 栄店",node:"sakae",timer:true},
-  {s:H(19,40),e:H(20),kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["KOKO HOTEL 名古屋栄","今天辛苦了"],node:"hotel"}
+  {s:H(19,40),e:H(20),kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["KOKO HOTEL 名古屋栄（栄站 2號出口旁）","今天辛苦了"],node:"hotel"}
 ];
 
 let steps=[], idx=0, isToday=false, view="guide";
@@ -410,9 +410,9 @@ function renderList(){
 // ---- route map (schematic) ----
 const NODES = [
   {id:"hotel", y:60,  label:"飯店",              sub:"KOKO HOTEL 名古屋栄（榮）", c:"--forest"},
-  {id:"sakae", y:135, label:"榮站",              sub:"栄・東山線 約 21–25 分",  c:"--sky"},
-  {id:"fuji",  y:210, label:"藤之丘",            sub:"藤が丘・轉乘含找電梯 20 分", c:"--sky"},
-  {id:"park",  y:285, label:"愛・地球博紀念公園", sub:"Linimo 約 13–17 分・北口 E1", c:"--sky"},
+  {id:"sakae", y:135, label:"榮站 H10",          sub:"栄・東山線 1號月台・約 23 分",  c:"--sky"},
+  {id:"fuji",  y:210, label:"藤之丘 H22／L01",    sub:"藤が丘・轉乘含找電梯 20 分", c:"--sky"},
+  {id:"park",  y:285, label:"愛・地球博紀念公園 L07", sub:"Linimo 約 17 分・5號出口 → 北口 E1", c:"--sky"},
   {id:"e2",    y:360, label:"E2 魔法之里",        sub:"貓巴士售票機",          c:"--forest"},
   {id:"cat",   y:435, label:"貓巴士",            sub:"ネコバス・魔法公主之里 → 咚咚可森林", c:"--sun"},
   {id:"forest",y:510, label:"咚咚可森林",         sub:"どんどこ森・龍貓・小梅的家・E7", c:"--forest"},
@@ -467,6 +467,10 @@ const MAPS = {
   forest:  {src:"maps/forest.webp",   alt:"咚咚可森林", label:"森林・斜坡車", hint:"咚咚可森林：斜坡車上下站與小梅的家"},
   ebus:    {src:"maps/ebus.webp",      alt:"免費園內巴士站位", label:"E1–E7 站位", hint:"免費園內巴士 E1～E7 站位"},
   east:    {src:"maps/east.webp",     alt:"東路線時刻表", label:"東線 時刻表", hint:"東路線中文時刻表（今天搭這條）"},
+  linigo:  {src:"maps/lini-go.webp",   alt:"Linimo 藤之丘站時刻表", label:"Linimo 去程時刻", hint:"藤之丘站往八草（平日看綠色）"},
+  liniback:{src:"maps/lini-back.webp", alt:"Linimo 公園站時刻表", label:"Linimo 回程時刻", hint:"愛・地球博紀念公園站往藤之丘（平日看綠色）"},
+  stfuji:  {src:"maps/st-fuji.webp",   alt:"Linimo 藤之丘站構內圖", label:"藤之丘站 電梯", hint:"Linimo 藤之丘站構內圖・紅線是輪椅（推車）路線"},
+  stpark:  {src:"maps/st-park.webp",   alt:"Linimo 公園站構內圖", label:"公園站 電梯", hint:"愛・地球博紀念公園站構內圖・5號出口往公園"},
   west:    {src:"maps/west.webp",     alt:"西路線時刻表", label:"西線 時刻表", hint:"西路線中文時刻表（今天用不到）"},
 };
 let mapMode = "route";

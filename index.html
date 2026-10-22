@@ -459,6 +459,7 @@ $("#zreset").onclick=()=>{z=1;px=0;py=0;applyZ();};
 // ---- official maps (hotlinked from aichi-koen.com; falls back to PDF buttons) ----
 const MAPS = {
   park: {src:"maps/park.webp", alt:"愛・地球博紀念公園 園區地圖", label:"官方園區地圖", hint:"官方繁中園區地圖（2026/4 版）・雙指放大"},
+  all:     {src:"maps/all.webp",      alt:"全園總覽", label:"全園總覽", hint:"全園總覽地圖（PlusWei 繪）"},
   north:   {src:"maps/north.webp",    alt:"貓巴士北端", label:"貓巴士 上車／售票", hint:"貓巴士北端：售票機與上車處"},
   catroute:{src:"maps/catroute.webp", alt:"貓巴士路線", label:"貓巴士 路線", hint:"貓巴士行車路線"},
   south:   {src:"maps/south.webp",    alt:"貓巴士森林端", label:"貓巴士 下車", hint:"貓巴士森林端下車處"},
@@ -467,7 +468,6 @@ const MAPS = {
   ebus:    {src:"maps/ebus.webp",      alt:"免費園內巴士站位", label:"E1–E7 站位", hint:"免費園內巴士 E1～E7 站位"},
   east:    {src:"maps/east.webp",     alt:"東路線時刻表", label:"東線 時刻表", hint:"東路線中文時刻表（今天搭這條）"},
   west:    {src:"maps/west.webp",     alt:"西路線時刻表", label:"西線 時刻表", hint:"西路線中文時刻表（今天用不到）"},
-  all:     {src:"maps/all.webp",      alt:"全園總覽", label:"全園總覽", hint:"全園總覽地圖（PlusWei 繪）"}
 };
 let mapMode = "route";
 function showMap(m){

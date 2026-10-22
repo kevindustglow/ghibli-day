@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>吉卜力公園親子日</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: left-hand phone guide. Top: date + timer chips, view switch. Middle: one big step card. Bottom-left (left thumb): next. */
+:root{
+  --bg:#E9EFE8; --card:#FFFFFF; --ink:#1C2620; --muted:#66756B; --line:#D5DED5;
+  --forest:#2D6A4C; --forest-soft:#DDEBE2; --sky:#2E6A9C; --sky-soft:#DDE8F2;
+  --sun:#A66B08; --sun-soft:#F6E8C9;
+  --f-display:"Huninn","Noto Sans TC","PingFang TC",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111814; --card:#1B241F; --ink:#E7EEE8; --muted:#97A99C; --line:#2B3930;
+  --forest:#7CC29D; --forest-soft:#20332A; --sky:#8CB7DF; --sky-soft:#1B2A37;
+  --sun:#E4B14C; --sun-soft:#352A13; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111814; --card:#1B241F; --ink:#E7EEE8; --muted:#97A99C; --line:#2B3930;
+  --forest:#7CC29D; --forest-soft:#20332A; --sky:#8CB7DF; --sky-soft:#1B2A37;
+  --sun:#E4B14C; --sun-soft:#352A13; color-scheme:dark}
+
+[hidden]{display:none!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance}
+p{margin:0}
+button,select{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--forest);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:14px;padding-block:12px 120px}
+
+/* top */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);padding-block:6px 8px;display:flex;flex-direction:column;gap:10px}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-family:var(--f-display);font-size:1.25rem}
+.datechip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:40px;font-size:.92rem}
+.datechip i{width:8px;height:8px;border-radius:50%;background:var(--sun);display:inline-block}
+.datechip.set i{background:var(--forest)}
+.top-row{flex-wrap:wrap}
+.datechip.timer.run{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.datechip.timer.over{background:var(--sun);color:var(--card);border-color:var(--sun)}
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.presets button{min-height:60px;border-radius:16px;border:1px solid var(--line);background:var(--bg);font-family:var(--f-mono);font-size:1.2rem}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg button{border:0;background:none;border-radius:10px;min-height:40px;font-size:.92rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* guide card */
+.progress{display:flex;gap:4px}
+.progress span{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.progress span.on{background:var(--forest)}
+.card{background:var(--card);border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;gap:16px;min-height:52vh;box-shadow:0 1px 0 var(--line)}
+.card .when{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card .time{font-family:var(--f-mono);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.card .time small{font-size:1rem;color:var(--muted)}
+.tag{font-size:.78rem;letter-spacing:.06em;padding:4px 10px;border-radius:999px;background:var(--forest-soft);color:var(--forest);white-space:nowrap}
+.card.move .tag{background:var(--sky-soft);color:var(--sky)}
+.card.decide{background:var(--sun-soft)}
+.card.decide .tag{background:var(--card);color:var(--sun)}
+.card .glyph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--forest-soft);color:var(--forest)}
+.card.move .glyph{background:var(--sky-soft);color:var(--sky)}
+.card.decide .glyph{background:var(--card);color:var(--sun)}
+.card h2{font-size:2rem;line-height:1.2}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.points li{display:flex;gap:10px;align-items:flex-start;font-size:1.05rem}
+.points li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-top:.65em}
+.actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+.btn{flex:1 1 140px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:16px;border:1px solid var(--line);background:var(--card);font-size:1rem;text-decoration:none}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card.decide .btn{border-color:transparent}
+.flag{font-size:.82rem;color:var(--sun);display:flex;gap:6px;align-items:center}
+.flag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sun)}
+
+/* bottom nav */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;background:linear-gradient(to top,var(--bg) 70%,transparent);
+  padding:18px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dock-in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.dock button{min-height:60px;border-radius:18px;border:1px solid var(--line);background:var(--card);font-size:1.05rem}
+.dock .next{background:var(--forest);border-color:var(--forest);color:var(--bg);font-weight:700}
+.dock button:disabled{opacity:.4}
+
+/* overview */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.list button{width:100%;display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;text-align:left;background:var(--card);border:0;border-radius:16px;padding:14px 16px;min-height:60px}
+.list .t{font-family:var(--f-mono);color:var(--muted)}
+.list .n{font-family:var(--f-display);font-size:1.1rem}
+.list .k{width:10px;height:10px;border-radius:50%;background:var(--forest)}
+.list .move .k{background:var(--sky)}
+.list .decide .k{background:var(--sun);border-radius:2px;transform:rotate(45deg)}
+.list .cur{outline:2px solid var(--forest)}
+
+/* map */
+.mapbox{background:var(--card);border-radius:24px;overflow:hidden;position:relative;height:62vh;touch-action:none}
+.mapbox svg{width:100%;height:100%;display:block;transform-origin:0 0}
+.zoom{position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:8px}
+.zoom button{width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:1.4rem;line-height:1}
+.maphint{font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.maphint a{color:var(--forest)}
+svg text{font-family:var(--f-body)}
+
+/* checklist */
+.group{background:var(--card);border-radius:20px;padding:6px 16px}
+.group h3{font-size:1rem;color:var(--muted);padding:12px 0 4px}
+.chk{list-style:none;margin:0;padding:0}
+.chk li+li{border-top:1px solid var(--line)}
+.chk label{display:flex;align-items:center;gap:14px;min-height:56px;cursor:pointer}
+.chk input{width:24px;height:24px;accent-color:var(--forest);flex:none;margin:0}
+.chk input:checked+span{color:var(--muted);text-decoration:line-through}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rule{background:var(--card);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.rule b{font-family:var(--f-display);font-weight:400;font-size:1.05rem}
+.rule span{font-size:.86rem;color:var(--muted)}
+.foot{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.foot a{color:var(--forest)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;background:var(--card);border-radius:24px 24px 0 0;
+  padding:20px max(20px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.sheet label{font-size:.9rem;color:var(--muted)}
+.sheet select{width:100%;min-height:52px;border-radius:14px;border:1px solid var(--line);background:var(--bg);padding:0 12px}
+.sheet .note{font-size:.85rem;color:var(--sun)}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .22s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <div class="top">
+    <div class="top-row">
+      <div class="brand">吉卜力日</div>
+      <div style="display:flex;gap:8px">
+      <button class="datechip timer" id="timerChip" aria-label="計時"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span id="timerText" class="mono">計時</span></button>
+      <button class="datechip" id="openSheet" aria-label="設定日期與時段"><i></i><span id="chipText">日期未定</span></button>
+      </div>
+    </div>
+    <div class="seg" role="group" aria-label="切換畫面">
+      <button data-view="guide" aria-pressed="true">引導</button>
+      <button data-view="all" aria-pressed="false">總覽</button>
+      <button data-view="map" aria-pressed="false">地圖</button>
+      <button data-view="pack" aria-pressed="false">清單</button>
+    </div>
+  </div>
+
+  <section id="guide">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="progress" id="progress"></div>
+      <article class="card" id="card"></article>
+    </div>
+  </section>
+
+  <section id="all" hidden><ol class="list" id="list"></ol></section>
+
+  <section id="map" hidden style="display:flex;flex-direction:column;gap:10px">
+    <div class="mapbox" id="mapbox">
+      <svg id="mapsvg" viewBox="0 0 360 620" aria-label="今日路線圖"></svg>
+      <div class="zoom">
+        <button id="zin" aria-label="放大">+</button>
+        <button id="zout" aria-label="縮小">−</button>
+        <button id="zreset" aria-label="重設" style="font-size:.9rem">⤢</button>
+      </div>
+    </div>
+    <div class="maphint"><span>雙指或按鈕放大・路線示意，非實際比例</span><a href="https://www.aichi-koen.com/moricoro/riyouannai/parkmap/" target="_blank" rel="noopener">官方園區地圖 ↗</a></div>
+  </section>
+
+  <section id="pack" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div class="group">
+      <h3>出門前</h3>
+      <ul class="chk">
+        <li><label><input type="checkbox" id="k1"><span>電子票 QR＋截圖</span></label></li>
+        <li><label><input type="checkbox" id="k2"><span>購票人護照</span></label></li>
+        <li><label><input type="checkbox" id="k3"><span>IC 卡已儲值</span></label></li>
+        <li><label><input type="checkbox" id="k4"><span>手機＋行動電源</span></label></li>
+      </ul>
+    </div>
+    <div class="group">
+      <h3>包包</h3>
+      <ul class="chk">
+        <li><label><input type="checkbox" id="k5"><span>推車（或北口／西口租）</span></label></li>
+        <li><label><input type="checkbox" id="k6"><span>有蓋水壺</span></label></li>
+        <li><label><input type="checkbox" id="k7"><span>薄外套、帽子</span></label></li>
+        <li><label><input type="checkbox" id="k8"><span>濕紙巾、備用衣褲</span></label></li>
+        <li><label><input type="checkbox" id="k9"><span>小零食、飯糰（區域外吃）</span></label></li>
+      </ul>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>全員一起</b><span>大倉庫時段起 1 小時內入場</span></div>
+      <div class="rule"><b>推車</b><span>進建築前停置場</span></div>
+      <div class="rule"><b>不能吃自備</b><span>區域內禁止，區域外可</span></div>
+      <div class="rule"><b>哺乳室</b><span>大倉庫、魔女の谷</span></div>
+      <div class="rule"><b>16:30</b><span>最後入區時間</span></div>
+      <div class="rule"><b>不能改退</b><span>本人須到場</span></div>
+    </div>
+    <div class="foot">
+      <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。交通分鐘數為估計值。</span>
+      <span>個人旅行筆記，非官方資訊。</span>
+    </div>
+  </section>
+</div>
+
+<nav class="dock" id="dock">
+  <div class="dock-in">
+    <button id="next" class="next">下一步 ›</button>
+    <button id="prev">‹ 上一步</button>
+  </div>
+</nav>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="sheet" role="dialog" aria-label="設定">
+    <h3>票面資訊</h3>
+    <label for="date">入園日</label>
+    <select id="date">
+      <option value="">未定（先用 11/11 預覽）</option>
+      <option value="2026-11-11">11/11（三）</option>
+      <option value="2026-11-12">11/12（四）</option>
+      <option value="2026-11-09">11/9（一）</option>
+      <option value="2026-11-13">11/13（五）</option>
+      <option value="2026-11-08">11/8（日）</option>
+    </select>
+    <label for="slot">大倉庫時段</label>
+    <select id="slot"></select>
+    <p class="note">買到票後依票面改這兩項，流程會自動重排。</p>
+    <button class="btn primary" id="closeSheet">完成</button>
+  </div>
+</div>
+
+<div class="scrim" id="tscrim" hidden>
+  <div class="sheet" role="dialog" aria-label="計時">
+    <h3>倒數計時</h3>
+    <div class="presets">
+      <button data-min="10">10</button><button data-min="20">20</button><button data-min="30">30</button><button data-min="45">45</button>
+    </div>
+    <button class="btn" id="tstop">停止計時</button>
+  </div>
+</div>
+
+<script>
+// ---- Trip variables ----
+const TRIP = { hotel:"KOKO HOTEL 名古屋栄", previewDate:"2026-11-11", holidays:[] };
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,"0");
+const fmt = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const WD = ["日","一","二","三","四","五","六"];
+const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+
+const GLYPH = {
+  train:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l1.5-4M15 21l-1.5-4"/><circle cx="9" cy="14" r=".6" fill="currentColor"/><circle cx="15" cy="14" r=".6" fill="currentColor"/></svg>',
+  walk:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="13" cy="4.5" r="1.8"/><path d="M10 21l2-6 3 3v3M8 11l3-3 3 2 3 1M12 15l-1-5"/></svg>',
+  house:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>',
+  food:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 12h16a8 8 0 0 1-16 0zM8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4"/></svg>',
+  ask:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l9 9-9 9-9-9z"/><path d="M10 10a2 2 0 1 1 3 1.7c-.7.4-1 .8-1 1.5M12 16.5v.01"/></svg>',
+  leaf:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 19c0-9 6-14 14-14 0 8-5 14-14 14z"/><path d="M5 19l8-8"/></svg>',
+  bed:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/></svg>'
+};
+
+function dayInfo(iso){
+  const d = new Date(iso+"T12:00:00+09:00"), wd = d.getUTCDay();
+  const weekend = wd===0||wd===6||TRIP.holidays.includes(iso);
+  return {label:`${d.getUTCMonth()+1}/${d.getUTCDate()}（${WD[wd]}）`, weekend, closed:wd===2, open:weekend?540:600};
+}
+
+// node: map stop id this step belongs to
+function buildSteps(info, T){
+  const S=[]; const add=(o)=>S.push(o);
+  const station = "愛・地球博記念公園駅";
+  if (T <= info.open+60){
+    add({s:T-75,e:T-55,kind:"move",g:"train",tag:"出發",title:"去栄站",pts:["東山線 往藤が丘","推車走電梯"],node:"sakae",links:[["栄站",gm("栄駅 名古屋")]],flag:"車程為估計"});
+    add({s:T-55,e:T-30,kind:"move",g:"train",tag:"轉乘",title:"藤が丘 → Linimo",pts:["終點站下車","轉 Linimo","在「愛・地球博記念公園」下"],node:"fuji"});
+    add({s:T-30,e:T,kind:"move",g:"walk",tag:"抵達",title:"走到大倉庫",pts:["先上廁所","準備 QR＋護照",`${fmt(T)} 起 1 小時內全員入場`],node:"park",links:[["大倉庫",gm("ジブリの大倉庫")]]});
+    add({s:T,e:T+150,kind:"do",g:"house",tag:"區域 1",title:"ジブリの大倉庫",pts:["推車停置場","館內有哺乳室","伴手禮最後再買"],node:"soko"});
+    add({s:T+150,e:T+210,kind:"do",g:"food",tag:"午餐",title:"吃飯休息",pts:["館內餐飲 或 魔女の谷熱狗攤","自備食物到區域外吃"],node:"soko"});
+    add({s:T+210,e:T+225,kind:"decide",g:"ask",tag:"判斷點",title:"還有電嗎？",pts:["看小孩狀態決定"],node:"soko",choice:[["去魔女の谷","next"],["回飯店","home"]]});
+    add({s:T+225,e:T+330,kind:"do",g:"house",tag:"區域 2",title:"魔女の谷",pts:["戶外街景，推車好推","建築要加購，排隊長就跳過","伴手禮在這買"],node:"majo",links:[["魔女の谷",gm("ジブリパーク 魔女の谷")]]});
+    const d2=Math.min(T+330,975);
+    add({s:d2,e:d2+15,kind:"decide",g:"ask",tag:"判斷點",title:"再去もののけの里？",pts:["16:30 前要入區"],node:"majo",choice:[["去看看","next"],["回飯店","home"]]});
+    add({s:d2+15,e:Math.min(d2+60,1020),kind:"do",g:"leaf",tag:"選配",title:"もののけの里",pts:["戶外里山，30–45 分","看完就回"],node:"mono"});
+  } else {
+    const o=info.open;
+    add({s:o-75,e:o-35,kind:"move",g:"train",tag:"出發",title:"去栄站",pts:["東山線 往藤が丘","藤が丘轉 Linimo"],node:"sakae",flag:"車程為估計"});
+    add({s:o-35,e:o,kind:"move",g:"walk",tag:"抵達",title:"走到魔女の谷",pts:["開園就進，人少好拍"],node:"park"});
+    add({s:o,e:T-60,kind:"do",g:"house",tag:"區域 1",title:"魔女の谷",pts:["建築要加購，排隊長就跳過"],node:"majo"});
+    add({s:T-60,e:T-10,kind:"do",g:"food",tag:"午餐",title:"吃飯休息",pts:["熱狗攤或餐廳","自備食物到區域外吃"],node:"majo"});
+    add({s:T-10,e:T,kind:"move",g:"walk",tag:"移動",title:"走到大倉庫",pts:[`${fmt(T)} 起 1 小時內全員入場`],node:"soko"});
+    add({s:T,e:Math.min(T+150,1000),kind:"do",g:"house",tag:"區域 2",title:"ジブリの大倉庫",pts:["推車停置場","最後買伴手禮"],node:"soko"});
+  }
+  const last=S[S.length-1].e;
+  add({s:last,e:last+70,kind:"move",g:"train",tag:"回程",title:"回栄",pts:["Linimo → 藤が丘","東山線回栄"],node:"fuji",id:"home"});
+  add({s:last+70,e:last+150,kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["今天辛苦了","早點睡"],node:"hotel"});
+  return S;
+}
+
+let steps=[], idx=0, info, isToday=false, view="guide";
+
+function load(){
+  const iso=$("#date").value||TRIP.previewDate;
+  info=dayInfo(iso);
+  const slots=[]; for(let m=info.open; m<=840; m+=60) slots.push(m);
+  const prev=Number($("#slot").value)||Number(store.get("gp-slot"))||info.open;
+  $("#slot").innerHTML=slots.map(m=>`<option value="${m}">${fmt(m)}</option>`).join("");
+  $("#slot").value=slots.includes(prev)?prev:slots[0];
+  const T=Number($("#slot").value);
+  $("#chipText").textContent = ($("#date").value? info.label : "日期未定") + " · " + fmt(T);
+  $("#openSheet").classList.toggle("set", !!$("#date").value);
+  steps = info.closed ? [] : buildSteps(info,T);
+  const nowJ=new Date(Date.now()+9*3600e3);
+  isToday = nowJ.toISOString().slice(0,10)===iso && !!$("#date").value;
+  if(isToday){ const nm=nowJ.getUTCHours()*60+nowJ.getUTCMinutes(); const c=steps.findIndex(s=>nm<s.e); idx=c<0?steps.length-1:c; }
+  else idx=Math.min(Number(store.get("gp-idx"))||0, Math.max(steps.length-1,0));
+}
+
+function renderCard(){
+  if(info.closed){
+    $("#card").className="card decide";
+    $("#card").innerHTML=`<div class="when"><span class="tag">休園日</span></div><h2>這天不開園</h2><ul class="points"><li>每週二固定休園</li></ul><div class="actions"><button class="btn primary" onclick="openSheet()">換一天</button></div>`;
+    $("#progress").innerHTML=""; return;
+  }
+  const s=steps[idx];
+  $("#progress").innerHTML=steps.map((_,i)=>`<span class="${i<=idx?"on":""}"></span>`).join("");
+  const kind = s.kind==="done"?"do":s.kind;
+  let actions="";
+  if(s.choice) actions = s.choice.map(([t,a],i)=>`<button class="btn ${i===0?"primary":""}" data-go="${a}">${t}</button>`).join("");
+  else {
+    actions = `<button class="btn" data-go="map">看路線圖</button>`;
+    if(s.links) actions += s.links.map(([t,u])=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${t} 導航 ↗</a>`).join("");
+  }
+  $("#card").className="card "+kind;
+  $("#card").innerHTML=`
+    <div class="when"><div class="time">${fmt(s.s)}<small> – ${fmt(s.e)}</small></div><span class="tag">${isToday&&idx===currentIdx()?`現在・剩 ${Math.max(0,s.e-nowMin())} 分`:s.tag}</span></div>
+    <div class="glyph">${GLYPH[s.g]}</div>
+    <h2>${s.title}</h2>
+    <ul class="points">${s.pts.map(p=>`<li>${p}</li>`).join("")}</ul>
+    ${s.flag?`<p class="flag">${s.flag}</p>`:""}
+    <div class="actions">${actions}</div>`;
+  $("#prev").disabled = idx===0;
+  $("#next").textContent = idx===steps.length-1 ? "回到第一步" : "下一步 ›";
+  store.set("gp-idx", idx);
+}
+function nowMin(){ const n=new Date(Date.now()+9*3600e3); return n.getUTCHours()*60+n.getUTCMinutes(); }
+function currentIdx(){ const nowJ=new Date(Date.now()+9*3600e3); const nm=nowJ.getUTCHours()*60+nowJ.getUTCMinutes(); const c=steps.findIndex(s=>nm<s.e); return c<0?steps.length-1:c; }
+
+function renderList(){
+  $("#list").innerHTML=steps.map((s,i)=>`<li><button class="${s.kind} ${i===idx?"cur":""}" data-i="${i}"><span class="t">${fmt(s.s)}</span><span class="n">${s.title}</span><span class="k"></span></button></li>`).join("");
+}
+
+// ---- route map (schematic) ----
+const NODES = [
+  {id:"hotel",x:60,y:60,label:"飯店",sub:"KOKO HOTEL",c:"--forest"},
+  {id:"sakae",x:60,y:150,label:"栄",sub:"東山線 H",c:"--sky"},
+  {id:"fuji",x:60,y:280,label:"藤が丘",sub:"轉 Linimo",c:"--sky"},
+  {id:"park",x:200,y:280,label:"愛・地球博記念公園",sub:"Linimo",c:"--sky"},
+  {id:"soko",x:200,y:390,label:"ジブリの大倉庫",sub:"區域 1",c:"--forest"},
+  {id:"majo",x:200,y:480,label:"魔女の谷",sub:"區域 2",c:"--forest"},
+  {id:"mono",x:200,y:570,label:"もののけの里",sub:"選配",c:"--forest",opt:true}
+];
+function renderMap(){
+  const cur = steps[idx] ? steps[idx].node : null;
+  const css = getComputedStyle(document.documentElement);
+  const col = v => css.getPropertyValue(v).trim();
+  const P = id => NODES.find(n=>n.id===id);
+  const seg = (a,b,c,dash) => `<line x1="${P(a).x}" y1="${P(a).y}" x2="${P(b).x}" y2="${P(b).y}" stroke="${col(c)}" stroke-width="8" stroke-linecap="round" ${dash?'stroke-dasharray="2 14"':''}/>`;
+  let g = `<rect width="360" height="620" fill="${col("--card")}"/>`;
+  g += `<rect x="150" y="250" width="196" height="356" rx="22" fill="${col("--forest-soft")}"/>`;
+  g += seg("hotel","sakae","--muted",true) + seg("sakae","fuji","--sky") + `<path d="M60 280 H200" stroke="${col("--sky")}" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 0" opacity=".55"/>`;
+  g += seg("park","soko","--forest",true) + seg("soko","majo","--forest",true) + seg("majo","mono","--forest",true);
+  g += `<text x="74" y="220" font-size="12" fill="${col("--sky")}">東山線 約 25 分</text><text x="92" y="270" font-size="12" fill="${col("--sky")}">Linimo 約 13 分</text>`;
+  NODES.forEach(n=>{
+    const on = n.id===cur;
+    const lx = n.x===60 ? n.x+22 : n.x+22;
+    g += on ? `<circle cx="${n.x}" cy="${n.y}" r="20" fill="${col(n.c)}" opacity=".25"/>` : "";
+    g += `<circle cx="${n.x}" cy="${n.y}" r="${on?12:9}" fill="${n.opt?col("--card"):col(n.c)}" stroke="${col(n.c)}" stroke-width="4"/>`;
+    const lbl = n.id==="park" ? `<text x="${n.x+20}" y="${n.y+28}" font-size="14" fill="${col("--ink")}">${n.label}</text>` :
+      n.id==="fuji" ? `<text x="${n.x-20}" y="${n.y+34}" font-size="17" fill="${col("--ink")}" ${on?'font-weight="700"':''}>${n.label}</text><text x="${n.x-20}" y="${n.y+52}" font-size="12" fill="${col("--muted")}">${n.sub}</text>` :
+      `<text x="${lx}" y="${n.y+1}" font-size="17" fill="${col("--ink")}" ${on?'font-weight="700"':''}>${n.label}</text><text x="${lx}" y="${n.y+19}" font-size="12" fill="${col("--muted")}">${n.sub}</text>`;
+    g += lbl;
+  });
+  $("#mapsvg").innerHTML = g;
+}
+// zoom & pan
+let z=1, px=0, py=0; const pts=new Map(); let startD=0, startZ=1, last=null;
+function applyZ(){ z=Math.min(4,Math.max(1,z)); const b=$("#mapbox").getBoundingClientRect(); px=Math.min(0,Math.max(b.width*(1-z),px)); py=Math.min(0,Math.max(b.height*(1-z),py)); $("#mapsvg").style.transform=`translate(${px}px,${py}px) scale(${z})`; }
+function zoomAt(f,cx,cy){ const nz=Math.min(4,Math.max(1,z*f)); px=cx-(cx-px)*(nz/z); py=cy-(cy-py)*(nz/z); z=nz; applyZ(); }
+const mb=$("#mapbox");
+mb.addEventListener("pointerdown",e=>{ if(e.target.closest(".zoom")) return; mb.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(pts.size===2){const [a,b]=[...pts.values()]; startD=Math.hypot(a.x-b.x,a.y-b.y); startZ=z;} last={x:e.clientX,y:e.clientY}; });
+mb.addEventListener("pointermove",e=>{ if(!pts.has(e.pointerId)) return; pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); const r=mb.getBoundingClientRect();
+  if(pts.size===2){ const [a,b]=[...pts.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); zoomAt((startZ*d/startD)/z,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top); }
+  else if(last){ px+=e.clientX-last.x; py+=e.clientY-last.y; applyZ(); last={x:e.clientX,y:e.clientY}; } });
+const endP=e=>{ pts.delete(e.pointerId); last=null; };
+mb.addEventListener("pointerup",endP); mb.addEventListener("pointercancel",endP);
+mb.addEventListener("wheel",e=>{ e.preventDefault(); const r=mb.getBoundingClientRect(); zoomAt(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top); },{passive:false});
+const center=()=>{const r=mb.getBoundingClientRect(); return [r.width/2,r.height/2];};
+$("#zin").onclick=()=>zoomAt(1.4,...center());
+$("#zout").onclick=()=>zoomAt(1/1.4,...center());
+$("#zreset").onclick=()=>{z=1;px=0;py=0;applyZ();};
+
+// ---- views ----
+function setView(v){
+  view=v;
+  ["guide","all","map","pack"].forEach(id=>$("#"+id).hidden = id!==v);
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===v));
+  $("#dock").hidden = v!=="guide";
+  if(v==="all") renderList();
+  if(v==="map"){ renderMap(); applyZ(); }
+  window.scrollTo(0,0);
+}
+function go(i){ idx=(i+steps.length)%steps.length; renderCard(); }
+function render(){ load(); renderCard(); if(view==="all") renderList(); if(view==="map") renderMap(); }
+
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$("#prev").onclick=()=>go(idx-1);
+$("#next").onclick=()=>go(idx===steps.length-1?0:idx+1);
+$("#card").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const a=b.dataset.go;
+  if(a==="next") go(idx+1); else if(a==="home") go(steps.findIndex(s=>s.id==="home")); else if(a==="map") setView("map"); });
+$("#list").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"); if(!b) return; idx=Number(b.dataset.i); renderCard(); setView("guide"); });
+// swipe on card
+let sx=null; $("#card").addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
+$("#card").addEventListener("touchend",e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60) go(idx+(dx<0?1:-1)); sx=null; });
+
+function openSheet(){ $("#scrim").hidden=false; }
+$("#openSheet").onclick=openSheet;
+$("#closeSheet").onclick=()=>{ $("#scrim").hidden=true; };
+$("#scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") $("#scrim").hidden=true; });
+$("#date").addEventListener("change",()=>{ store.set("gp-date",$("#date").value); store.set("gp-idx",0); render(); });
+$("#slot").addEventListener("change",()=>{ store.set("gp-slot",$("#slot").value); store.set("gp-idx",0); render(); });
+
+document.querySelectorAll(".chk input").forEach(i=>{ i.checked=store.get("gp-"+i.id)==="1"; i.onchange=()=>store.set("gp-"+i.id,i.checked?"1":"0"); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{ if(view==="map") renderMap(); });
+
+// ---- minimal countdown timer ----
+let tEnd = Number(store.get("gp-tend")) || 0, tTick=null;
+function tRender(){
+  const chip=$("#timerChip"), left=Math.round((tEnd-Date.now())/1000);
+  chip.classList.remove("run","over");
+  if(!tEnd){ $("#timerText").textContent="計時"; return; }
+  if(left>0){ chip.classList.add("run"); $("#timerText").textContent=`${pad(Math.floor(left/60))}:${pad(left%60)}`; }
+  else { chip.classList.add("over"); $("#timerText").textContent="時間到"; if(tTick){ try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){} clearInterval(tTick); tTick=null; } }
+}
+function tStart(min){ tEnd=Date.now()+min*60000; store.set("gp-tend",tEnd); clearInterval(tTick); tTick=setInterval(tRender,1000); tRender(); $("#tscrim").hidden=true; }
+$("#timerChip").onclick=()=>{ if(tEnd && Date.now()>tEnd){ tEnd=0; store.set("gp-tend",0); tRender(); return; } $("#tscrim").hidden=false; };
+document.querySelectorAll(".presets button").forEach(b=>b.onclick=()=>tStart(Number(b.dataset.min)));
+$("#tstop").onclick=()=>{ tEnd=0; store.set("gp-tend",0); clearInterval(tTick); tTick=null; tRender(); $("#tscrim").hidden=true; };
+$("#tscrim").addEventListener("click",e=>{ if(e.target.id==="tscrim") $("#tscrim").hidden=true; });
+if(tEnd && tEnd>Date.now()) tTick=setInterval(tRender,1000);
+tRender();
+
+const hv = location.hash.slice(1);
+$("#date").value = store.get("gp-date") || "";
+render();
+setView(["guide","all","map","pack"].includes(hv)?hv:"guide");
+setInterval(()=>{ if(isToday){ render(); } },60000);
+</script>
+
+</body>
+</html>

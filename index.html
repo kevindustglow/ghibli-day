@@ -192,7 +192,7 @@ svg text{font-family:var(--f-body)}
         <li><label><input type="checkbox" id="k1"><span>電子票 QR＋截圖</span></label></li>
         <li><label><input type="checkbox" id="k2"><span>購票人護照</span></label></li>
         <li><label><input type="checkbox" id="k3"><span>IC 卡已儲值</span></label></li>
-        <li><label><input type="checkbox" id="k10"><span>ネコバス 車資 ¥2,500（現金或 QR）</span></label></li>
+        <li><label><input type="checkbox" id="k10"><span>貓巴士（ネコバス）車資 ¥2,500（現金或 QR）</span></label></li>
         <li><label><input type="checkbox" id="k11"><span>前一晚：飯店 → 栄站電梯路線先走一次</span></label></li>
         <li><label><input type="checkbox" id="k4"><span>手機＋行動電源</span></label></li>
       </ul>
@@ -211,12 +211,12 @@ svg text{font-family:var(--f-body)}
       <div class="rule"><b>大倉庫 14:00</b><span>14:00–15:00 全員一起入場，不能提早</span></div>
       <div class="rule"><b>推車</b><span>進建築前停置場</span></div>
       <div class="rule"><b>不能吃自備</b><span>區域內禁止，區域外可</span></div>
-      <div class="rule"><b>哺乳室</b><span>大倉庫、魔女の谷</span></div>
+      <div class="rule"><b>哺乳室</b><span>大倉庫、魔女の谷（魔女之谷）</span></div>
       <div class="rule"><b>16:30</b><span>最後入區時間</span></div>
       <div class="rule"><b>不能改退</b><span>本人須到場</span></div>
     </div>
     <div class="foot">
-      <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。園內巴士站名、班次與ネコバス售票時間來自 Codex 行程，尚未逐一對官方核對；東山線、Linimo 分鐘數為估計值，Linimo 車資查自 linimo.jp。</span>
+      <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。園內巴士站名、班次與貓巴士售票時間來自 Codex 行程，尚未逐一對官方核對；東山線、Linimo 分鐘數為估計值，Linimo 車資查自 linimo.jp。</span>
       <span>個人旅行筆記，非官方資訊。</span>
     </div>
   </section>
@@ -239,6 +239,17 @@ const pad = n => String(n).padStart(2,"0");
 const fmt = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
 const WD = ["日","一","二","三","四","五","六"];
 const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+
+// Japanese names get a Chinese translation in parentheses on render
+const GLOSS = {
+  "ジブリの大倉庫":"吉卜力大倉庫", "サツキとメイの家":"小月與小梅的家", "ハウルの城":"霍爾的移動城堡",
+  "オキノ邸":"琪琪老家", "魔女の谷":"魔女之谷", "もののけの里":"魔法公主之里", "どんどこ森":"咚咚可森林",
+  "どんどこ号":"咚咚可號斜坡車", "猫の城遊具":"貓之城遊具", "ネコバス":"貓巴士", "リニモ":"Linimo",
+  "藤が丘":"藤之丘", "愛・地球博記念公園":"愛・地球博紀念公園", "オアシス21":"綠洲21", "大戸屋":"大戶屋",
+  "栄":"榮"
+};
+const GLOSS_RE = new RegExp("(" + Object.keys(GLOSS).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|") + ")(?!（)","g");
+const zh = t => t.replace(GLOSS_RE, m => `${m}（${GLOSS[m]}）`);
 
 const GLYPH = {
   train:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l1.5-4M15 21l-1.5-4"/><circle cx="9" cy="14" r=".6" fill="currentColor"/><circle cx="15" cy="14" r=".6" fill="currentColor"/></svg>',
@@ -304,9 +315,9 @@ function renderCard(){
   $("#card").innerHTML=`
     <div class="when"><div class="time">${fmt(s.s)}<small> – ${fmt(s.e)}</small></div><span class="tag">${isToday&&idx===currentIdx()?`現在・剩 ${Math.max(0,s.e-nowMin())} 分`:s.tag}</span></div>
     <div class="glyph">${GLYPH[s.g]}</div>
-    <h2>${s.title}</h2>
-    <ul class="points">${s.pts.map(p=>`<li>${p}</li>`).join("")}</ul>
-    ${s.flag?`<p class="flag">${s.flag}</p>`:""}
+    <h2>${zh(s.title)}</h2>
+    <ul class="points">${s.pts.map(p=>`<li>${zh(p)}</li>`).join("")}</ul>
+    ${s.flag?`<p class="flag">${zh(s.flag)}</p>`:""}
     ${timed(s)?`<div class="tm" id="tm"></div>`:""}
     <div class="actions">${actions}</div>`;
   renderTm();
@@ -318,21 +329,21 @@ function nowMin(){ const n=new Date(Date.now()+9*3600e3); return n.getUTCHours()
 function currentIdx(){ const nowJ=new Date(Date.now()+9*3600e3); const nm=nowJ.getUTCHours()*60+nowJ.getUTCMinutes(); const c=steps.findIndex(s=>nm<s.e); return c<0?steps.length-1:c; }
 
 function renderList(){
-  $("#list").innerHTML=steps.map((s,i)=>`<li><button class="${s.kind} ${i===idx?"cur":""}" data-i="${i}"><span class="t">${fmt(s.s)}</span><span class="n">${s.title}</span><span class="k"></span></button></li>`).join("");
+  $("#list").innerHTML=steps.map((s,i)=>`<li><button class="${s.kind} ${i===idx?"cur":""}" data-i="${i}"><span class="t">${fmt(s.s)}</span><span class="n">${zh(s.title)}</span><span class="k"></span></button></li>`).join("");
 }
 
 // ---- route map (schematic) ----
 const NODES = [
-  {id:"hotel", y:60,  label:"飯店",              sub:"KOKO HOTEL 名古屋栄", c:"--forest"},
-  {id:"sakae", y:135, label:"栄",                sub:"東山線 約 21–25 分",    c:"--sky"},
-  {id:"fuji",  y:210, label:"藤が丘",            sub:"轉乘 含找電梯 20 分",     c:"--sky"},
-  {id:"park",  y:285, label:"愛・地球博記念公園", sub:"Linimo 約 13–17 分・北口 E1", c:"--sky"},
-  {id:"e2",    y:360, label:"E2 魔法之里",        sub:"ネコバス售票機",      c:"--forest"},
-  {id:"cat",   y:435, label:"ネコバス",           sub:"もののけの里 → どんどこ森", c:"--sun"},
-  {id:"forest",y:510, label:"どんどこ森",         sub:"龍貓・小梅的家・E7",  c:"--forest"},
-  {id:"majo",  y:585, label:"E3 魔女の谷",        sub:"ハウルの城・午餐・オキノ邸", c:"--forest"},
-  {id:"soko",  y:660, label:"E4 ジブリの大倉庫",  sub:"14:00–15:00 入場",    c:"--forest"},
-  {id:"home",  y:730, label:"回栄・飯店",          sub:"E4→E1 巴士・同路線回栄",  c:"--sky"}
+  {id:"hotel", y:60,  label:"飯店",              sub:"KOKO HOTEL 名古屋栄（榮）", c:"--forest"},
+  {id:"sakae", y:135, label:"榮站",              sub:"栄・東山線 約 21–25 分",  c:"--sky"},
+  {id:"fuji",  y:210, label:"藤之丘",            sub:"藤が丘・轉乘含找電梯 20 分", c:"--sky"},
+  {id:"park",  y:285, label:"愛・地球博紀念公園", sub:"Linimo 約 13–17 分・北口 E1", c:"--sky"},
+  {id:"e2",    y:360, label:"E2 魔法之里",        sub:"貓巴士售票機",          c:"--forest"},
+  {id:"cat",   y:435, label:"貓巴士",            sub:"ネコバス・魔法公主之里 → 咚咚可森林", c:"--sun"},
+  {id:"forest",y:510, label:"咚咚可森林",         sub:"どんどこ森・龍貓・小梅的家・E7", c:"--forest"},
+  {id:"majo",  y:585, label:"E3 魔女之谷",        sub:"魔女の谷・霍爾城堡・午餐・琪琪老家", c:"--forest"},
+  {id:"soko",  y:660, label:"E4 吉卜力大倉庫",    sub:"ジブリの大倉庫・14:00–15:00 入場", c:"--forest"},
+  {id:"home",  y:730, label:"回榮站・飯店",        sub:"E4→E1 巴士・同路線回程",  c:"--sky"}
 ];
 // line style from each node to the next: [color token, dashed?]
 const LEGS = [["--muted",true],["--sky",false],["--sky",false],["--forest",true],["--sun",false],["--sun",false],["--forest",true],["--forest",true],["--sky",false]];
@@ -343,7 +354,7 @@ function renderMap(){
   const X = 60, LX = 88;
   let g = `<rect width="360" height="760" fill="${col("--card")}"/>`;
   NODES.slice(0,-1).forEach((n,i)=>{ const [c,d]=LEGS[i]; g += `<line x1="${X}" y1="${n.y}" x2="${X}" y2="${NODES[i+1].y}" stroke="${col(c)}" stroke-width="8" stroke-linecap="round" ${d?'stroke-dasharray="2 14"':''}/>`; });
-  const lg = [["--sky",false,"地鐵・Linimo"],["--sun",false,"ネコバス（付費）"],["--forest",true,"免費園內巴士"]];
+  const lg = [["--sky",false,"地鐵・Linimo"],["--sun",false,"貓巴士（付費）"],["--forest",true,"免費園內巴士"]];
   lg.forEach(([c,d,t],i)=>{ const y=24+i*20; g += `<line x1="236" y1="${y}" x2="258" y2="${y}" stroke="${col(c)}" stroke-width="5" stroke-linecap="round" ${d?'stroke-dasharray="1 7"':''}/><text x="266" y="${y+4}" font-size="11" fill="${col("--muted")}">${t}</text>`; });
   NODES.forEach(n=>{
     const on = n.id===cur;

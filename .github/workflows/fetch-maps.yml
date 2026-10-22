@@ -20,14 +20,19 @@ jobs:
           done
           curl -fsSL -A "Mozilla/5.0" -o maps/park.png "https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png" || echo "FAIL park"
           curl -fsSL -A "Mozilla/5.0" -o maps/busmap.jpg "https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg" || echo "FAIL busmap"
-          echo "--- codex page refs ---"
-          curl -fsSL -A "Mozilla/5.0" "$C/" -o /tmp/page.html
-          grep -oE '(href|src|data-[a-z-]+)="[^"]+"' /tmp/page.html | sort -u || true
-          for js in $(grep -oE '[a-zA-Z0-9_./-]+\.js' /tmp/page.html | sort -u); do
-            echo "--- $js ---"; curl -fsSL "$C/$js" | grep -oE '["'"'"'`][^"'"'"'`]*\.(webp|png|jpe?g|pdf)' | sort -u || true
+          echo "--- app.js context ---"
+          curl -fsSL "$C/app.js" -o /tmp/app.js
+          grep -oE '.{0,120}east-route-timetable-zh\.png.{0,60}' /tmp/app.js | head -3 || true
+          grep -oE '(base|dir|path|prefix)[A-Za-z]*\s*[:=]\s*["'"'"'`][^"'"'"'`]+' /tmp/app.js | head || true
+          mkdir -p maps/full
+          for f in catbus-forest-zh.png catbus-north-zh.png catbus-overview-zh.png catbus-route-zh.png east-route-timetable-zh.png forest-loop-zh.png forest-user-original.png official-catbus-forest-detail.png official-catbus-north-detail.png official-catbus-route.png official-catbus-stops.png park-bus-map-zh.png park-bus-user-original.png park-map-pluswei.webp west-route-timetable-zh.png; do
+            for pre in assets/maps assets assets/full assets/images assets/img maps images img .; do
+              if curl -fsSL -A "Mozilla/5.0" -o /tmp/x "$C/$pre/$f" && file /tmp/x | grep -qiE 'image|RIFF'; then
+                mv /tmp/x maps/full/$f; echo "OK $pre/$f"; break; fi
+            done
+            [ -f maps/full/$f ] || echo "MISS $f"
           done
-          grep -n -B2 -A2 'thumbs/east' /tmp/page.html || true
-          ls -la maps
+          ls -la maps maps/full; file maps/full/*
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"

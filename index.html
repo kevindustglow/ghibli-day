@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-/* Layout: left-hand phone guide. Top: date + timer chips, view switch. Middle: one big step card. Bottom-left (left thumb): next. */
+/* Layout: left-hand phone guide. Top: running-timer + date chips, view switch. Middle: one big step card. Bottom-left (left thumb): next. */
 :root{
   --bg:#E9EFE8; --card:#FFFFFF; --ink:#1C2620; --muted:#66756B; --line:#D5DED5;
   --forest:#2D6A4C; --forest-soft:#DDEBE2; --sky:#2E6A9C; --sky-soft:#DDE8F2;
@@ -52,8 +52,16 @@ a{color:inherit}
 .top-row{flex-wrap:wrap}
 .datechip.timer.run{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .datechip.timer.over{background:var(--sun);color:var(--card);border-color:var(--sun)}
-.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.presets button{min-height:60px;border-radius:16px;border:1px solid var(--line);background:var(--bg);font-family:var(--f-mono);font-size:1.2rem}
+.datechip.timer.late{background:var(--sun-soft);color:var(--sun);border-color:var(--sun)}
+.tm{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.tm .count{font-family:var(--f-mono);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.tm .count small{font-size:.95rem;color:var(--muted);margin-left:8px;font-family:var(--f-body)}
+.tm .track{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.tm .fill{height:100%;background:var(--forest);transition:width 1s linear}
+.tm.late .fill{background:var(--sun)}
+.tm.over .count{color:var(--sun)}
+.tm .row{display:flex;gap:10px}
+.tm .row .btn{flex:1 1 0;min-height:48px}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
 .seg button{border:0;background:none;border-radius:10px;min-height:40px;font-size:.92rem;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -144,7 +152,7 @@ svg text{font-family:var(--f-body)}
     <div class="top-row">
       <div class="brand">吉卜力日</div>
       <div style="display:flex;gap:8px">
-      <button class="datechip timer" id="timerChip" aria-label="計時"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span id="timerText" class="mono">計時</span></button>
+      <button class="datechip timer" id="timerChip" aria-label="回到計時中的站點" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span id="timerText" class="mono">計時</span></button>
       <button class="datechip" id="openSheet" aria-label="設定日期與時段"><i></i><span id="chipText">日期未定</span></button>
       </div>
     </div>
@@ -235,16 +243,6 @@ svg text{font-family:var(--f-body)}
     <select id="slot"></select>
     <p class="note">買到票後依票面改這兩項，流程會自動重排。</p>
     <button class="btn primary" id="closeSheet">完成</button>
-  </div>
-</div>
-
-<div class="scrim" id="tscrim" hidden>
-  <div class="sheet" role="dialog" aria-label="計時">
-    <h3>倒數計時</h3>
-    <div class="presets">
-      <button data-min="10">10</button><button data-min="20">20</button><button data-min="30">30</button><button data-min="45">45</button>
-    </div>
-    <button class="btn" id="tstop">停止計時</button>
   </div>
 </div>
 
@@ -345,7 +343,9 @@ function renderCard(){
     <h2>${s.title}</h2>
     <ul class="points">${s.pts.map(p=>`<li>${p}</li>`).join("")}</ul>
     ${s.flag?`<p class="flag">${s.flag}</p>`:""}
+    ${timed(s)?`<div class="tm" id="tm"></div>`:""}
     <div class="actions">${actions}</div>`;
+  renderTm();
   $("#prev").disabled = idx===0;
   $("#next").textContent = idx===steps.length-1 ? "回到第一步" : "下一步 ›";
   store.set("gp-idx", idx);
@@ -440,22 +440,48 @@ $("#slot").addEventListener("change",()=>{ store.set("gp-slot",$("#slot").value)
 document.querySelectorAll(".chk input").forEach(i=>{ i.checked=store.get("gp-"+i.id)==="1"; i.onchange=()=>store.set("gp-"+i.id,i.checked?"1":"0"); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{ if(view==="map") renderMap(); });
 
-// ---- minimal countdown timer ----
-let tEnd = Number(store.get("gp-tend")) || 0, tTick=null;
-function tRender(){
-  const chip=$("#timerChip"), left=Math.round((tEnd-Date.now())/1000);
-  chip.classList.remove("run","over");
-  if(!tEnd){ $("#timerText").textContent="計時"; return; }
-  if(left>0){ chip.classList.add("run"); $("#timerText").textContent=`${pad(Math.floor(left/60))}:${pad(left%60)}`; }
-  else { chip.classList.add("over"); $("#timerText").textContent="時間到"; if(tTick){ try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){} clearInterval(tTick); tTick=null; } }
+// ---- per-stop timer: each in-park stop counts down its planned minutes ----
+const timed = st => st && st.kind==="do" && ["soko","majo","mono"].includes(st.node);
+let T0 = null; try{ T0 = JSON.parse(store.get("gp-timer")||"null"); }catch(e){}
+let buzzed = false;
+const mmss = sec => { const a=Math.abs(sec); return `${a>=3600?Math.floor(a/3600)+":":""}${pad(Math.floor(a%3600/60))}:${pad(a%60)}`; };
+function saveT(){ store.set("gp-timer", JSON.stringify(T0)); }
+function startT(i){ const st=steps[i]; T0={key:st.title, start:Date.now(), end:Date.now()+(st.e-st.s)*60000}; buzzed=false; saveT(); tick(); }
+function renderTm(){
+  const el=$("#tm"); if(!el) return;
+  const st=steps[idx];
+  el.className="tm";
+  if(!T0 || T0.key!==st.title){
+    el.innerHTML=`<button class="btn primary" data-t="start">開始計時 · ${st.e-st.s} 分</button>`;
+    return;
+  }
+  const left=Math.round((T0.end-Date.now())/1000), total=(T0.end-T0.start)/1000;
+  const pct=Math.max(0,Math.min(100,100*left/total));
+  if(left<=0) el.classList.add("over"); else if(left<=600) el.classList.add("late");
+  el.innerHTML=`<div class="count">${left<=0?"+":""}${mmss(left)}<small>${left<=0?"超過預定":"本站剩餘"}</small></div>
+    <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <div class="row">${left<=0?`<button class="btn primary" data-t="done">前往下一步</button>`:`<button class="btn" data-t="plus">＋10 分</button>`}<button class="btn" data-t="stop">${left<=0?"結束":"停止"}</button></div>`;
 }
-function tStart(min){ tEnd=Date.now()+min*60000; store.set("gp-tend",tEnd); clearInterval(tTick); tTick=setInterval(tRender,1000); tRender(); $("#tscrim").hidden=true; }
-$("#timerChip").onclick=()=>{ if(tEnd && Date.now()>tEnd){ tEnd=0; store.set("gp-tend",0); tRender(); return; } $("#tscrim").hidden=false; };
-document.querySelectorAll(".presets button").forEach(b=>b.onclick=()=>tStart(Number(b.dataset.min)));
-$("#tstop").onclick=()=>{ tEnd=0; store.set("gp-tend",0); clearInterval(tTick); tTick=null; tRender(); $("#tscrim").hidden=true; };
-$("#tscrim").addEventListener("click",e=>{ if(e.target.id==="tscrim") $("#tscrim").hidden=true; });
-if(tEnd && tEnd>Date.now()) tTick=setInterval(tRender,1000);
-tRender();
+function tick(){
+  const chip=$("#timerChip");
+  chip.classList.remove("run","late","over");
+  if(!T0){ chip.hidden=true; return; }
+  chip.hidden=false;
+  const left=Math.round((T0.end-Date.now())/1000);
+  chip.classList.add(left<=0?"over":left<=600?"late":"run");
+  $("#timerText").textContent = left<=0 ? "時間到" : mmss(left);
+  if(left<=0 && !buzzed){ buzzed=true; try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){} }
+  if(view==="guide") renderTm();
+}
+$("#card").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b) return; const a=b.dataset.t;
+  if(a==="start") startT(idx);
+  else if(a==="plus"){ T0.end+=600000; saveT(); }
+  else if(a==="stop"){ T0=null; saveT(); }
+  else if(a==="done"){ T0=null; saveT(); go(idx+1); }
+  tick(); });
+$("#timerChip").onclick=()=>{ const i=steps.findIndex(st=>T0&&st.title===T0.key); if(i>-1){ idx=i; renderCard(); } setView("guide"); };
+setInterval(tick,1000);
+tick();
 
 const hv = location.hash.slice(1);
 $("#date").value = store.get("gp-date") || "";

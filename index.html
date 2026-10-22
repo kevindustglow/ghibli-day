@@ -142,7 +142,9 @@ a{color:inherit}
 .zoom button{width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:1.4rem;line-height:1}
 .maphint{font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .maphint a{color:var(--forest)}
-.mapseg{grid-template-columns:repeat(3,1fr)}
+.mapchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:2px 16px}
+.mapchips button{flex:none;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.9rem;white-space:nowrap}
+.mapchips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 #mapzoom{width:100%;height:100%;transform-origin:0 0}
 #mapzoom svg{width:100%;height:100%;display:block}
 #mapzoom img{width:100%;height:100%;object-fit:contain;display:block;background:var(--card)}
@@ -207,11 +209,7 @@ svg text{font-family:var(--f-body)}
   <section id="all" hidden><ol class="list" id="list"></ol></section>
 
   <section id="map" hidden style="display:flex;flex-direction:column;gap:10px">
-    <div class="seg mapseg" role="group" aria-label="切換地圖">
-      <button data-map="route" aria-pressed="true">今日路線</button>
-      <button data-map="park" aria-pressed="false">園區地圖</button>
-      <button data-map="bus" aria-pressed="false">園內巴士</button>
-    </div>
+    <div class="mapchips" id="mapchips" role="group" aria-label="切換地圖"></div>
     <div class="mapbox" id="mapbox">
       <div id="mapzoom">
         <svg id="mapsvg" viewBox="0 0 360 760" aria-label="今日路線圖"></svg>
@@ -330,18 +328,18 @@ const STEPS = [
   {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 → 藤が丘",fare:["大人 約 ¥270–310（以站內票價表為準）","Amber 學齡前免費","IC 卡（Suica／manaca）或現金買票"],pts:["往藤が丘，坐到終點","約 21–25 分","推車停車廂兩端"],node:"sakae"},
   {s:H(8,15),e:H(8,35),kind:"move",g:"walk",tag:"轉乘",title:"東山線 → Linimo",pts:["電梯出地鐵剪票口","照「リニモ」指標走","電梯上 Linimo 月台，往八草"],node:"fuji",flag:"含找電梯 20 分"},
   {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金，售票機不收信用卡"],pts:["約 13–17 分"],node:"park"},
-  {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
-  {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",fare:["免費園內巴士 E1 → E2：¥0"],pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",q:"售票機前會排隊；買不到 09:30–10:00 就改搭免費東線 E2 → E7（約 14 分）"},
-  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"貓巴士",title:"搭ネコバス到森",fare:["大人 ¥1,000 ×2、兒童 ¥500","合計 ¥2,500，吉卜力門票不含","現金或 QR（街口、PayPay…），不收信用卡、IC 卡"],film:"《龍貓》的貓巴士・上車處在《魔法公主》的もののけの里",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分"],node:"cat"},
-  {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"咚咚可森林",title:"斜坡車上山看龍貓",film:"《龍貓》",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","山頂どんどこ堂限小學生以下，Amber 進去玩"],node:"forest",timer:true,q:"斜坡車排隊超過 20 分 → 跳過山頂，直接看小梅的家",flag:"山頂若要另購票（大人 ¥400、兒童 ¥200），現場確認"},
+  {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",map:"ebus",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
+  {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",map:"north",fare:["免費園內巴士 E1 → E2：¥0"],pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",q:"售票機前會排隊；買不到 09:30–10:00 就改搭免費東線 E2 → E7（約 14 分）"},
+  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"貓巴士",title:"搭ネコバス到森",map:"catroute",fare:["大人 ¥1,000 ×2、兒童 ¥500","合計 ¥2,500，吉卜力門票不含","現金或 QR（街口、PayPay…），不收信用卡、IC 卡"],film:"《龍貓》的貓巴士・上車處在《魔法公主》的もののけの里",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分"],node:"cat"},
+  {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"咚咚可森林",title:"斜坡車上山看龍貓",map:"forest",film:"《龍貓》",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","山頂どんどこ堂限小學生以下，Amber 進去玩"],node:"forest",timer:true,q:"斜坡車排隊超過 20 分 → 跳過山頂，直接看小梅的家",flag:"山頂若要另購票（大人 ¥400、兒童 ¥200），現場確認"},
   {s:H(10,40),e:H(11,10),kind:"do",g:"house",tag:"咚咚可森林",title:"サツキとメイの家",film:"《龍貓》姊妹搬進的家",pts:["搭斜坡車下山","廚房、浴室、和室都能進去看"],q:"入屋排隊超過 20 分 → 只看外觀和庭院",node:"forest",timer:true},
-  {s:H(11,10),e:H(11,20),kind:"move",g:"walk",tag:"準備",title:"廁所、補水 → E7",pts:["走到免費巴士 E7","不要回ネコバス站"],node:"forest"},
-  {s:H(11,20),e:H(11,50),kind:"move",g:"train",tag:"免費巴士",title:"E7 → E3 魔女の谷",fare:["免費園內巴士：¥0"],film:"《魔女宅急便》《霍爾的移動城堡》《安雅與魔女》",pts:["搭往北口方向","經過 E4 大倉庫先不下車","E3 下車，約 12 分"],node:"majo"},
+  {s:H(11,10),e:H(11,20),kind:"move",g:"walk",tag:"準備",title:"廁所、補水 → E7",map:"ebus",pts:["走到免費巴士 E7","不要回ネコバス站"],node:"forest"},
+  {s:H(11,20),e:H(11,50),kind:"move",g:"train",tag:"免費巴士",title:"E7 → E3 魔女の谷",map:"east",fare:["免費園內巴士：¥0"],film:"《魔女宅急便》《霍爾的移動城堡》《安雅與魔女》",pts:["搭往北口方向","經過 E4 大倉庫先不下車","E3 下車，約 12 分"],node:"majo"},
   {s:H(11,50),e:H(12,25),kind:"do",g:"house",tag:"魔女之谷",title:"ハウルの城",film:"《霍爾的移動城堡》",pts:["推車停置場","票面若有指定時間，以票面為準"],q:"排隊超過 25 分 → 先吃午餐，下午不回頭",node:"majo",timer:true},
   {s:H(12,25),e:H(13,5),kind:"do",g:"food",tag:"午餐",title:"Hot Tin Roof 熱狗",pts:["坐下來好好吃","順便上廁所"],q:"排隊超過 15 分 → 到區域外吃自備，或換魔女の谷其他餐廳",node:"majo",timer:true},
   {s:H(13,5),e:H(13,5),kind:"decide",g:"ask",tag:"判斷點",title:"還看オキノ邸嗎？",pts:["有延誤就跳過，留時間給大倉庫"],node:"majo",choice:[["去オキノ邸","next"],["跳過，去搭車","skip"]]},
   {s:H(13,5),e:H(13,30),kind:"do",g:"house",tag:"魔女之谷",title:"オキノ邸",film:"《魔女宅急便》琪琪的老家",pts:["看完往出口，不再排長隊"],q:"排隊超過 15 分 → 跳過",node:"majo",timer:true},
-  {s:H(13,30),e:H(14,10),kind:"move",g:"walk",tag:"移動",title:"E3 → E4 大倉庫",fare:["免費園內巴士：¥0"],pts:["搭往 E4／西口方向，不要往北口","一站，約 2 分","廁所、停推車、備好 QR"],node:"soko",flag:"14:00–15:00 全員入場，不能提早"},
+  {s:H(13,30),e:H(14,10),kind:"move",g:"walk",tag:"移動",title:"E3 → E4 大倉庫",map:"ebus",fare:["免費園內巴士：¥0"],pts:["搭往 E4／西口方向，不要往北口","一站，約 2 分","廁所、停推車、備好 QR"],node:"soko",flag:"14:00–15:00 全員入場，不能提早"},
   {s:H(14,10),e:H(16,50),kind:"do",g:"house",tag:"大倉庫",title:"ジブリの大倉庫",film:"多部吉卜力作品的室內展館",pts:["推車停入口，最後取","先去貓巴士房，人少時再看名場景"],q:"貓巴士房、名場景展、牛奶吧、商店結帳都會排隊；單點超過 20 分就換下一個",must:[
     ["ネコバスルーム","可以爬上去玩（限 12 歲以下）・排隊熱點","《龍貓》"],
     ["天空の庭","等待主人的機器人兵","《天空之城》"],
@@ -353,7 +351,7 @@ const STEPS = [
     ["ミルクスタンド","西伯利亞蛋糕＋鮮奶，賣完為止・排隊熱點","《風起》"],
     ["冒険飛行団","園區最大商店，結帳會排隊，16:20 前開始買","伴手禮"]
   ],node:"soko",timer:true},
-  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",fare:["免費園內巴士：¥0"],pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
+  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",map:"east",fare:["免費園內巴士：¥0"],pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
   {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"公園 → 藤が丘",fare:["大人 ¥400","Amber 學齡前免費（大人陪同）","IC 卡或現金"],pts:["電梯進站","約 13–17 分，坐到終點"],node:"park",q:"閉園人潮：電梯和月台都可能排隊，已含在時間內"},
   {s:H(17,40),e:H(18),kind:"move",g:"walk",tag:"轉乘",title:"Linimo → 東山線",pts:["電梯下樓，走到地鐵藤が丘","起點站：可多等一班坐著回","往高畑方向"],node:"fuji",flag:"含找電梯 20 分"},
   {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 → 栄",fare:["大人 約 ¥270–310","Amber 學齡前免費","IC 卡或現金"],pts:["約 21–25 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
@@ -379,7 +377,7 @@ function renderCard(){
   let actions="";
   if(s.choice) actions = s.choice.map(([t,a],i)=>`<button class="btn ${i===0?"primary":""}" data-go="${a}">${t}</button>`).join("");
   else {
-    actions = `<button class="btn" data-go="map">看路線圖</button>`;
+    actions = s.map ? `<button class="btn" data-go="map" data-map-key="${s.map}">看${MAPS[s.map].label}</button>` : `<button class="btn" data-go="map">看路線圖</button>`;
     if(s.links) actions += s.links.map(([t,u])=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${t} 導航 ↗</a>`).join("");
   }
   $("#card").className="card "+kind;
@@ -458,13 +456,23 @@ $("#zreset").onclick=()=>{z=1;px=0;py=0;applyZ();};
 
 // ---- official maps (hotlinked from aichi-koen.com; falls back to PDF buttons) ----
 const MAPS = {
-  park: {src:"https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png", alt:"モリコロパーク 園區地圖", hint:"官方園區地圖（モリコロパーク）・雙指放大"},
-  bus:  {src:"https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg", alt:"園內巴士路線圖", hint:"官方園內巴士路線圖（2024/11 版）・以現場為準"}
+  park: {src:"https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png", alt:"モリコロパーク 園區地圖", label:"官方園區地圖", hint:"官方園區地圖（モリコロパーク）・雙指放大"},
+  north:   {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/north.webp",    alt:"貓巴士北端", label:"貓巴士 上車／售票", hint:"貓巴士北端：售票機與上車處"},
+  catroute:{src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/catroute.webp", alt:"貓巴士路線", label:"貓巴士 路線", hint:"貓巴士行車路線"},
+  south:   {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/south.webp",    alt:"貓巴士森林端", label:"貓巴士 下車", hint:"貓巴士森林端下車處"},
+  catall:  {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/catall.webp",   alt:"貓巴士兩端", label:"貓巴士 總覽", hint:"貓巴士兩端位置總覽"},
+  forest:  {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/forest.webp",   alt:"咚咚可森林", label:"森林・斜坡車", hint:"咚咚可森林：斜坡車上下站與小梅的家"},
+  ebus:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/bus.webp",      alt:"免費園內巴士站位", label:"E1–E7 站位", hint:"免費園內巴士 E1～E7 站位"},
+  east:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/east.webp",     alt:"東路線時刻表", label:"東線 時刻表", hint:"東路線中文時刻表（今天搭這條）"},
+  west:    {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/west.webp",     alt:"西路線時刻表", label:"西線 時刻表", hint:"西路線中文時刻表（今天用不到）"},
+  all:     {src:"https://ghibli-family-day-nov12.kevindustglow.chatgpt.site/assets/thumbs/all.webp",      alt:"全園總覽", label:"全園總覽", hint:"全園總覽地圖（PlusWei 繪）"},
+  bus:  {src:"https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg", alt:"園內巴士路線圖", label:"官方巴士路線", hint:"官方園內巴士路線圖（2024/11 版）・以現場為準"}
 };
 let mapMode = "route";
 function showMap(m){
   mapMode = m; z=1; px=0; py=0;
-  document.querySelectorAll(".mapseg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.map===m));
+  document.querySelectorAll("#mapchips button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.map===m));
+  const on=document.querySelector(`#mapchips [data-map="${m}"]`); if(on) on.scrollIntoView({block:"nearest",inline:"nearest"});
   const img=$("#mapimg"), svg=$("#mapsvg");
   $("#mapfail").hidden = true;
   if(m==="route"){ svg.style.display=""; img.hidden=true; $("#maphint").textContent="雙指或按鈕放大・路線示意，非實際比例"; renderMap(); }
@@ -475,7 +483,8 @@ function showMap(m){
   }
   applyZ();
 }
-document.querySelectorAll(".mapseg button").forEach(b=>b.onclick=()=>showMap(b.dataset.map));
+$("#mapchips").innerHTML = `<button data-map="route" aria-pressed="true">今日路線</button>` + Object.entries(MAPS).map(([k,v])=>`<button data-map="${k}" aria-pressed="false">${v.label}</button>`).join("");
+document.querySelectorAll("#mapchips button").forEach(b=>b.onclick=()=>showMap(b.dataset.map));
 
 // ---- views ----
 function setView(v){
@@ -494,7 +503,7 @@ document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.data
 $("#prev").onclick=()=>go(idx-1);
 $("#next").onclick=()=>go(idx===steps.length-1?0:idx+1);
 $("#card").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const a=b.dataset.go;
-  if(a==="next") go(idx+1); else if(a==="skip") go(idx+2); else if(a==="home") go(steps.findIndex(s=>s.id==="home")); else if(a==="map") setView("map"); });
+  if(a==="next") go(idx+1); else if(a==="skip") go(idx+2); else if(a==="home") go(steps.findIndex(s=>s.id==="home")); else if(a==="map"){ mapMode = b.dataset.mapKey || "route"; setView("map"); } });
 $("#list").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"); if(!b) return; idx=Number(b.dataset.i); renderCard(); setView("guide"); });
 // swipe on card
 let sx=null; $("#card").addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});

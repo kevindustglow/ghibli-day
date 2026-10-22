@@ -138,8 +138,10 @@ a{color:inherit}
 /* map */
 .mapbox{background:var(--card);border-radius:24px;overflow:hidden;position:relative;height:62vh;touch-action:none}
 
-.zoom{position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:8px}
-.zoom button{width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:1.4rem;line-height:1}
+.zoom{position:absolute;left:10px;bottom:10px;display:flex;gap:2px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--card) 55%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 1px 6px rgba(0,0,0,.12);opacity:.85;transition:opacity .2s}
+.zoom:active,.zoom:focus-within{opacity:1}
+.zoom button{width:40px;height:40px;border-radius:999px;border:0;background:transparent;color:var(--ink);font-size:1.25rem;line-height:1}
+.zoom button:active{background:color-mix(in srgb,var(--ink) 12%,transparent)}
 .maphint{font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .maphint a{color:var(--forest)}
 .mapchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:2px 16px}
@@ -221,7 +223,7 @@ svg text{font-family:var(--f-body)}
       <div class="zoom">
         <button id="zin" aria-label="放大">+</button>
         <button id="zout" aria-label="縮小">−</button>
-        <button id="zreset" aria-label="重設" style="font-size:.9rem">⤢</button>
+        <button id="zreset" aria-label="重設" style="font-size:.85rem">⤢</button>
       </div>
     </div>
     <p class="maphint" id="maphint">雙指或按鈕放大・路線示意，非實際比例</p>

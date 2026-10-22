@@ -153,7 +153,7 @@ svg text{font-family:var(--f-body)}
       <div class="brand">吉卜力日</div>
       <div style="display:flex;gap:8px">
       <button class="datechip timer" id="timerChip" aria-label="回到計時中的站點" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg><span id="timerText" class="mono">計時</span></button>
-      <button class="datechip" id="openSheet" aria-label="設定日期與時段"><i></i><span id="chipText">日期未定</span></button>
+      <span class="datechip set" id="openSheet"><i></i><span id="chipText">11/12（四）· Premium</span></span>
       </div>
     </div>
     <div class="seg" role="group" aria-label="切換畫面">
@@ -175,7 +175,7 @@ svg text{font-family:var(--f-body)}
 
   <section id="map" hidden style="display:flex;flex-direction:column;gap:10px">
     <div class="mapbox" id="mapbox">
-      <svg id="mapsvg" viewBox="0 0 360 620" aria-label="今日路線圖"></svg>
+      <svg id="mapsvg" viewBox="0 0 360 760" aria-label="今日路線圖"></svg>
       <div class="zoom">
         <button id="zin" aria-label="放大">+</button>
         <button id="zout" aria-label="縮小">−</button>
@@ -192,6 +192,8 @@ svg text{font-family:var(--f-body)}
         <li><label><input type="checkbox" id="k1"><span>電子票 QR＋截圖</span></label></li>
         <li><label><input type="checkbox" id="k2"><span>購票人護照</span></label></li>
         <li><label><input type="checkbox" id="k3"><span>IC 卡已儲值</span></label></li>
+        <li><label><input type="checkbox" id="k10"><span>ネコバス 車資 ¥2,500（現金或 QR）</span></label></li>
+        <li><label><input type="checkbox" id="k11"><span>前一晚：飯店 → 栄站電梯路線先走一次</span></label></li>
         <li><label><input type="checkbox" id="k4"><span>手機＋行動電源</span></label></li>
       </ul>
     </div>
@@ -206,7 +208,7 @@ svg text{font-family:var(--f-body)}
       </ul>
     </div>
     <div class="rules">
-      <div class="rule"><b>全員一起</b><span>大倉庫時段起 1 小時內入場</span></div>
+      <div class="rule"><b>大倉庫 14:00</b><span>14:00–15:00 全員一起入場，不能提早</span></div>
       <div class="rule"><b>推車</b><span>進建築前停置場</span></div>
       <div class="rule"><b>不能吃自備</b><span>區域內禁止，區域外可</span></div>
       <div class="rule"><b>哺乳室</b><span>大倉庫、魔女の谷</span></div>
@@ -214,7 +216,7 @@ svg text{font-family:var(--f-body)}
       <div class="rule"><b>不能改退</b><span>本人須到場</span></div>
     </div>
     <div class="foot">
-      <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。交通分鐘數為估計值。</span>
+      <span>規則查自官方網站，2026-10-22：<a href="https://ghibli-park.jp/ticket/" target="_blank" rel="noopener">票務</a>・<a href="https://ghibli-park.jp/faq/" target="_blank" rel="noopener">FAQ</a>・<a href="https://ghibli-park.jp/calendar/" target="_blank" rel="noopener">日曆</a>。園內巴士站名、班次與ネコバス售票時間來自 Codex 行程，尚未逐一對官方核對；東山線、Linimo 分鐘數為估計值，Linimo 車資查自 linimo.jp。</span>
       <span>個人旅行筆記，非官方資訊。</span>
     </div>
   </section>
@@ -227,24 +229,6 @@ svg text{font-family:var(--f-body)}
   </div>
 </nav>
 
-<div class="scrim" id="scrim" hidden>
-  <div class="sheet" role="dialog" aria-label="設定">
-    <h3>票面資訊</h3>
-    <label for="date">入園日</label>
-    <select id="date">
-      <option value="">未定（先用 11/11 預覽）</option>
-      <option value="2026-11-11">11/11（三）</option>
-      <option value="2026-11-12">11/12（四）</option>
-      <option value="2026-11-09">11/9（一）</option>
-      <option value="2026-11-13">11/13（五）</option>
-      <option value="2026-11-08">11/8（日）</option>
-    </select>
-    <label for="slot">大倉庫時段</label>
-    <select id="slot"></select>
-    <p class="note">買到票後依票面改這兩項，流程會自動重排。</p>
-    <button class="btn primary" id="closeSheet">完成</button>
-  </div>
-</div>
 
 <script>
 // ---- Trip variables ----
@@ -266,67 +250,47 @@ const GLYPH = {
   bed:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/></svg>'
 };
 
-function dayInfo(iso){
-  const d = new Date(iso+"T12:00:00+09:00"), wd = d.getUTCDay();
-  const weekend = wd===0||wd===6||TRIP.holidays.includes(iso);
-  return {label:`${d.getUTCMonth()+1}/${d.getUTCDate()}（${WD[wd]}）`, weekend, closed:wd===2, open:weekend?540:600};
-}
+// ---- Fixed itinerary: 2026/11/12 (Thu), Premium ticket, Daisoko 14:00 slot (Japan time) ----
+const DAY = { iso:"2026-11-12", label:"11/12（四）", ticket:"Premium" };
+const H = (h,m=0) => h*60+m;
+const STEPS = [
+  {s:H(7,25),e:H(7,45),kind:"move",g:"walk",tag:"出發",title:"飯店 → 栄站月台",pts:["電梯下到剪票口","再搭電梯到東山線「往藤が丘」月台","前一晚先走一次"],node:"hotel",flag:"含找電梯 20 分",links:[["栄站",gm("栄駅 名古屋")]]},
+  {s:H(7,45),e:H(8,15),kind:"move",g:"train",tag:"東山線",title:"栄 → 藤が丘",pts:["往藤が丘，坐到終點","約 21–25 分","推車停車廂兩端"],node:"sakae"},
+  {s:H(8,15),e:H(8,35),kind:"move",g:"walk",tag:"轉乘",title:"東山線 → Linimo",pts:["電梯出地鐵剪票口","照「リニモ」指標走","電梯上 Linimo 月台，往八草"],node:"fuji",flag:"含找電梯 20 分"},
+  {s:H(8,35),e:H(8,55),kind:"move",g:"train",tag:"Linimo",title:"藤が丘 → 愛・地球博記念公園",pts:["約 13–17 分","大人 ¥400、兒童 ¥200"],node:"park"},
+  {s:H(8,55),e:H(9,5),kind:"move",g:"walk",tag:"抵達",title:"出站 → E1 巴士站",pts:["電梯出站","跟「北口」指標","找 E1 地球市民交流中心"],node:"park"},
+  {s:H(9,5),e:H(9,30),kind:"move",g:"walk",tag:"轉車",title:"買ネコバス票",pts:["E1 免費巴士 → E2「魔法之里」下車","猫の城遊具前黑色建物，最左邊售票機","09:15 開賣，買 09:30–10:00"],node:"e2",flag:"買不到：E2 搭東線到 E7（約 14 分）"},
+  {s:H(9,30),e:H(10),kind:"move",g:"train",tag:"ネコバス",title:"搭ネコバス到森",pts:["もののけの里 APM 專用站上車","推車收折","約 10 分，¥2,500（現金或 QR）"],node:"cat"},
+  {s:H(10),e:H(10,40),kind:"do",g:"leaf",tag:"どんどこ森",title:"斜坡車上山看龍貓",pts:["驗票，循「どんどこ号」指標","推車優先，但仍可能要等","Amber 進大龍貓，大人外面拍照"],node:"forest",timer:true},
+  {s:H(10,40),e:H(11,10),kind:"do",g:"house",tag:"どんどこ森",title:"サツキとメイの家",pts:["搭斜坡車下山","參觀家與庭院"],node:"forest",timer:true},
+  {s:H(11,10),e:H(11,20),kind:"move",g:"walk",tag:"準備",title:"廁所、補水 → E7",pts:["走到免費巴士 E7","不要回ネコバス站"],node:"forest"},
+  {s:H(11,20),e:H(11,50),kind:"move",g:"train",tag:"免費巴士",title:"E7 → E3 魔女の谷",pts:["搭往北口方向","經過 E4 大倉庫先不下車","E3 下車，約 12 分"],node:"majo"},
+  {s:H(11,50),e:H(12,25),kind:"do",g:"house",tag:"魔女の谷",title:"ハウルの城",pts:["推車停置場","票面若有指定時間，以票面為準"],node:"majo",timer:true},
+  {s:H(12,25),e:H(13,5),kind:"do",g:"food",tag:"午餐",title:"Hot Tin Roof 熱狗",pts:["坐下來好好吃","排隊超過 15 分 → 到區域外吃自備"],node:"majo",timer:true},
+  {s:H(13,5),e:H(13,5),kind:"decide",g:"ask",tag:"判斷點",title:"還看オキノ邸嗎？",pts:["有延誤就跳過，留時間給大倉庫"],node:"majo",choice:[["去オキノ邸","next"],["跳過，去搭車","skip"]]},
+  {s:H(13,5),e:H(13,30),kind:"do",g:"house",tag:"魔女の谷",title:"オキノ邸",pts:["琪琪的家","看完往出口，不再排長隊"],node:"majo",timer:true},
+  {s:H(13,30),e:H(14,10),kind:"move",g:"walk",tag:"移動",title:"E3 → E4 大倉庫",pts:["搭往 E4／西口方向，不要往北口","一站，約 2 分","廁所、停推車、備好 QR"],node:"soko",flag:"14:00–15:00 全員入場，不能提早"},
+  {s:H(14,10),e:H(16,50),kind:"do",g:"house",tag:"大倉庫",title:"ジブリの大倉庫",pts:["名場景 → 小人庭園 → 短片休息","兒童街 → 購物、取推車","單一拍照點超過 20 分就換"],node:"soko",timer:true},
+  {s:H(16,50),e:H(17,10),kind:"move",g:"train",tag:"回程",title:"E4 → E1 北口",pts:["免費巴士往北口，約 6 分","推車收折","末班 E4 17:31，錯過就推車走回"],node:"soko",id:"home"},
+  {s:H(17,10),e:H(17,40),kind:"move",g:"train",tag:"Linimo",title:"公園 → 藤が丘",pts:["電梯進站，閉園人潮可能排隊","約 13–17 分，坐到終點"],node:"park",flag:"含等電梯與人潮"},
+  {s:H(17,40),e:H(18),kind:"move",g:"walk",tag:"轉乘",title:"Linimo → 東山線",pts:["電梯下樓，走到地鐵藤が丘","起點站：可多等一班坐著回","往高畑方向"],node:"fuji",flag:"含找電梯 20 分"},
+  {s:H(18),e:H(18,30),kind:"move",g:"train",tag:"東山線",title:"藤が丘 → 栄",pts:["約 21–25 分","下班尖峰，推車靠車廂兩端"],node:"sakae"},
+  {s:H(18,30),e:H(18,40),kind:"move",g:"walk",tag:"抵達",title:"栄站 → オアシス21",pts:["月台電梯上剪票口","往オアシス21方向"],node:"sakae"},
+  {s:H(18,40),e:H(19,40),kind:"do",g:"food",tag:"晚餐",title:"上海湯包小館",pts:["オアシス21 內","排隊超過 15 分 → 大戸屋 栄店","小孩累了就外帶"],node:"sakae",timer:true},
+  {s:H(19,40),e:H(20),kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["KOKO HOTEL 名古屋栄","今天辛苦了"],node:"hotel"}
+];
 
-// node: map stop id this step belongs to
-function buildSteps(info, T){
-  const S=[]; const add=(o)=>S.push(o);
-  const station = "愛・地球博記念公園駅";
-  if (T <= info.open+60){
-    add({s:T-75,e:T-55,kind:"move",g:"train",tag:"出發",title:"去栄站",pts:["東山線 往藤が丘","推車走電梯"],node:"sakae",links:[["栄站",gm("栄駅 名古屋")]],flag:"車程為估計"});
-    add({s:T-55,e:T-30,kind:"move",g:"train",tag:"轉乘",title:"藤が丘 → Linimo",pts:["終點站下車","轉 Linimo","在「愛・地球博記念公園」下"],node:"fuji"});
-    add({s:T-30,e:T,kind:"move",g:"walk",tag:"抵達",title:"走到大倉庫",pts:["先上廁所","準備 QR＋護照",`${fmt(T)} 起 1 小時內全員入場`],node:"park",links:[["大倉庫",gm("ジブリの大倉庫")]]});
-    add({s:T,e:T+150,kind:"do",g:"house",tag:"區域 1",title:"ジブリの大倉庫",pts:["推車停置場","館內有哺乳室","伴手禮最後再買"],node:"soko"});
-    add({s:T+150,e:T+210,kind:"do",g:"food",tag:"午餐",title:"吃飯休息",pts:["館內餐飲 或 魔女の谷熱狗攤","自備食物到區域外吃"],node:"soko"});
-    add({s:T+210,e:T+225,kind:"decide",g:"ask",tag:"判斷點",title:"還有電嗎？",pts:["看小孩狀態決定"],node:"soko",choice:[["去魔女の谷","next"],["回飯店","home"]]});
-    add({s:T+225,e:T+330,kind:"do",g:"house",tag:"區域 2",title:"魔女の谷",pts:["戶外街景，推車好推","建築要加購，排隊長就跳過","伴手禮在這買"],node:"majo",links:[["魔女の谷",gm("ジブリパーク 魔女の谷")]]});
-    const d2=Math.min(T+330,975);
-    add({s:d2,e:d2+15,kind:"decide",g:"ask",tag:"判斷點",title:"再去もののけの里？",pts:["16:30 前要入區"],node:"majo",choice:[["去看看","next"],["回飯店","home"]]});
-    add({s:d2+15,e:Math.min(d2+60,1020),kind:"do",g:"leaf",tag:"選配",title:"もののけの里",pts:["戶外里山，30–45 分","看完就回"],node:"mono"});
-  } else {
-    const o=info.open;
-    add({s:o-75,e:o-35,kind:"move",g:"train",tag:"出發",title:"去栄站",pts:["東山線 往藤が丘","藤が丘轉 Linimo"],node:"sakae",flag:"車程為估計"});
-    add({s:o-35,e:o,kind:"move",g:"walk",tag:"抵達",title:"走到魔女の谷",pts:["開園就進，人少好拍"],node:"park"});
-    add({s:o,e:T-60,kind:"do",g:"house",tag:"區域 1",title:"魔女の谷",pts:["建築要加購，排隊長就跳過"],node:"majo"});
-    add({s:T-60,e:T-10,kind:"do",g:"food",tag:"午餐",title:"吃飯休息",pts:["熱狗攤或餐廳","自備食物到區域外吃"],node:"majo"});
-    add({s:T-10,e:T,kind:"move",g:"walk",tag:"移動",title:"走到大倉庫",pts:[`${fmt(T)} 起 1 小時內全員入場`],node:"soko"});
-    add({s:T,e:Math.min(T+150,1000),kind:"do",g:"house",tag:"區域 2",title:"ジブリの大倉庫",pts:["推車停置場","最後買伴手禮"],node:"soko"});
-  }
-  const last=S[S.length-1].e;
-  add({s:last,e:last+70,kind:"move",g:"train",tag:"回程",title:"回栄",pts:["Linimo → 藤が丘","東山線回栄"],node:"fuji",id:"home"});
-  add({s:last+70,e:last+150,kind:"done",g:"bed",tag:"完成",title:"回飯店休息",pts:["今天辛苦了","早點睡"],node:"hotel"});
-  return S;
-}
-
-let steps=[], idx=0, info, isToday=false, view="guide";
+let steps=[], idx=0, isToday=false, view="guide";
 
 function load(){
-  const iso=$("#date").value||TRIP.previewDate;
-  info=dayInfo(iso);
-  const slots=[]; for(let m=info.open; m<=840; m+=60) slots.push(m);
-  const prev=Number($("#slot").value)||Number(store.get("gp-slot"))||info.open;
-  $("#slot").innerHTML=slots.map(m=>`<option value="${m}">${fmt(m)}</option>`).join("");
-  $("#slot").value=slots.includes(prev)?prev:slots[0];
-  const T=Number($("#slot").value);
-  $("#chipText").textContent = ($("#date").value? info.label : "日期未定") + " · " + fmt(T);
-  $("#openSheet").classList.toggle("set", !!$("#date").value);
-  steps = info.closed ? [] : buildSteps(info,T);
+  steps = STEPS;
   const nowJ=new Date(Date.now()+9*3600e3);
-  isToday = nowJ.toISOString().slice(0,10)===iso && !!$("#date").value;
+  isToday = nowJ.toISOString().slice(0,10)===DAY.iso;
   if(isToday){ const nm=nowJ.getUTCHours()*60+nowJ.getUTCMinutes(); const c=steps.findIndex(s=>nm<s.e); idx=c<0?steps.length-1:c; }
-  else idx=Math.min(Number(store.get("gp-idx"))||0, Math.max(steps.length-1,0));
+  else idx=Math.min(Number(store.get("gp-idx"))||0, steps.length-1);
 }
 
 function renderCard(){
-  if(info.closed){
-    $("#card").className="card decide";
-    $("#card").innerHTML=`<div class="when"><span class="tag">休園日</span></div><h2>這天不開園</h2><ul class="points"><li>每週二固定休園</li></ul><div class="actions"><button class="btn primary" onclick="openSheet()">換一天</button></div>`;
-    $("#progress").innerHTML=""; return;
-  }
   const s=steps[idx];
   $("#progress").innerHTML=steps.map((_,i)=>`<span class="${i<=idx?"on":""}"></span>`).join("");
   const kind = s.kind==="done"?"do":s.kind;
@@ -359,34 +323,33 @@ function renderList(){
 
 // ---- route map (schematic) ----
 const NODES = [
-  {id:"hotel",x:60,y:60,label:"飯店",sub:"KOKO HOTEL",c:"--forest"},
-  {id:"sakae",x:60,y:150,label:"栄",sub:"東山線 H",c:"--sky"},
-  {id:"fuji",x:60,y:280,label:"藤が丘",sub:"轉 Linimo",c:"--sky"},
-  {id:"park",x:200,y:280,label:"愛・地球博記念公園",sub:"Linimo",c:"--sky"},
-  {id:"soko",x:200,y:390,label:"ジブリの大倉庫",sub:"區域 1",c:"--forest"},
-  {id:"majo",x:200,y:480,label:"魔女の谷",sub:"區域 2",c:"--forest"},
-  {id:"mono",x:200,y:570,label:"もののけの里",sub:"選配",c:"--forest",opt:true}
+  {id:"hotel", y:60,  label:"飯店",              sub:"KOKO HOTEL 名古屋栄", c:"--forest"},
+  {id:"sakae", y:135, label:"栄",                sub:"東山線 約 21–25 分",    c:"--sky"},
+  {id:"fuji",  y:210, label:"藤が丘",            sub:"轉乘 含找電梯 20 分",     c:"--sky"},
+  {id:"park",  y:285, label:"愛・地球博記念公園", sub:"Linimo 約 13–17 分・北口 E1", c:"--sky"},
+  {id:"e2",    y:360, label:"E2 魔法之里",        sub:"ネコバス售票機",      c:"--forest"},
+  {id:"cat",   y:435, label:"ネコバス",           sub:"もののけの里 → どんどこ森", c:"--sun"},
+  {id:"forest",y:510, label:"どんどこ森",         sub:"龍貓・小梅的家・E7",  c:"--forest"},
+  {id:"majo",  y:585, label:"E3 魔女の谷",        sub:"ハウルの城・午餐・オキノ邸", c:"--forest"},
+  {id:"soko",  y:660, label:"E4 ジブリの大倉庫",  sub:"14:00–15:00 入場",    c:"--forest"},
+  {id:"home",  y:730, label:"回栄・飯店",          sub:"E4→E1 巴士・同路線回栄",  c:"--sky"}
 ];
+// line style from each node to the next: [color token, dashed?]
+const LEGS = [["--muted",true],["--sky",false],["--sky",false],["--forest",true],["--sun",false],["--sun",false],["--forest",true],["--forest",true],["--sky",false]];
 function renderMap(){
   const cur = steps[idx] ? steps[idx].node : null;
   const css = getComputedStyle(document.documentElement);
   const col = v => css.getPropertyValue(v).trim();
-  const P = id => NODES.find(n=>n.id===id);
-  const seg = (a,b,c,dash) => `<line x1="${P(a).x}" y1="${P(a).y}" x2="${P(b).x}" y2="${P(b).y}" stroke="${col(c)}" stroke-width="8" stroke-linecap="round" ${dash?'stroke-dasharray="2 14"':''}/>`;
-  let g = `<rect width="360" height="620" fill="${col("--card")}"/>`;
-  g += `<rect x="150" y="250" width="196" height="356" rx="22" fill="${col("--forest-soft")}"/>`;
-  g += seg("hotel","sakae","--muted",true) + seg("sakae","fuji","--sky") + `<path d="M60 280 H200" stroke="${col("--sky")}" stroke-width="8" stroke-linecap="round" stroke-dasharray="1 0" opacity=".55"/>`;
-  g += seg("park","soko","--forest",true) + seg("soko","majo","--forest",true) + seg("majo","mono","--forest",true);
-  g += `<text x="74" y="220" font-size="12" fill="${col("--sky")}">東山線 約 25 分</text><text x="92" y="270" font-size="12" fill="${col("--sky")}">Linimo 約 13 分</text>`;
+  const X = 60, LX = 88;
+  let g = `<rect width="360" height="760" fill="${col("--card")}"/>`;
+  NODES.slice(0,-1).forEach((n,i)=>{ const [c,d]=LEGS[i]; g += `<line x1="${X}" y1="${n.y}" x2="${X}" y2="${NODES[i+1].y}" stroke="${col(c)}" stroke-width="8" stroke-linecap="round" ${d?'stroke-dasharray="2 14"':''}/>`; });
+  const lg = [["--sky",false,"地鐵・Linimo"],["--sun",false,"ネコバス（付費）"],["--forest",true,"免費園內巴士"]];
+  lg.forEach(([c,d,t],i)=>{ const y=24+i*20; g += `<line x1="236" y1="${y}" x2="258" y2="${y}" stroke="${col(c)}" stroke-width="5" stroke-linecap="round" ${d?'stroke-dasharray="1 7"':''}/><text x="266" y="${y+4}" font-size="11" fill="${col("--muted")}">${t}</text>`; });
   NODES.forEach(n=>{
     const on = n.id===cur;
-    const lx = n.x===60 ? n.x+22 : n.x+22;
-    g += on ? `<circle cx="${n.x}" cy="${n.y}" r="20" fill="${col(n.c)}" opacity=".25"/>` : "";
-    g += `<circle cx="${n.x}" cy="${n.y}" r="${on?12:9}" fill="${n.opt?col("--card"):col(n.c)}" stroke="${col(n.c)}" stroke-width="4"/>`;
-    const lbl = n.id==="park" ? `<text x="${n.x+20}" y="${n.y+28}" font-size="14" fill="${col("--ink")}">${n.label}</text>` :
-      n.id==="fuji" ? `<text x="${n.x-20}" y="${n.y+34}" font-size="17" fill="${col("--ink")}" ${on?'font-weight="700"':''}>${n.label}</text><text x="${n.x-20}" y="${n.y+52}" font-size="12" fill="${col("--muted")}">${n.sub}</text>` :
-      `<text x="${lx}" y="${n.y+1}" font-size="17" fill="${col("--ink")}" ${on?'font-weight="700"':''}>${n.label}</text><text x="${lx}" y="${n.y+19}" font-size="12" fill="${col("--muted")}">${n.sub}</text>`;
-    g += lbl;
+    if(on) g += `<circle cx="${X}" cy="${n.y}" r="20" fill="${col(n.c)}" opacity=".25"/>`;
+    g += `<circle cx="${X}" cy="${n.y}" r="${on?12:9}" fill="${col(n.c)}" stroke="${col("--card")}" stroke-width="3"/>`;
+    g += `<text x="${LX}" y="${n.y+1}" font-size="17" fill="${col("--ink")}" ${on?'font-weight="700"':''}>${n.label}</text><text x="${LX}" y="${n.y+19}" font-size="12" fill="${col("--muted")}">${n.sub}</text>`;
   });
   $("#mapsvg").innerHTML = g;
 }
@@ -424,24 +387,18 @@ document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>setView(b.data
 $("#prev").onclick=()=>go(idx-1);
 $("#next").onclick=()=>go(idx===steps.length-1?0:idx+1);
 $("#card").addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const a=b.dataset.go;
-  if(a==="next") go(idx+1); else if(a==="home") go(steps.findIndex(s=>s.id==="home")); else if(a==="map") setView("map"); });
+  if(a==="next") go(idx+1); else if(a==="skip") go(idx+2); else if(a==="home") go(steps.findIndex(s=>s.id==="home")); else if(a==="map") setView("map"); });
 $("#list").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"); if(!b) return; idx=Number(b.dataset.i); renderCard(); setView("guide"); });
 // swipe on card
 let sx=null; $("#card").addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
 $("#card").addEventListener("touchend",e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60) go(idx+(dx<0?1:-1)); sx=null; });
 
-function openSheet(){ $("#scrim").hidden=false; }
-$("#openSheet").onclick=openSheet;
-$("#closeSheet").onclick=()=>{ $("#scrim").hidden=true; };
-$("#scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") $("#scrim").hidden=true; });
-$("#date").addEventListener("change",()=>{ store.set("gp-date",$("#date").value); store.set("gp-idx",0); render(); });
-$("#slot").addEventListener("change",()=>{ store.set("gp-slot",$("#slot").value); store.set("gp-idx",0); render(); });
 
 document.querySelectorAll(".chk input").forEach(i=>{ i.checked=store.get("gp-"+i.id)==="1"; i.onchange=()=>store.set("gp-"+i.id,i.checked?"1":"0"); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{ if(view==="map") renderMap(); });
 
 // ---- per-stop timer: each in-park stop counts down its planned minutes ----
-const timed = st => st && st.kind==="do" && ["soko","majo","mono"].includes(st.node);
+const timed = st => !!(st && st.timer);
 let T0 = null; try{ T0 = JSON.parse(store.get("gp-timer")||"null"); }catch(e){}
 let buzzed = false;
 const mmss = sec => { const a=Math.abs(sec); return `${a>=3600?Math.floor(a/3600)+":":""}${pad(Math.floor(a%3600/60))}:${pad(a%60)}`; };
@@ -484,7 +441,6 @@ setInterval(tick,1000);
 tick();
 
 const hv = location.hash.slice(1);
-$("#date").value = store.get("gp-date") || "";
 render();
 setView(["guide","all","map","pack"].includes(hv)?hv:"guide");
 setInterval(()=>{ if(isToday){ render(); } },60000);

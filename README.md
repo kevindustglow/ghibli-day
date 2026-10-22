@@ -6,9 +6,8 @@ Kevin 一家 2026/11 名古屋行的吉卜力公園當天手機引導頁。單�
 
 | 想改什麼 | 在 `index.html` 找 |
 |---|---|
-| 飯店名稱、預設日期 | `const TRIP = {...}` |
-| 每一步的標題與重點 | `function buildSteps` 裡的 `add({...})` |
-| 日期選項 | `<select id="date">` |
+| 日期、票種 | `const DAY = {...}` |
+| 每一步的時間、標題、重點、是否計時 | `const STEPS = [...]`（`timer:true` 會出現倒數） |
 | 出門清單 | `<ul class="chk">` |
 | 路線圖站點 | `const NODES = [...]` |
 

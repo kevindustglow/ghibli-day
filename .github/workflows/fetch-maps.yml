@@ -1,0 +1,33 @@
+name: fetch-maps
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/fetch-maps.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download map images into maps/
+        run: |
+          set -e
+          mkdir -p maps
+          C=https://ghibli-family-day-nov12.kevindustglow.chatgpt.site
+          for n in all bus catall catroute east forest north south west; do
+            curl -fsSL -A "Mozilla/5.0" -o maps/$n.webp "$C/assets/thumbs/$n.webp" || echo "FAIL $n"
+          done
+          curl -fsSL -A "Mozilla/5.0" -o maps/park.png "https://www.aichi-koen.com/wp-content/uploads/2026/08/map202604.png" || echo "FAIL park"
+          curl -fsSL -A "Mozilla/5.0" -o maps/busmap.jpg "https://www.aichi-koen.com/wp-content/uploads/2025/03/%E3%83%90%E3%82%B9%E3%83%9E%E3%83%83%E3%83%97.jpg" || echo "FAIL busmap"
+          echo "--- codex image refs ---"
+          curl -fsSL -A "Mozilla/5.0" "$C/" | grep -oE '[a-zA-Z0-9_./-]+\.(webp|png|jpe?g)' | sort -u || true
+          ls -la maps
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898732+github-actions[bot]@users.noreply.github.com"
+          git add maps
+          git diff --cached --quiet || git commit -m "Add map images to repo"
+          git push origin HEAD:main
+          git push origin HEAD:gh-pages --force

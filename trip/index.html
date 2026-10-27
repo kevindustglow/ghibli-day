@@ -153,6 +153,9 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
 .chk label{flex:1;min-width:0}
 .chk .del{flex:none;width:40px;height:40px;border:0;background:none;color:var(--muted);font-size:1.3rem;border-radius:50%;opacity:.6}
 .chk .del:active{background:var(--rose-soft);color:var(--rose);opacity:1}
+.chk.memo li{align-items:flex-start}
+.chk .txt{flex:1;min-width:0;border:0;background:none;text-align:left;padding:12px 0;line-height:1.5;font-size:1rem}
+.chk .edit{flex:1;min-width:0;min-height:46px;border:1px solid var(--forest);border-radius:12px;padding:0 12px;background:var(--bg);font-size:1rem;margin:4px 0}
 .add{display:flex;gap:8px;border-top:1px dashed var(--line);padding-top:10px;margin-top:4px}
 .add input{flex:1;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:var(--bg);font-size:1rem}
 .add button{flex:none;width:46px;height:46px;border:0;border-radius:12px;background:var(--forest);color:#fff;font-size:1.3rem}
@@ -436,16 +439,20 @@ function renderAll(){
 
 // ===== 準備 =====
 // 每組清單存在手機：{done:{id:true}, extra:[{id,t}], hidden:{id:true}}；預設項目 id 用 d0、d1…，自己加的用 x+時間
-const LISTS = [["buy","還沒買"],["week","出發前 7 天"],...PACK.map(([g],i)=>["pack"+i,g])];
-const defaults = key => key==="buy" ? TODO_BUY.map(([b,s,l])=>({t:b,s,l})) : key==="week" ? TODO_WEEK.map(t=>({t})) : PACK[+key.slice(4)][1].map(t=>({t}));
+const MEMOS = ["推車：地鐵、名鐵車廂內收折；吉卜力園區道路可推，多數建築內要停指定位置","吉卜力區域內不能吃自帶食物；其他景點可","日本 11 月名古屋白天約 12–18°C，早晚涼，洋蔥式穿法","每天出門前：票券截圖、行動電源、Amber 的水和零食","蓬萊軒週二休；11/13 松坂屋本館、北館會員包場，只逛南館"];
+const LISTS = [["buy","還沒買"],["week","出發前 7 天"],...PACK.map(([g],i)=>["pack"+i,g]),["memo","備忘"]];
+const defaults = key => key==="memo" ? MEMOS.map(t=>({t})) : key==="buy" ? TODO_BUY.map(([b,s,l])=>({t:b,s,l})) : key==="week" ? TODO_WEEK.map(t=>({t})) : PACK[+key.slice(4)][1].map(t=>({t}));
 function listItems(key){
   const st = store.get(key, {}); const done=st.done||{}, hidden=st.hidden||{}, extra=st.extra||[];
   const items = defaults(key).map((it,i)=>({id:"d"+i,...it})).concat(extra.map(e=>({id:e.id,t:e.t,custom:true})));
-  return items.filter(it=>!hidden[it.id]).map(it=>({...it,done:!!done[it.id]}));
+  const text=st.text||{};
+  return items.filter(it=>!hidden[it.id]).map(it=>({...it,t:text[it.id]||it.t,done:!!done[it.id]}));
 }
-function saveList(key, fn){ const st = store.get(key, {done:{},extra:[],hidden:{}}); st.done=st.done||{}; st.extra=st.extra||[]; st.hidden=st.hidden||{}; fn(st); store.set(key, st); }
+function saveList(key, fn){ const st = store.get(key, {done:{},extra:[],hidden:{}}); st.done=st.done||{}; st.extra=st.extra||[]; st.hidden=st.hidden||{}; st.text=st.text||{}; fn(st); store.set(key, st); }
 function chkList(key){
   const items = listItems(key);
+  if(key==="memo") return `<ul class="chk memo">${items.map(it=>`<li><button class="txt" data-key="${key}" data-id="${it.id}">${esc(it.t)}</button><button class="del" data-key="${key}" data-id="${it.id}" aria-label="移除">×</button></li>`).join("")}</ul>
+  <form class="add" data-key="${key}"><input type="text" id="add-${key}" placeholder="新增備忘…" autocomplete="off" enterkeyhint="done"><button type="submit" aria-label="新增">＋</button></form>`;
   return `<ul class="chk">${items.map(it=>`<li><label><input type="checkbox" id="${key}-${it.id}" data-key="${key}" data-id="${it.id}" ${it.done?"checked":""}><span>${esc(it.t)}${it.s?`<small>${esc(it.s)}${it.l?` · <a href="${it.l[0]}" target="_blank" rel="noopener">${esc(it.l[1])} ↗</a>`:""}</small>`:""}</span></label><button class="del" data-key="${key}" data-id="${it.id}" aria-label="移除 ${esc(it.t)}">×</button></li>`).join("")}</ul>
   <form class="add" data-key="${key}"><input type="text" id="add-${key}" placeholder="新增一項…" autocomplete="off" enterkeyhint="done"><button type="submit" aria-label="新增">＋</button></form>`;
 }
@@ -454,11 +461,12 @@ function renderPrep(){
   const count = key=>{const a=listItems(key);return a.filter(i=>i.done).length+"/"+a.length;};
   let h = `<div class="card hero"><div class="eyebrow"><span>距離出發</span></div><div class="count"><b class="mono">${daysLeft>0?daysLeft:0}</b><span>天 · 11/7（六）07:30 家門口上車</span></div><p class="note">清單可以直接新增、移除、打勾，只存在這支手機。</p></div>`;
   h += LISTS.map(([key,title])=>`<div class="card group"><h3>${esc(title)} <small>${count(key)}</small></h3>${chkList(key)}</div>`).join("");
-  h += `<div class="card"><h3>備忘</h3><ul class="pts"><li>推車：地鐵、名鐵車廂內收折；吉卜力園區道路可推，多數建築內要停指定位置</li><li>吉卜力區域內不能吃自帶食物；其他景點可</li><li>日本 11 月名古屋白天約 12–18°C，早晚涼，洋蔥式穿法</li><li>每天出門前：票券截圖、行動電源、Amber 的水和零食</li><li>蓬萊軒週二休；11/13 松坂屋本館、北館會員包場，只逛南館</li></ul><div class="actions"><button class="linkbtn" id="uncheckAll">全部取消打勾</button><button class="linkbtn" id="resetChk">還原成預設清單</button></div></div>`;
+  h += `<div class="card"><p class="note">備忘點一下文字就能改。</p><div class="actions"><button class="linkbtn" id="uncheckAll">全部取消打勾</button><button class="linkbtn" id="resetChk">還原成預設清單</button></div></div>`;
   $("#v-prep").innerHTML = h;
   $("#v-prep").querySelectorAll("input[type=checkbox]").forEach(c=>c.onchange=()=>{ saveList(c.dataset.key, st=>{ st.done[c.dataset.id]=c.checked; }); renderPrep(); });
   $("#v-prep").querySelectorAll(".del").forEach(b=>b.onclick=()=>{ const key=b.dataset.key,id=b.dataset.id; saveList(key, st=>{ if(id.startsWith("x")) st.extra=st.extra.filter(e=>e.id!==id); else st.hidden[id]=true; delete st.done[id]; }); renderPrep(); toast("已移除"); });
   $("#v-prep").querySelectorAll("form.add").forEach(f=>f.onsubmit=e=>{ e.preventDefault(); const inp=f.querySelector("input"); const t=inp.value.trim(); if(!t) return; saveList(f.dataset.key, st=>{ st.extra.push({id:"x"+Date.now(),t}); }); renderPrep(); const n=$("#add-"+f.dataset.key); n&&n.focus(); });
+  $("#v-prep").querySelectorAll(".txt").forEach(b=>b.onclick=()=>{ const key=b.dataset.key,id=b.dataset.id; const inp=document.createElement("input"); inp.type="text"; inp.value=b.textContent; inp.className="edit"; inp.enterKeyHint="done"; b.replaceWith(inp); inp.focus(); let done=false; const save=()=>{ if(done) return; done=true; const t=inp.value.trim(); saveList(key, st=>{ if(!t){ if(id.startsWith("x")) st.extra=st.extra.filter(e=>e.id!==id); else st.hidden[id]=true; } else st.text[id]=t; }); renderPrep(); }; inp.onblur=save; inp.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); inp.blur(); } }; });
   $("#uncheckAll").onclick=()=>{ LISTS.forEach(([k])=>saveList(k, st=>{ st.done={}; })); renderPrep(); toast("已取消打勾"); };
   $("#resetChk").onclick=()=>{ const ok=$("#resetChk").dataset.arm; if(!ok){ $("#resetChk").dataset.arm="1"; $("#resetChk").textContent="再按一次確認還原"; return; } LISTS.forEach(([k])=>store.set(k,{})); renderPrep(); toast("已還原"); };
 }

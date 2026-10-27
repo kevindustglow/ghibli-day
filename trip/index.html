@@ -355,7 +355,7 @@ const INFO = {
   flights:[["去程 11/7（六）","CX530","桃園 TPE 12:00 → 名古屋 NGO 15:35"],["回程 11/14（六）","CX531","名古屋 NGO 16:40 → 桃園 TPE 19:10"]],
   taxi:[["去程 11/7（六）","07:30 家門口上車 → 桃園機場 T1","NT$1,500（含兒童座椅）"],["回程 11/14（六）","20:00 桃園機場 T1 → 家，出關後聯繫司機","NT$1,700（含兒童座椅）"]],
   fares:[["地鐵 1／2／3 區","¥210／¥240／¥270"],["栄 → 藤が丘（吉卜力）","¥310"],["Linimo 藤が丘 → 公園","¥400"],["あおなみ線 名古屋 → 金城ふ頭","¥360"],["名鐵 金山 ↔ 機場","¥910 ＋指定席 ¥450"],["Amber 5 歲","地鐵／名鐵／Linimo 隨大人免費"]],
-  emergency:[["警察","110"],["救護車・消防","119"],["外交部旅外急難救助（24h）","+886-800-085-095"],["台北駐大阪辦事處（轄愛知）","+81-6-6227-8623"]],
+  emergency:[["警察（日本）","110"],["救護車・消防（日本）","119"],["駐大阪辦事處 緊急手機（轄愛知）","+81-90-8794-4568"],["外交部緊急聯絡中心（24h，付費）","+886-800-085-095"],["旅外急難免付費（日本撥）","001-010-800-0885-0885"]],
   links:[
     ["吉卜力公園 當日攻略","自家頁面，含門票、計時、地圖",GHIBLI,true],
     ["去趣 Chictrip","地圖與路線細節（需登入）","https://chictrip.com.tw/"],
@@ -481,7 +481,7 @@ function renderInfo(){
   h += `<div class="card"><div class="eyebrow"><span class="tag rose">航班</span><span>座位與訂位代號看電子機票</span></div><dl class="kv">${I.flights.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd><b class="mono">${esc(b)}</b><br>${esc(c)}</dd></div>`).join("")}</dl></div>`;
   h += `<div class="card"><div class="eyebrow"><span class="tag sun">台灣機場接送</span><span>已預約</span></div><dl class="kv">${I.taxi.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}<br><small class="note">${esc(c)}</small></dd></div>`).join("")}</dl><p class="note">司機與車牌資料在叫車 App，這裡不放。</p></div>`;
   h += `<div class="card"><div class="eyebrow"><span class="tag sky">車資速查</span><span>大人單程，IC 卡同價</span></div><ul class="fares">${I.fares.map(([a,b])=>`<li><span>${zh(esc(a))}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">查證日 2026/10/28（ekitan、名鐵官網）。以售票機顯示為準。</p></div>`;
-  h += `<div class="card"><div class="eyebrow"><span class="tag rose">緊急</span></div><ul class="fares">${I.emergency.map(([a,b])=>`<li><span>${esc(a)}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">保單號碼與保險公司電話存在手機，這裡不放。</p></div>`;
+  h += `<div class="card"><div class="eyebrow"><span class="tag rose">緊急</span></div><ul class="fares">${I.emergency.map(([a,b])=>`<li><span>${esc(a)}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">+ 開頭的號碼用台灣門號漫遊直接撥；免付費專線在日本要加 001 或 0033 前綴，手機不一定能撥，撥不通就打 +886 那支。KDDI 旅遊 eSIM 只有上網沒有通話，110／119 和所有電話都要用台灣門號撥（出國前確認漫遊有開）。查證 2026/10/28 外交部領事事務局。保單號碼與保險公司電話存在手機，這裡不放。</p></div>`;
   h += `<div class="card"><h3>重要連結</h3><div class="links">${I.links.map(([t,s,u,hot])=>`<a href="${u}" class="${hot?"hot":""}" ${hot?"":'target="_blank" rel="noopener"'}><span>${esc(t)}<br><small>${esc(s)}</small></span><small>↗</small></a>`).join("")}</div><p class="note">票券連結、Google 行程文件請用手機書籤，不放在這個公開頁面。</p></div>`;
   $("#v-info").innerHTML = h;
   $("#v-info").querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{const t=b.dataset.copy; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("已複製")).catch(()=>{ const r=document.createRange(); r.selectNodeContents(b.parentElement); getSelection().removeAllRanges(); getSelection().addRange(r); toast("請長按複製"); });});

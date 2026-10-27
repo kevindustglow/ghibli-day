@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>名古屋八日</title>
+<meta name="theme-color" content="#EEF3F7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="名古屋八日">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: left-hand phone page. Sticky top = brand + day chips. One day at a time as stacked cards. Bottom-left dock. */
+:root{
+  --sky-top:#CFE4F3; --grass:#8DBF7A; --acorn:#9A6A3C;
+  --bg:#EEF3F7; --card:#FFFFFF; --ink:#18263A; --muted:#647387; --line:#D8E1EA;
+  --forest:#3F7D5C; --forest-soft:#E1EFE6; --sky:#3C78B4; --sky-soft:#E0ECF7;
+  --sun:#C9821C; --sun-soft:#FBEED6; --rose:#B8524F; --rose-soft:#F9E3E2;
+  --f-display:"Huninn","Noto Sans TC","PingFang TC",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545;
+  --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
+  --sun:#F0B455; --sun-soft:#33281A; --rose:#F0908D; --rose-soft:#3A2224; --sky-top:#16243A; --grass:#3E6B47; --acorn:#C79A6B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545;
+  --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
+  --sun:#F0B455; --sun-soft:#33281A; --rose:#F0908D; --rose-soft:#3A2224; --sky-top:#16243A; --grass:#3E6B47; --acorn:#C79A6B; color-scheme:dark}
+
+[hidden]{display:none!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:linear-gradient(to bottom,var(--sky-top),var(--bg) 300px) no-repeat,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance}
+p,ul,ol{margin:0}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--forest);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:14px;padding-block:12px 120px}
+
+/* top */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);margin-inline:-16px;padding-inline:16px;border-radius:0 0 20px 20px;padding-block:6px 10px;display:flex;flex-direction:column;gap:10px}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-family:var(--f-display);font-size:1.35rem;display:flex;align-items:center;gap:8px}
+.brand svg{flex:none}
+.pillbtn{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 12px;border-radius:999px;border:0;background:var(--forest);color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.pillbtn:active{transform:scale(.97)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;min-height:40px;padding:0 13px;font-size:.9rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;gap:1px}
+.chips button small{font-size:.68rem;letter-spacing:.04em}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chips button.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
+
+/* cards */
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{position:relative;background:var(--card);border-radius:24px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 0 var(--line),0 10px 24px -18px rgba(24,38,58,.35)}
+.card.hero{padding-bottom:26px;overflow:hidden}
+.card.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:radial-gradient(circle at 10px 12px,var(--grass) 10px,transparent 11px) 0 0/20px 12px repeat-x;opacity:.55}
+.card.maybe{background:transparent;border:2px dashed var(--line);box-shadow:none}
+.card.warm{background:var(--sun-soft);box-shadow:none}
+.card.ghibli{background:var(--forest-soft);box-shadow:none}
+.eyebrow{display:flex;align-items:center;gap:8px;font-size:.78rem;letter-spacing:.06em;color:var(--muted)}
+.eyebrow .dots{color:var(--sun);letter-spacing:2px;font-size:.7rem}
+.tag{font-size:.75rem;letter-spacing:.06em;padding:3px 9px;border-radius:999px;background:var(--forest-soft);color:var(--forest);white-space:nowrap}
+.tag.sky{background:var(--sky-soft);color:var(--sky)}
+.tag.sun{background:var(--sun-soft);color:var(--sun)}
+.tag.rose{background:var(--rose-soft);color:var(--rose)}
+.tag.ghost{background:var(--card);color:var(--muted);border:1px solid var(--line)}
+.hero h2{font-size:2rem;line-height:1.2}
+.hero .ja{font-size:.95rem;color:var(--muted);margin-top:-6px}
+.times{display:flex;gap:18px;flex-wrap:wrap}
+.times div{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted)}
+.times b{font-family:var(--f-mono);font-size:1.45rem;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.plan{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.plan li{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:baseline}
+.plan .t{font-family:var(--f-mono);font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.plan .t.blank::before{content:"·";display:block;text-align:center}
+.plan b{font-weight:500}
+.plan small{display:block;font-size:.85rem;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:.95rem;text-decoration:none;flex:0 1 auto}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.wide{flex:1 1 100%}
+.btn.ghibli{background:var(--forest);color:#fff;border-color:var(--forest);min-height:56px;font-size:1.05rem}
+.btn:active{transform:scale(.98)}
+.pts{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.pts li{display:flex;gap:10px;align-items:flex-start;font-size:1rem}
+.pts li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-top:.65em}
+.note{font-size:.85rem;color:var(--muted)}
+.card h3{font-size:1.15rem}
+
+/* transport */
+details.tr{border-top:1px solid var(--line);padding-top:10px}
+details.tr summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;min-height:44px;font-weight:500}
+details.tr summary::-webkit-details-marker{display:none}
+details.tr summary .chev{transition:transform .2s;color:var(--muted)}
+details.tr[open] summary .chev{transform:rotate(180deg)}
+.route{list-style:none;padding:0;display:flex;flex-direction:column;margin-top:6px}
+.route li{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:8px 0;position:relative}
+.route li::before{content:"";position:absolute;left:14px;top:30px;bottom:-6px;width:2px;background:var(--line)}
+.route li:last-child::before{display:none}
+.route .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:.78rem;background:var(--sky-soft);color:var(--sky);position:relative;z-index:1}
+.route .n.walk{background:var(--forest-soft);color:var(--forest)}
+.route .n.taxi{background:var(--sun-soft);color:var(--sun)}
+.route .n.fly{background:var(--rose-soft);color:var(--rose)}
+.route b{display:block;font-weight:500;line-height:1.35}
+.route small{display:block;font-size:.86rem;color:var(--muted);margin-top:2px}
+.route .code{font-family:var(--f-mono);font-size:.85em;background:var(--bg);padding:0 5px;border-radius:5px}
+.fare{display:flex;gap:10px;align-items:flex-start;background:var(--sky-soft);border-radius:14px;padding:10px 12px;font-size:.9rem;margin-top:8px}
+.fare svg{flex:none;color:var(--sky);margin-top:3px}
+.fare ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:2px}
+.flag{font-size:.84rem;color:var(--sun);display:flex;gap:6px;align-items:flex-start;margin-top:6px}
+.flag::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--sun);margin-top:.5em}
+
+/* overview list */
+.days{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.days button{width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:14px 16px;display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;min-height:72px}
+.days button.big{border-color:var(--ink);border-width:2px}
+.days button.past{opacity:.55}
+.days .d{display:flex;flex-direction:column;line-height:1.1}
+.days .d b{font-family:var(--f-mono);font-size:1.15rem}
+.days .d small{font-size:.72rem;color:var(--muted)}
+.days .m{display:flex;flex-direction:column;gap:3px;min-width:0}
+.days .m b{font-weight:500;line-height:1.3}
+.days .m small{font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.days .e{color:var(--sun);letter-spacing:2px;font-size:.7rem;white-space:nowrap}
+
+/* prep */
+.count{display:flex;align-items:baseline;gap:10px}
+.count b{font-family:var(--f-mono);font-size:3rem;line-height:1}
+.chk{list-style:none;padding:0;display:flex;flex-direction:column}
+.chk li{border-top:1px solid var(--line)}
+.chk li:first-child{border-top:0}
+.chk label{display:flex;gap:12px;align-items:center;min-height:50px;padding:6px 0;cursor:pointer}
+.chk input{width:24px;height:24px;flex:none;accent-color:var(--forest);margin:0}
+.chk input:checked+span{color:var(--muted);text-decoration:line-through}
+.chk span{flex:1}
+.chk span small{display:block;font-size:.82rem;color:var(--muted);text-decoration:none}
+.chk .pill{font-size:.72rem;padding:2px 8px;border-radius:999px;background:var(--sun-soft);color:var(--sun);white-space:nowrap}
+.group h3{display:flex;justify-content:space-between;align-items:baseline}
+.group h3 small{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.linkbtn{border:0;background:none;color:var(--muted);font-size:.85rem;text-decoration:underline;padding:6px 0;text-align:left}
+
+/* info */
+.kv{display:flex;flex-direction:column;gap:8px}
+.kv div{display:grid;grid-template-columns:76px 1fr;gap:10px;font-size:.95rem}
+.kv dt{color:var(--muted);font-size:.85rem;padding-top:2px}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.copy{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:3px 10px;font-size:.78rem;margin-left:6px;vertical-align:middle}
+.fares{list-style:none;padding:0}
+.fares li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:.95rem}
+.fares li:first-child{border-top:0}
+.links{display:flex;flex-direction:column;gap:8px}
+.links a{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:50px;padding:0 14px;border:1px solid var(--line);border-radius:14px;text-decoration:none;background:var(--card)}
+.links a small{color:var(--muted);font-size:.8rem;white-space:nowrap}
+.links a.hot{border-color:var(--forest);background:var(--forest-soft)}
+
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.dock nav{max-width:520px;margin:0 auto;display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:6px;box-shadow:0 10px 30px -14px rgba(24,38,58,.45)}
+.dock button{flex:1;min-height:56px;border:0;border-radius:16px;background:none;color:var(--muted);font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0}
+.dock button svg{width:22px;height:22px}
+.dock button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:.9rem;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" style="position:relative;isolation:isolate">
+  <div class="top">
+    <div class="top-row">
+      <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10c0-3.5 3-6 7-6s7 2.5 7 6z" fill="var(--acorn)"/><path d="M12 4V2" stroke="var(--acorn)" stroke-width="2" stroke-linecap="round"/><path d="M6 10h12c0 6-3 11-6 11s-6-5-6-11z" fill="var(--sun)"/></svg>名古屋八日</div>
+      <a class="pillbtn" href="../" id="ghibliTop"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-4 4-7 6-7 11a7 7 0 0 0 14 0c0-5-3-7-7-11z"/><path d="M12 10v11"/></svg>吉卜力日</a>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="選擇日期"></div>
+  </div>
+
+  <section id="v-day" class="stack"></section>
+  <section id="v-all" class="stack" hidden></section>
+  <section id="v-prep" class="stack" hidden></section>
+  <section id="v-info" class="stack" hidden></section>
+</div>
+
+<div class="dock"><nav aria-label="切換畫面" id="dock">
+  <button data-view="day" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/></svg>今天</button>
+  <button data-view="all" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>八天</button>
+  <button data-view="prep" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="3"/></svg>準備</button>
+  <button data-view="info" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>資訊</button>
+</nav></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ===== 資料：以 Google 文件 2026/10/27 總覽表為準；吃的只是參考 =====
+const GM = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const GHIBLI = "../";
+
+// 日文名稱自動加中文
+const GLOSS = {"栄":"榮","藤が丘":"藤丘","金城ふ頭":"金城碼頭","大須観音":"大須觀音","中部国際空港":"中部國際機場","名鉄":"名鐵","あおなみ線":"青波線","ミュースカイ":"μ-SKY 機場特快","ミューチケット":"指定席券","右回り":"順時針","左回り":"逆時針","矢場とん":"矢場豬排","蓬莱軒":"蓬萊軒","どんどこ森":"咚咚可森林","魔女の谷":"魔女之谷","ジブリの大倉庫":"吉卜力大倉庫","青春の丘":"青春之丘","ドン・キホーテ":"唐吉訶德","オアシス21":"綠洲 21","ららぽーと":"LaLaport"};
+const GRE = new RegExp("(" + Object.keys(GLOSS).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|") + ")(?![（）\\w])","g");
+const zh = t => String(t).replace(GRE, m => `${m}（${GLOSS[m]}）`);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const code = t => `<span class="code">${esc(t)}</span>`;
+
+// 共用交通段
+const SAKAE_H = {k:"walk",b:"飯店 → 栄站 H10／M05",s:"飯店就在栄站 2號出口旁（1 分）。推車找「エレベーター」標示，一般出口號不保證有電梯"};
+const SUBWAY_FARE = ["大人 ¥210／¥240／¥270（1／2／3 區）","Amber 5 歲：大人陪同免費（每位大人可帶 2 名幼兒）","IC 卡（Suica／manaca）或售票機現金；售票機不收信用卡"];
+
+const DAYS = [
+ {iso:"2026-11-07",md:"11/7",dow:"六",n:1,e:2,emoji:"🛫",title:"出發，抵達名古屋",ja:"台北 → 中部国際空港 → 栄",
+  depart:"07:30",back:"18:15",departLabel:"家門口上車",backLabel:"入住目標",
+  plan:[["07:30","計程車到桃園機場 T1","已預約。2 大 1 小、行李 30 吋×2＋20 吋×1、推車、兒童座椅"],["08:30","到 T1，國泰櫃檯報到","12:00 起飛，留 3 小時夠用"],["12:00","CX530 起飛","桃園 12:00 → 名古屋 15:35（日本時間）"],["15:35","入境、領行李","留 75 分，16:50 前出關"],["16:50","名鐵 → 金山 → 地鐵 → 栄","留 75–90 分，見下方交通"],["18:15","KOKO HOTEL 入住","彈性 18:00–18:30；整理約 45 分"],["19:00","晚餐、休息","飯店附近隨意"]],
+  maybe:[["唐吉訶德 榮本店","20:30–21:30 彈性採買，24 小時營業。航班延誤或 Amber 累了就取消，留到休息日"]],
+  food:"飯店附近隨意，不趕",
+  tip:"入境延誤就順延入住和晚餐，取消唐吉訶德，不趕車。",
+  rg:{title:"機場 → 飯店（75–90 分）",steps:[
+    {k:"fly",b:"中部国際空港 站",s:"出關後跟「名鉄」指標走，連通道平路到車站（約 5–10 分）"},
+    {k:"train",b:"名鉄 特急 → 金山",s:"往「名鉄名古屋／岐阜」方向，約 24–30 分。一般車免費對號；帶行李和小孩建議買指定席券（1–2 號車）才有位子"},
+    {k:"walk",b:"金山 轉地鐵名城線",s:"出名鐵剪票口，跟「地下鉄」指標下一層；搬行李留 15–20 分。金山站有電梯，依標示"},
+    {k:"train",b:"名城線 右回り → 栄 M05",s:"往「栄・大曽根」方向，4 站約 8 分。栄站出口 2 就是飯店"},
+  ],fare:["名鐵 機場→金山 大人 ¥910；指定席券每人 ¥450（不分年齡，Amber 坐位子也要）","地鐵 金山→栄 大人 ¥210","Amber 地鐵免費；名鐵一般車免費（坐指定席才要券＋兒童票）"],flag:"名鐵車次請看月台顯示終點不是「中部国際空港」即可；班次改點出發前再查"},
+  links:[["飯店位置",GM("KOKO HOTEL Nagoya Sakae")],["名鐵查詢","https://www.meitetsu.co.jp/"]]},
+
+ {iso:"2026-11-08",md:"11/8",dow:"日",n:2,e:1,emoji:"🐨",title:"東山動植物園",ja:"東山動植物園（ひがしやま）",
+  depart:"10:00",back:"下午",departLabel:"出門",backLabel:"看狀況",
+  plan:[["10:00","出門，地鐵到東山公園","約 12 分車程，3 號出口旁有電梯"],["10:30","動物園慢慢逛","以動物園為主，不硬逛植物園。無尾熊、大猩猩區、兒童動物園"],["12:00","園內午餐、休息",""],["14:00","回榮，或繼續","Amber 還有電就留，累了就走"],["18:00","晚餐候選：蓬萊軒 松坂屋南館","鰻魚飯三吃，週二休，未訂位"]],
+  maybe:[["東山天空塔","動物園旁邊，共通券可一起買"],["不去動物園也可以","今天是緩衝日，睡飽比較重要"]],
+  food:"蓬萊軒（松坂屋南館 10F）、HARBS 榮本店",
+  tip:"09:00–16:50 開園（16:30 停止入園）。成人約 ¥500、Amber 免費，以售票處為準。",
+  rg:{title:"栄 → 東山公園（約 12 分）",steps:[SAKAE_H,
+    {k:"train",b:"東山線 → 東山公園 H16",s:"往「藤が丘」方向，1 號月台，6 站約 12 分"},
+    {k:"walk",b:"3 號出口 → 正門",s:"3 號出口旁有電梯，步行約 3 分"}],
+    fare:["大人 ¥240（2 區）","Amber 免費"]},
+  rb:{title:"東山公園 → 栄",steps:[{k:"train",b:"東山線 → 栄 H10",s:"往「高畑」方向，坐 6 站，2 號月台下車"},{k:"walk",b:"栄 2 號出口 → 飯店",s:"或走オアシス21 電梯上地面"}],fare:["大人 ¥240"]},
+  links:[["動物園官網","https://www.higashiyama.city.nagoya.jp/"],["地圖",GM("東山動植物園")]]},
+
+ {iso:"2026-11-09",md:"11/9",dow:"一",n:3,e:3,emoji:"🧱",title:"LEGOLAND",ja:"レゴランド・ジャパン（樂高樂園）",
+  depart:"08:00",back:"17:30",departLabel:"出門",backLabel:"回飯店約",
+  plan:[["08:00","出門","門到門留 75–90 分"],["09:15","到入口排隊","10:00 開園；09:30 前到就排前段"],["10:00","入園","先玩 Amber 身高能玩的：DUPLO、Mini-land、Submarine Adventure"],["12:00","園內午餐、休息","人少時段先吃"],["16:00","離園","Amber 累了可提早；17:00 閉園"],["17:30","回到飯店",""]],
+  maybe:[["Maker's Pier 晚餐","車站旁商場，不想回榮再吃可以在這裡"]],
+  food:"園內午餐",
+  tip:"門票還沒買。官方日曆尚未確認 11/9 全天開園，出發前再查。ロストキングダム 11/9–11/13 暫停（非官方來源）。",
+  rg:{title:"栄 → 金城ふ頭（75–90 分）",steps:[SAKAE_H,
+    {k:"train",b:"東山線 → 名古屋 H08",s:"往「高畑」方向，2 站約 5 分"},
+    {k:"walk",b:"名古屋站 轉あおなみ線",s:"出剪票口跟「あおなみ線」指標往太閤通口（JR 那側），跨站約 10 分；含電梯、買票留 20–25 分"},
+    {k:"train",b:"あおなみ線 → 金城ふ頭 AN11",s:"終點站，坐到底不會過站，約 24 分"},
+    {k:"walk",b:"出站 → 樂高樂園入口",s:"沿指標過 Maker's Pier，平路步行約 10–15 分"}],
+    fare:["地鐵 栄→名古屋 大人 ¥210","あおなみ線 名古屋→金城ふ頭 大人 ¥360","Amber 兩段都免費（大人陪同）","あおなみ線可用 Suica／manaca"]},
+  rb:{title:"金城ふ頭 → 栄（75–90 分）",steps:[{k:"train",b:"あおなみ線 → 名古屋",s:"終點站，約 24 分"},{k:"walk",b:"名古屋站 轉東山線",s:"跟「地下鉄東山線」指標，留 20 分"},{k:"train",b:"東山線 → 栄 H10",s:"往「藤が丘」方向，2 站"}],fare:["同去程 ¥570／大人"]},
+  links:[["LEGOLAND 官網","https://www.legoland.jp/"],["營業日曆","https://www.legoland.jp/hours-and-calendar/"],["地圖",GM("LEGOLAND Japan")]]},
+
+ {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）",
+  depart:"08:30",back:"14:30",departLabel:"出門",backLabel:"離館",
+  plan:[["08:30","出門","門到門留 50–60 分"],["09:30","開館入館，先逛北館","虎鯨、白鯨在北館"],["10:45","北館 3F 表演場入座","海豚秀前 15 分先坐好"],["11:00","海豚表演（20 分）","唯一備案 13:00 場；不等 15:30"],["11:30","午餐、休息","館內餐廳或帶出去吃"],["12:15","南館","企鵝、海龜、大水槽"],["14:30","離館","不戀棧，Amber 下午電力有限"]],
+  maybe:[["LaLaport 名古屋港 AQULS","15:15–16:45。名古屋港站搭 2 站到港区役所，步行 5 分。累就直接回飯店"]],
+  food:"館內或 LaLaport 美食街",
+  tip:"門票還沒買。成人 ¥2,030、Amber（4 歲以上）¥500，三人約 ¥4,560。週一休館，11/10 週二正常。",
+  rg:{title:"栄 → 名古屋港（50–60 分）",steps:[SAKAE_H,
+    {k:"train",b:"名城線 左回り → 金山 M01",s:"往「金山」方向。看月台顯示：寫「名古屋港」的車可以直達不用換；寫「左回り」的在金山下車"},
+    {k:"train",b:"金山 轉名港線 → 名古屋港 E07",s:"同月台或對面月台換「名古屋港」行，終點站約 11 分"},
+    {k:"walk",b:"3 號出口 → 水族館",s:"步行約 5 分，平路；推車依電梯標示"}],
+    fare:["大人 ¥270（3 區）","Amber 免費"]},
+  rb:{title:"名古屋港 → 栄",steps:[{k:"train",b:"名港線 → 金山 → 栄",s:"「栄・大曽根」方向直達車最省事，否則金山換名城線右回り"},{k:"walk",b:"栄 2 號出口 → 飯店",s:""}],fare:["大人 ¥270"]},
+  links:[["水族館官網","https://nagoyaaqua.jp/"],["表演時間表","https://nagoyaaqua.jp/schedule/"],["地圖",GM("名古屋港水族館")]]},
+
+ {iso:"2026-11-11",md:"11/11",dow:"三",n:5,e:1,emoji:"🏯",title:"名古屋城半天",ja:"名古屋城（なごやじょう）",
+  depart:"08:45",back:"12:30",departLabel:"出門",backLabel:"回榮",
+  plan:[["08:45","出門","2 站就到"],["09:30","入城：本丸御殿、城郭","天守閣整修中不開放；御殿要脫鞋、推車停門口"],["12:00","午餐、回榮",""],["14:30","HARBS 榮本店 下午茶","或改松坂屋店，不排兩家"],["","下午回飯店休息，早睡","明天吉卜力是大日子"]],
+  maybe:[["晚餐候選 蓬萊軒 松坂屋南館","18:00；11/8 已吃就換別家"]],
+  food:"HARBS、蓬萊軒（候選）",
+  tip:"09:00–16:30，本丸御殿 16:00 停止入場。成人約 ¥500、Amber 免費，以售票處為準。",
+  rg:{title:"栄 → 名古屋城（約 5 分車程）",steps:[SAKAE_H,
+    {k:"train",b:"名城線 右回り → 名古屋城 M07",s:"往「大曽根」方向，2 站約 5 分"},
+    {k:"walk",b:"7 號出口 → 東門",s:"步行約 5 分，帶 Amber 抓 10–15 分；推車依電梯標示"}],
+    fare:["大人 ¥210（1 區）","Amber 免費"]},
+  rb:{title:"名古屋城 → 栄",steps:[{k:"train",b:"名城線 左回り → 栄 M05",s:"往「栄・金山」方向，2 站"}],fare:["大人 ¥210"]},
+  links:[["名古屋城官網","https://www.nagoyajo.city.nagoya.jp/"],["地圖",GM("名古屋城 東門")]]},
+
+ {iso:"2026-11-12",md:"11/12",dow:"四",n:6,e:3,emoji:"🌳",title:"吉卜力公園",ja:"ジブリパーク（Premium・大倉庫 14:00）",ghibli:true,
+  depart:"07:25",back:"20:00",departLabel:"出門",backLabel:"回飯店",
+  plan:[["07:25","出門，栄 → 藤が丘 → Linimo",""],["10:00","どんどこ森 開園入場","驗票領手環，購票代表人帶護照"],["11:50","魔女の谷、午餐",""],["14:00","ジブリの大倉庫 入場","14:00–15:00 內入場，不能提早"],["17:00","閉園，原路回榮","留 90–120 分"],["18:40","晚餐 オアシス21",""]],
+  maybe:[["青春の丘","大倉庫之後 16:20–16:50 順路逛，離車站近"]],
+  food:"魔女の谷 Hot Tin Roof、晚餐 上海湯包小館",
+  tip:"今天的每一步、計時、地圖、門票都在吉卜力攻略頁，這裡只放摘要。",
+  links:[]},
+
+ {iso:"2026-11-13",md:"11/13",dow:"五",n:7,e:1,emoji:"🛍️",title:"大須、買伴手禮",ja:"大須観音・大須商店街・松坂屋 南館",
+  depart:"09:45",back:"15:00",departLabel:"出門",backLabel:"回飯店約",
+  plan:[["09:45","睡飽再出門",""],["10:30","大須観音 參拜","鴿子很多，Amber 會喜歡"],["11:30","大須商店街 散步","老店、雜貨、小吃"],["12:30","矢場とん 矢場町本店 午餐","味噌豬排，含排隊；未訂位"],["13:45","松坂屋 南館 買伴手禮","本館／北館今天會員包場，只逛南館"],["15:00","回飯店，整理行李","明天早上退房"]],
+  maybe:[["黑豚屋 らむちぃ","味噌豬排替代，矢場とん 排太長就換"],["唐吉訶德","11/7 沒去的話今天補"]],
+  food:"矢場とん、黑豚屋 らむちぃ、HARBS 松坂屋店",
+  tip:"今天是輕鬆日，走累了就回飯店。回程從矢場町 M04 搭 1 站到栄，或走路 10 分。",
+  rg:{title:"栄 → 大須観音（35–45 分門到門）",steps:[SAKAE_H,
+    {k:"train",b:"東山線 → 伏見 H09",s:"往「高畑」方向，1 站"},
+    {k:"walk",b:"伏見 轉鶴舞線",s:"跟「鶴舞線」指標，留 10–15 分"},
+    {k:"train",b:"鶴舞線 → 大須観音 T08",s:"往「赤池」方向，2 站"},
+    {k:"walk",b:"2 號出口 → 大須観音",s:"步行約 3 分；推車依電梯標示"}],
+    fare:["大人 ¥210（1 區）","Amber 免費"]},
+  rb:{title:"矢場町 → 栄",steps:[{k:"train",b:"名城線 → 栄 M05",s:"矢場町 M04 往「栄・大曽根」方向 1 站，約 2 分"},{k:"walk",b:"走路也行",s:"松坂屋 → 飯店約 10 分，平路"}],fare:["大人 ¥210，或 ¥0 走路"]},
+  links:[["矢場とん 本店",GM("矢場とん 矢場町本店")],["松坂屋 南館",GM("松坂屋名古屋店 南館")]]},
+
+ {iso:"2026-11-14",md:"11/14",dow:"六",n:8,e:2,emoji:"🛬",title:"回家",ja:"栄 → 金山 → 中部国際空港 → 台北",
+  depart:"11:40",back:"21:30",departLabel:"離開飯店",backLabel:"到家約",
+  plan:[["11:00","退房，行李先寄櫃檯","最後逛逛或休息"],["11:25","領行李、上廁所",""],["11:40","出發，栄站 3 號月台","名城線 12:02 往金山"],["12:10","金山 轉名鐵，留 25 分","特急 322 12:35 → 機場 13:06"],["13:20","到 T1 國泰櫃檯","14:10 開櫃，14:45 前完成托運"],["15:30","到登機口附近","15:40 是報到硬截止，不能當目標"],["16:40","CX531 起飛","名古屋 16:40 → 桃園 19:10"],["20:00","計程車接機","出關後聯繫司機，T1 → 家"]],
+  maybe:[["機場逛逛","13:30–14:10 開櫃前的空檔，T1 有商店和餐廳"]],
+  food:"機場或機上",
+  tip:"錯過 12:02 就搭下一班經金山的車，仍留轉乘緩衝。唯一機場備案：特急 330 金山 13:05 → 13:36。延誤就取消購物。",
+  rg:{title:"飯店 → 中部国際空港（約 90 分）",steps:[
+    {k:"walk",b:"飯店 → 栄站 M05 3 號月台",s:"帶大行李走電梯，留 15–20 分"},
+    {k:"train",b:"名城線 12:02 → 金山 M01",s:"往「金山／名古屋港」方向，4 站 12:10 到"},
+    {k:"walk",b:"金山 轉名鐵，留 25 分",s:"跟「名鉄」指標上樓；搬行李、電梯、買票各留一些"},
+    {k:"train",b:"名鐵 特急 322 12:35 → 中部国際空港 13:06",s:"看月台顯示終點是「中部国際空港」才上車。不是 12:56 往知多半田的普通車"},
+    {k:"fly",b:"機場站 → T1 國泰櫃檯（I／J 島）",s:"步行留 10–15 分"}],
+    fare:["地鐵 栄→金山 大人 ¥210","名鐵 金山→機場 大人 ¥910；指定席券每人 ¥450（建議買，帶行李有位子）","Amber 地鐵、名鐵一般車免費"],flag:"班次按現行時刻表，非 11/14 當日查詢；出發前覆核改點與電梯點檢"},
+  links:[["名鐵查詢","https://www.meitetsu.co.jp/"],["國泰 管理預訂","https://www.cathaypacific.com/"],["中部機場","https://www.centrair.jp/"]]},
+];
+
+// ===== 準備清單 =====
+const TODO_BUY = [
+  ["LEGOLAND 11/9 指定日門票","官網購買，不加 SEA LIFE",["https://www.legoland.jp/","官網"]],
+  ["名古屋港水族館 門票","11/10；出發前重查海豚場次",["https://nagoyaaqua.jp/","官網"]],
+  ["eSIM 兩張","推薦易遊網 KDDI 5G 8 天吃到飽，NT$569／張，熱點 7GB。下單前撥 *#06# 確認 EID，不可退",["https://activity.eztravel.com.tw/detail/TKAC000012678","易遊網"]],
+];
+const TODO_WEEK = ["查天氣，決定外套厚度","查地鐵／名鐵／Linimo 改點與電梯點檢公告","LEGOLAND 官方日曆確認 11/9 開園","水族館 11/10 海豚場次確認","吉卜力票券頁手機能開（已有密碼按鈕）","列印或離線備份：機票、訂房、保單、eSIM 安裝資料","行動電源充飽、充電線備齊","飯店確認 7 晚、Amber 同床","計程車接送時間再確認（11/7 07:30、11/14 20:00）"];
+const PACK = [
+  ["隨身（登機）",["護照 ×3","電子機票、訂房確認（截圖）","信用卡、日圓現金","手機、充電線、行動電源","eSIM 安裝資料","旅遊保單、緊急聯絡","Amber 的零食、水壺","濕紙巾、面紙","小玩具或平板（機上）","薄外套（機艙冷）"]],
+  ["Amber",["替換衣物（每天 1 套＋備 2）","保暖外套、帽子","雨衣或雨具","常用藥、退燒藥、OK 繃","小被子或披肩（推車用）","替換鞋","晚上安撫的東西"]],
+  ["大人",["衣物、保暖層","好走的鞋","盥洗用品","個人藥品","洗衣袋（髒衣分開）"]],
+  ["推車與行李",["推車（可收折，地鐵要收）","30 吋 ×2、20 吋 ×1","行李秤（回程伴手禮）","摺疊購物袋","行李鎖"]],
+  ["3C 與文件",["轉接頭（日本 A 型，台灣相同可不用）","多孔充電器","耳機","Google Doc 行程離線備份","吉卜力攻略頁加到主畫面"]],
+];
+
+// ===== 資訊 =====
+const INFO = {
+  hotel:{name:"KOKO HOTEL Nagoya Sakae",ja:"KOKO HOTEL 名古屋栄",addr:"愛知県名古屋市中区錦3-15-21",tel:"+81-52-961-0082",io:"入住 15:00 後／退房 11:00 前",room:"高級雙床房 22㎡，兩床各 110cm，2 大 1 小",go:"地鐵栄站 2 號出口旁，步行 1 分"},
+  flights:[["去程 11/7（六）","CX530","桃園 TPE 12:00 → 名古屋 NGO 15:35"],["回程 11/14（六）","CX531","名古屋 NGO 16:40 → 桃園 TPE 19:10"]],
+  taxi:[["去程 11/7（六）","07:30 家門口上車 → 桃園機場 T1","NT$1,500（含兒童座椅）"],["回程 11/14（六）","20:00 桃園機場 T1 → 家，出關後聯繫司機","NT$1,700（含兒童座椅）"]],
+  fares:[["地鐵 1／2／3 區","¥210／¥240／¥270"],["栄 → 藤が丘（吉卜力）","¥310"],["Linimo 藤が丘 → 公園","¥400"],["あおなみ線 名古屋 → 金城ふ頭","¥360"],["名鐵 金山 ↔ 機場","¥910 ＋指定席 ¥450"],["Amber 5 歲","地鐵／名鐵／Linimo 隨大人免費"]],
+  emergency:[["警察","110"],["救護車・消防","119"],["外交部旅外急難救助（24h）","+886-800-085-095"],["台北駐大阪辦事處（轄愛知）","+81-6-6227-8623"]],
+  links:[
+    ["吉卜力公園 當日攻略","自家頁面，含門票、計時、地圖",GHIBLI,true],
+    ["去趣 Chictrip","地圖與路線細節（需登入）","https://chictrip.com.tw/"],
+    ["名古屋市交通局 路線查詢","地鐵時刻、電梯點檢","https://www.kotsu.city.nagoya.jp/"],
+    ["名鐵 時刻表與票價","機場往返","https://www.meitetsu.co.jp/"],
+    ["Linimo 時刻表","吉卜力當天","https://www.linimo.jp/"],
+    ["KOKO HOTEL 官網","地址、交通","https://koko-hotels.com/"],
+    ["國泰航空 管理預訂","座位、報到","https://www.cathaypacific.com/"],
+    ["吉卜力公園 官網","開園日曆、等待時間","https://ghibli-park.jp/"],
+    ["LEGOLAND Japan","門票、日曆","https://www.legoland.jp/"],
+    ["名古屋港水族館","門票、表演時間","https://nagoyaaqua.jp/"],
+    ["東山動植物園","營業、票價","https://www.higashiyama.city.nagoya.jp/"],
+    ["名古屋城","營業、票價","https://www.nagoyajo.city.nagoya.jp/"],
+    ["易遊網 KDDI eSIM","推薦方案","https://activity.eztravel.com.tw/detail/TKAC000012678"],
+  ],
+};
+
+// ===== 狀態 =====
+const store = {get(k,d){try{const v=localStorage.getItem("trip-"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("trip-"+k,JSON.stringify(v))}catch(e){}}};
+const jstToday = () => { const d = new Date(Date.now() + 9*3600e3); return d.toISOString().slice(0,10); };
+const TODAY = jstToday();
+const TRIP_START = "2026-11-07";
+let view = "day";
+let dayIdx = Math.max(0, DAYS.findIndex(d => d.iso === TODAY));
+if (dayIdx < 0) dayIdx = 0;
+
+const $ = s => document.querySelector(s);
+const dots = e => "●".repeat(e) + "<span style='opacity:.3'>" + "●".repeat(3-e) + "</span>";
+const energyLabel = e => ["","輕鬆","普通","大日子"][e];
+
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("on"),1600); }
+
+// ===== 今天／某一天 =====
+function renderChips(){
+  $("#chips").innerHTML = DAYS.map((d,i)=>`<button aria-pressed="${i===dayIdx}" class="${d.iso===TODAY?"today":""}" data-i="${i}"><span>${d.md}</span><small>${d.dow}</small></button>`).join("");
+  $("#chips").querySelectorAll("button").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.i; show("day"); });
+  const on=$("#chips button[aria-pressed='true']"); on && on.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
+}
+function routeHTML(r){
+  if(!r) return "";
+  const icon = {walk:"步",train:"車",taxi:"計",fly:"機"};
+  return `<details class="tr"><summary><span>${esc(r.title)}</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <ol class="route">${r.steps.map(s=>`<li><span class="n ${s.k}">${icon[s.k]||"·"}</span><div><b>${zh(esc(s.b)).replace(/\b([HMETL]\d{2}|AN\d{2})\b/g,'<span class="code">$1</span>')}</b>${s.s?`<small>${zh(esc(s.s))}</small>`:""}</div></li>`).join("")}</ol>
+    ${r.fare?`<div class="fare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M7 7h7a3 3 0 0 1 0 6H8M7 13h8"/></svg><ul>${r.fare.map(f=>`<li>${zh(esc(f))}</li>`).join("")}</ul></div>`:""}
+    ${r.flag?`<p class="flag">${esc(r.flag)}</p>`:""}
+  </details>`;
+}
+function renderDay(){
+  const d = DAYS[dayIdx];
+  const before = TODAY < TRIP_START;
+  const daysLeft = Math.round((new Date(TRIP_START) - new Date(TODAY))/864e5);
+  let h = "";
+  if (before && dayIdx===0) h += `<div class="card warm"><div class="count"><b class="mono">${daysLeft}</b><span>天後出發 · 還沒買的東西在「準備」</span></div><div class="actions"><button class="btn" data-go="prep">看準備清單</button></div></div>`;
+  h += `<article class="card hero">
+    <div class="eyebrow"><span>DAY ${d.n} · ${d.md}（${d.dow}）</span><span class="dots">${dots(d.e)}</span><span>${energyLabel(d.e)}</span></div>
+    <h2>${d.emoji} ${esc(d.title)}</h2>
+    <p class="ja">${esc(d.ja)}</p>
+    <div class="times"><div><span>${esc(d.departLabel)}</span><b>${esc(d.depart)}</b></div><div><span>${esc(d.backLabel)}</span><b>${esc(d.back)}</b></div></div>
+    ${d.ghibli?`<div class="actions"><a class="btn ghibli wide" href="${GHIBLI}">打開吉卜力攻略頁 →</a></div>`:""}
+    <ol class="plan">${d.plan.map(([t,b,s])=>`<li><span class="t ${t?"":"blank"}">${esc(t)}</span><div><b>${zh(esc(b))}</b>${s?`<small>${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ol>
+    ${routeHTML(d.rg)}${routeHTML(d.rb)}
+    ${d.links&&d.links.length?`<div class="actions">${d.links.map(([t,u])=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</div>`:""}
+  </article>`;
+  if (d.maybe&&d.maybe.length) h += `<article class="card maybe"><div class="eyebrow"><span class="tag ghost">看情況</span></div><ul class="pts">${d.maybe.map(([b,s])=>`<li><div><b>${zh(esc(b))}</b>${s?`<small class="note" style="display:block">${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ul></article>`;
+  if (d.food) h += `<article class="card"><div class="eyebrow"><span class="tag sun">吃的參考</span><span>自己決定，不綁行程</span></div><p>${zh(esc(d.food))}</p></article>`;
+  if (d.tip) h += `<article class="card warm"><p>${zh(esc(d.tip))}</p></article>`;
+  const prev = DAYS[dayIdx-1], next = DAYS[dayIdx+1];
+  h += `<div class="actions">${prev?`<button class="btn" data-day="${dayIdx-1}">← ${prev.md}</button>`:""}${next?`<button class="btn primary" data-day="${dayIdx+1}">${next.md} →</button>`:""}</div>`;
+  $("#v-day").innerHTML = h;
+  $("#v-day").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.day; show("day"); window.scrollTo({top:0,behavior:"smooth"});});
+  $("#v-day").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+}
+
+// ===== 八天 =====
+function renderAll(){
+  $("#v-all").innerHTML = `<div class="card"><h3>8 天 7 夜 · 一天最多一個主要景點</h3><p class="note">● 輕鬆　●● 普通　●●● 大日子。大日子前後都是輕鬆日，有餘裕。</p></div>
+  <ol class="days">${DAYS.map((d,i)=>`<li><button class="${d.e===3?"big":""} ${d.iso<TODAY?"past":""}" data-i="${i}"><span class="d"><b>${d.md}</b><small>${d.dow} · D${d.n}</small></span><span class="m"><b>${d.emoji} ${esc(d.title)}</b><small>${esc(d.depart)} ${esc(d.departLabel)}${d.maybe&&d.maybe.length?" · 可選："+esc(d.maybe[0][0]):""}</small></span><span class="e">${dots(d.e)}</span></button></li>`).join("")}</ol>
+  <div class="card"><h3>節奏檢查</h3><ul class="pts"><li>11/8–11/10 連三天出門，11/8 刻意放輕鬆、可取消</li><li>11/11 半天行程，為 11/12 吉卜力留體力</li><li>11/13 睡飽再出門，當天整理行李</li></ul></div>`;
+  $("#v-all").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.i; show("day"); window.scrollTo({top:0});});
+}
+
+// ===== 準備 =====
+function chkList(key, items, render){
+  const done = store.get(key, {});
+  return `<ul class="chk">${items.map((it,i)=>{const id=key+"-"+i; return `<li><label><input type="checkbox" id="${id}" data-key="${key}" data-i="${i}" ${done[i]?"checked":""}><span>${render(it)}</span></label></li>`;}).join("")}</ul>`;
+}
+function renderPrep(){
+  const daysLeft = Math.round((new Date(TRIP_START) - new Date(TODAY))/864e5);
+  const count = (key,n)=>{const d=store.get(key,{});return Object.values(d).filter(Boolean).length+"/"+n;};
+  let h = `<div class="card hero"><div class="eyebrow"><span>距離出發</span></div><div class="count"><b class="mono">${daysLeft>0?daysLeft:0}</b><span>天 · 11/7（六）07:30 家門口上車</span></div></div>`;
+  h += `<div class="card group"><h3>還沒買 <small>${count("buy",TODO_BUY.length)}</small></h3>${chkList("buy",TODO_BUY,([b,s,l])=>`${esc(b)}<small>${esc(s)}${l?` · <a href="${l[0]}" target="_blank" rel="noopener">${esc(l[1])} ↗</a>`:""}</small>`)}</div>`;
+  h += `<div class="card group"><h3>出發前 7 天 <small>${count("week",TODO_WEEK.length)}</small></h3>${chkList("week",TODO_WEEK,t=>esc(t))}</div>`;
+  h += PACK.map(([g,items],gi)=>`<div class="card group"><h3>${esc(g)} <small>${count("pack"+gi,items.length)}</small></h3>${chkList("pack"+gi,items,t=>esc(t))}</div>`).join("");
+  h += `<div class="card"><h3>備忘</h3><ul class="pts"><li>推車：地鐵、名鐵車廂內收折；吉卜力園區道路可推，多數建築內要停指定位置</li><li>吉卜力區域內不能吃自帶食物；其他景點可</li><li>日本 11 月名古屋白天約 12–18°C，早晚涼，洋蔥式穿法</li><li>每天出門前：票券截圖、行動電源、Amber 的水和零食</li><li>蓬萊軒週二休；11/13 松坂屋本館、北館會員包場，只逛南館</li></ul><button class="linkbtn" id="resetChk">清除所有勾選</button></div>`;
+  $("#v-prep").innerHTML = h;
+  $("#v-prep").querySelectorAll("input[type=checkbox]").forEach(c=>c.onchange=()=>{const d=store.get(c.dataset.key,{}); d[c.dataset.i]=c.checked; store.set(c.dataset.key,d); renderPrep();});
+  $("#resetChk").onclick=()=>{["buy","week",...PACK.map((_,i)=>"pack"+i)].forEach(k=>store.set(k,{})); renderPrep(); toast("已清除");};
+}
+
+// ===== 資訊 =====
+function renderInfo(){
+  const I = INFO;
+  const cp = (t,label) => `<button class="copy" data-copy="${esc(t)}">${label||"複製"}</button>`;
+  let h = `<div class="card"><div class="eyebrow"><span class="tag">住宿</span></div><h3>${esc(I.hotel.name)}</h3>
+    <dl class="kv"><div><dt>給司機看</dt><dd>${esc(I.hotel.ja)}<br>${esc(I.hotel.addr)} ${cp(I.hotel.ja+" "+I.hotel.addr)}</dd></div><div><dt>電話</dt><dd class="mono">${esc(I.hotel.tel)} ${cp(I.hotel.tel)}</dd></div><div><dt>時間</dt><dd>${esc(I.hotel.io)}</dd></div><div><dt>房型</dt><dd>${esc(I.hotel.room)}</dd></div><div><dt>怎麼去</dt><dd>${esc(I.hotel.go)}</dd></div></dl>
+    <div class="actions"><a class="btn primary" href="${GM("KOKO HOTEL Nagoya Sakae")}" target="_blank" rel="noopener">地圖導航 ↗</a></div></div>`;
+  h += `<div class="card"><div class="eyebrow"><span class="tag rose">航班</span><span>座位與訂位代號看電子機票</span></div><dl class="kv">${I.flights.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd><b class="mono">${esc(b)}</b><br>${esc(c)}</dd></div>`).join("")}</dl></div>`;
+  h += `<div class="card"><div class="eyebrow"><span class="tag sun">台灣機場接送</span><span>已預約</span></div><dl class="kv">${I.taxi.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}<br><small class="note">${esc(c)}</small></dd></div>`).join("")}</dl><p class="note">司機與車牌資料在叫車 App，這裡不放。</p></div>`;
+  h += `<div class="card"><div class="eyebrow"><span class="tag sky">車資速查</span><span>大人單程，IC 卡同價</span></div><ul class="fares">${I.fares.map(([a,b])=>`<li><span>${zh(esc(a))}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">查證日 2026/10/28（ekitan、名鐵官網）。以售票機顯示為準。</p></div>`;
+  h += `<div class="card"><div class="eyebrow"><span class="tag rose">緊急</span></div><ul class="fares">${I.emergency.map(([a,b])=>`<li><span>${esc(a)}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">保單號碼與保險公司電話存在手機，這裡不放。</p></div>`;
+  h += `<div class="card"><h3>重要連結</h3><div class="links">${I.links.map(([t,s,u,hot])=>`<a href="${u}" class="${hot?"hot":""}" ${hot?"":'target="_blank" rel="noopener"'}><span>${esc(t)}<br><small>${esc(s)}</small></span><small>↗</small></a>`).join("")}</div><p class="note">票券連結、Google 行程文件請用手機書籤，不放在這個公開頁面。</p></div>`;
+  $("#v-info").innerHTML = h;
+  $("#v-info").querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{const t=b.dataset.copy; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("已複製")).catch(()=>{ const r=document.createRange(); r.selectNodeContents(b.parentElement); getSelection().removeAllRanges(); getSelection().addRange(r); toast("請長按複製"); });});
+}
+
+// ===== 切換 =====
+function show(v){
+  view = v;
+  ["day","all","prep","info"].forEach(k=>{ $("#v-"+k).hidden = k!==v; });
+  $("#dock").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.view===v));
+  $("#chips").hidden = v!=="day";
+  if(v==="day"){ renderChips(); renderDay(); }
+  if(v==="all") renderAll();
+  if(v==="prep") renderPrep();
+  if(v==="info") renderInfo();
+  try{ location.hash = v==="day" ? "d"+DAYS[dayIdx].md.replace("/","-") : v; }catch(e){}
+}
+$("#dock").querySelectorAll("button").forEach(b=>b.onclick=()=>{ show(b.dataset.view); window.scrollTo({top:0}); });
+(function(){
+  const h = location.hash.replace("#","");
+  const m = h.match(/^d11-(\d+)$/);
+  if (m){ const i = DAYS.findIndex(d=>d.md==="11/"+m[1]); if(i>=0) dayIdx=i; show("day"); }
+  else if (["all","prep","info"].includes(h)) show(h);
+  else show("day");
+})();
+try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}
+</script>
+</body>
+</html>

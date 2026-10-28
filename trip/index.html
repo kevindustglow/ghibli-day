@@ -227,6 +227,7 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
 
 <script>
 // ===== 資料：以 Google 文件 2026/10/27 總覽表為準；吃的只是參考 =====
+const GNAV = (o,d) => "https://www.google.com/maps/dir/?api=1&travelmode=transit&origin=" + encodeURIComponent(o) + "&destination=" + encodeURIComponent(d);
 const GM = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 const GHIBLI = "../";
 
@@ -248,7 +249,7 @@ const DAYS = [
   maybe:[["唐吉訶德 榮本店","20:30–21:30 隨意逛逛，24 小時營業。航班延誤或 Amber 沒電就跳過，休息日再補 🛒"]],
   food:"飯店附近隨便吃，不趕",
   tip:"入境慢了就順延入住和晚餐、跳過唐吉訶德，今天不趕車 🙂",
-  rg:{title:"機場 → 飯店（75–90 分）",steps:[
+  rg:nav:["中部国際空港駅","KOKO HOTEL Nagoya Sakae"],{title:"機場 → 飯店（75–90 分）",steps:[
     {k:"fly",b:"中部国際空港 站",s:"出關後跟「名鉄」指標走，連通道平路到車站（約 5–10 分）"},
     {k:"train",b:"名鉄 特急 → 金山",s:"往「名鉄名古屋／岐阜」方向，約 24–30 分。一般車免費對號；帶行李和小孩建議買指定席券（1–2 號車）才有位子"},
     {k:"walk",b:"金山 轉地鐵名城線",s:"出名鐵剪票口，跟「地下鉄」指標下一層；搬行李留 15–20 分。金山站有電梯，依標示"},
@@ -262,11 +263,11 @@ const DAYS = [
   maybe:[["東山天空塔（備案）","動物園旁邊的展望塔，20–30 分就夠。買票時看天氣：晴天就買共通券（成人約 ¥640，多付 ¥140），陰雨天不買。Amber 還有電、不趕晚餐再上去"],["不去動物園也完全 OK","今天是緩衝日，睡飽比什麼都重要"]],
   food:"蓬萊軒（松坂屋南館 10F）、HARBS 榮本店",
   tip:"09:00–16:50 開園（16:30 停止入園）。成人約 ¥500、Amber 免費，以售票處為準 🎟️",
-  rg:{title:"栄 → 東山公園（約 12 分）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","東山動植物園 正門"],{title:"栄 → 東山公園（約 12 分）",steps:[SAKAE_H,
     {k:"train",b:"東山線 → 東山公園 H16",s:"往「藤が丘」方向，1 號月台，6 站約 12 分"},
     {k:"walk",b:"3 號出口 → 正門",s:"3 號出口旁有電梯，步行約 3 分"}],
     fare:["大人 ¥240（2 區）","Amber 免費"]},
-  rb:{title:"東山公園 → 栄",steps:[{k:"train",b:"東山線 → 栄 H10",s:"往「高畑」方向，坐 6 站，2 號月台下車"},{k:"walk",b:"栄 2 號出口 → 飯店",s:"或走オアシス21 電梯上地面"}],fare:["大人 ¥240"]},
+  rb:nav:["東山動植物園 正門","KOKO HOTEL Nagoya Sakae"],{title:"東山公園 → 栄",steps:[{k:"train",b:"東山線 → 栄 H10",s:"往「高畑」方向，坐 6 站，2 號月台下車"},{k:"walk",b:"栄 2 號出口 → 飯店",s:"或走オアシス21 電梯上地面"}],fare:["大人 ¥240"]},
   links:[["動物園官網","https://www.higashiyama.city.nagoya.jp/"],["地圖",GM("東山動植物園")]]},
 
  {iso:"2026-11-09",md:"11/9",dow:"一",n:3,e:3,emoji:"🧱",title:"LEGOLAND",ja:"レゴランド・ジャパン（樂高樂園）", wear:"靠海空曠、風大，體感比市區冷。三人毛帽＋防風外套，推車小毯子帶著 🧣", exp:"sea", buy:"d0",
@@ -275,13 +276,13 @@ const DAYS = [
   maybe:[["Maker's Pier 晚餐","車站旁商場，不想回榮再吃可以在這裡"]],
   food:"園內午餐",
   tip:"⚠️ 門票還沒買。官方日曆尚未確認 11/9 全天開園，出發前再查。ロストキングダム 11/9–11/13 暫停（非官方來源）。",
-  rg:{title:"栄 → 金城ふ頭（75–90 分）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","LEGOLAND Japan"],{title:"栄 → 金城ふ頭（75–90 分）",steps:[SAKAE_H,
     {k:"train",b:"東山線 → 名古屋 H08",s:"往「高畑」方向，2 站約 5 分"},
     {k:"walk",b:"名古屋站 轉あおなみ線",s:"出剪票口跟「あおなみ線」指標往太閤通口（JR 那側），跨站約 10 分；含電梯、買票留 20–25 分"},
     {k:"train",b:"あおなみ線 → 金城ふ頭 AN11",s:"終點站，坐到底不會過站，約 24 分"},
     {k:"walk",b:"出站 → 樂高樂園入口",s:"沿指標過 Maker's Pier，平路步行約 10–15 分"}],
     fare:["地鐵 栄→名古屋 大人 ¥210","あおなみ線 名古屋→金城ふ頭 大人 ¥360","Amber 兩段都免費（大人陪同）","あおなみ線可用 Suica／manaca"]},
-  rb:{title:"金城ふ頭 → 栄（75–90 分）",steps:[{k:"train",b:"あおなみ線 → 名古屋",s:"終點站，約 24 分"},{k:"walk",b:"名古屋站 轉東山線",s:"跟「地下鉄東山線」指標，留 20 分"},{k:"train",b:"東山線 → 栄 H10",s:"往「藤が丘」方向，2 站"}],fare:["同去程 ¥570／大人"]},
+  rb:nav:["LEGOLAND Japan","KOKO HOTEL Nagoya Sakae"],{title:"金城ふ頭 → 栄（75–90 分）",steps:[{k:"train",b:"あおなみ線 → 名古屋",s:"終點站，約 24 分"},{k:"walk",b:"名古屋站 轉東山線",s:"跟「地下鉄東山線」指標，留 20 分"},{k:"train",b:"東山線 → 栄 H10",s:"往「藤が丘」方向，2 站"}],fare:["同去程 ¥570／大人"]},
   links:[["LEGOLAND 官網","https://www.legoland.jp/"],["營業日曆","https://www.legoland.jp/hours-and-calendar/"],["地圖",GM("LEGOLAND Japan")]]},
 
  {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）", wear:"水族館靠海，館外風大、館內舒適。防風外套進館脫，推車小毯子帶著", exp:"sea", buy:"d1",
@@ -290,12 +291,12 @@ const DAYS = [
   maybe:[["LaLaport 名古屋港 AQULS","15:15–16:45。名古屋港站搭 2 站到港区役所，步行 5 分。累就直接回飯店"]],
   food:"館內或 LaLaport 美食街",
   tip:"⚠️ 門票還沒買。成人 ¥2,030、Amber（4 歲以上）¥500，三人約 ¥4,560。週一休館，11/10 週二正常。",
-  rg:{title:"栄 → 名古屋港（50–60 分）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","名古屋港水族館"],{title:"栄 → 名古屋港（50–60 分）",steps:[SAKAE_H,
     {k:"train",b:"名城線 左回り → 金山 M01",s:"往「金山」方向。看月台顯示：寫「名古屋港」的車可以直達不用換；寫「左回り」的在金山下車"},
     {k:"train",b:"金山 轉名港線 → 名古屋港 E07",s:"同月台或對面月台換「名古屋港」行，終點站約 11 分"},
     {k:"walk",b:"3 號出口 → 水族館",s:"步行約 5 分，平路；推車依電梯標示"}],
     fare:["大人 ¥270（3 區）","Amber 免費"]},
-  rb:{title:"名古屋港 → 栄",steps:[{k:"train",b:"名港線 → 金山 → 栄",s:"「栄・大曽根」方向直達車最省事，否則金山換名城線右回り"},{k:"walk",b:"栄 2 號出口 → 飯店",s:""}],fare:["大人 ¥270"]},
+  rb:nav:["名古屋港水族館","KOKO HOTEL Nagoya Sakae"],{title:"名古屋港 → 栄",steps:[{k:"train",b:"名港線 → 金山 → 栄",s:"「栄・大曽根」方向直達車最省事，否則金山換名城線右回り"},{k:"walk",b:"栄 2 號出口 → 飯店",s:""}],fare:["大人 ¥270"]},
   links:[["水族館官網","https://nagoyaaqua.jp/"],["表演時間表","https://nagoyaaqua.jp/schedule/"],["地圖",GM("名古屋港水族館")]]},
 
  {iso:"2026-11-11",md:"11/11",dow:"三",n:5,e:1,emoji:"🏯",title:"名古屋城半天",ja:"名古屋城（なごやじょう）", wear:"市區半天，白天 17–18° 薄外套就好；下午回飯店休息不用多帶", exp:"city",
@@ -304,11 +305,11 @@ const DAYS = [
   maybe:[["晚餐候選 蓬萊軒 松坂屋南館","18:00；11/8 已吃就換別家"]],
   food:"HARBS、蓬萊軒（候選）",
   tip:"09:00–16:30，本丸御殿 16:00 停止入場。成人約 ¥500、Amber 免費，以售票處為準。",
-  rg:{title:"栄 → 名古屋城（約 5 分車程）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","名古屋城 東門"],{title:"栄 → 名古屋城（約 5 分車程）",steps:[SAKAE_H,
     {k:"train",b:"名城線 右回り → 名古屋城 M07",s:"往「大曽根」方向，2 站約 5 分"},
     {k:"walk",b:"7 號出口 → 東門",s:"步行約 5 分，帶 Amber 抓 10–15 分；推車依電梯標示"}],
     fare:["大人 ¥210（1 區）","Amber 免費"]},
-  rb:{title:"名古屋城 → 栄",steps:[{k:"train",b:"名城線 左回り → 栄 M05",s:"往「栄・金山」方向，2 站"}],fare:["大人 ¥210"]},
+  rb:nav:["名古屋城 東門","KOKO HOTEL Nagoya Sakae"],{title:"名古屋城 → 栄",steps:[{k:"train",b:"名城線 左回り → 栄 M05",s:"往「栄・金山」方向，2 站"}],fare:["大人 ¥210"]},
   links:[["名古屋城官網","https://www.nagoyajo.city.nagoya.jp/"],["地圖",GM("名古屋城 東門")]]},
 
  {iso:"2026-11-12",md:"11/12",dow:"四",n:6,e:3,emoji:"🌳",title:"吉卜力公園",ja:"ジブリパーク（Premium・大倉庫 14:00）",ghibli:true, wear:"丘陵戶外整天，傍晚回程最冷。毛帽、刷毛、防風外套、推車小毯子；大倉庫室內熱了可脫 🧣", exp:"hill",
@@ -316,13 +317,13 @@ const DAYS = [
   plan:[["07:25","出門，栄 → 藤が丘 → Linimo",""],["10:00","🌳 どんどこ森 開園入場","驗票領手環，購票代表人帶護照"],["11:50","魔女の谷、午餐",""],["14:00","🎫 ジブリの大倉庫 入場","14:00–15:00 內入場，不能提早"],["17:00","閉園，原路回榮","留 90–120 分"],["18:40","晚餐 オアシス21",""]],
   maybe:[["青春の丘","大倉庫之後 16:20–16:50 順路逛，離車站近"]],
   food:"魔女の谷 Hot Tin Roof、晚餐 上海湯包小館",
-  rg:{title:"栄 → 吉卜力公園（約 100 分）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","ジブリパーク"],{title:"栄 → 吉卜力公園（約 100 分）",steps:[SAKAE_H,
     {k:"train",b:"東山線 → 藤が丘 H22",s:"1 號月台往「藤が丘」，坐到終點約 23 分"},
     {k:"walk",b:"藤が丘 轉 Linimo L01",s:"出剪票口跟「リニモ」指標；Linimo 站 2–4 號電梯到大廳、1 號電梯下月台。目標 08:35，錯過搭 08:43"},
     {k:"train",b:"Linimo → 愛・地球博記念公園 L07",s:"往八草方向，第 7 站，約 17 分"},
     {k:"walk",b:"L07 5 號出口 → 公園北口",s:"月台搭 1 或 2 號電梯下大廳，5 號出口平路進公園，往 E1 巴士站"}],
     fare:["東山線 栄→藤が丘 大人 ¥310","Linimo 藤が丘→公園 大人 ¥400","Amber 兩段都免費；Linimo 售票機不收信用卡"],flag:"藤が丘地下鐵站的電梯位置待確認，留 20 分找電梯"},
-  rb:{title:"吉卜力公園 → 栄（90–120 分）",steps:[
+  rb:nav:["ジブリパーク","KOKO HOTEL Nagoya Sakae"],{title:"吉卜力公園 → 栄（90–120 分）",steps:[
     {k:"walk",b:"園內 E4 → E1 北口 → L07",s:"免費巴士往北口約 6 分，E4 末班 17:31；走回 L07 5 號出口"},
     {k:"train",b:"Linimo → 藤が丘 L01",s:"搭電梯上「藤が丘方面」月台，17:12／17:20／17:28 發車，坐到終點約 17 分"},
     {k:"walk",b:"藤が丘 轉東山線 H22",s:"1 號電梯上大廳、2–4 號電梯到地面，跟「地下鉄」指標；起點站可多等一班坐著回"},
@@ -337,13 +338,13 @@ const DAYS = [
   maybe:[["黑豚屋 らむちぃ","味噌豬排替代，矢場とん 排太長就換"],["唐吉訶德","11/7 沒去的話今天補"]],
   food:"矢場とん、黑豚屋 らむちぃ、HARBS 松坂屋店",
   tip:"今天是輕鬆日，走累了就回飯店。回程從矢場町 M04 搭 1 站到栄，或散步 10 分回去。",
-  rg:{title:"栄 → 大須観音（35–45 分門到門）",steps:[SAKAE_H,
+  rg:nav:["KOKO HOTEL Nagoya Sakae","大須観音"],{title:"栄 → 大須観音（35–45 分門到門）",steps:[SAKAE_H,
     {k:"train",b:"東山線 → 伏見 H09",s:"往「高畑」方向，1 站"},
     {k:"walk",b:"伏見 轉鶴舞線",s:"跟「鶴舞線」指標，留 10–15 分"},
     {k:"train",b:"鶴舞線 → 大須観音 T08",s:"往「赤池」方向，2 站"},
     {k:"walk",b:"2 號出口 → 大須観音",s:"步行約 3 分；推車依電梯標示"}],
     fare:["大人 ¥210（1 區）","Amber 免費"]},
-  rb:{title:"矢場町 → 栄",steps:[{k:"train",b:"名城線 → 栄 M05",s:"矢場町 M04 往「栄・大曽根」方向 1 站，約 2 分"},{k:"walk",b:"走路也行",s:"松坂屋 → 飯店約 10 分，平路"}],fare:["大人 ¥210，或 ¥0 走路"]},
+  rb:nav:["松坂屋名古屋店 南館","KOKO HOTEL Nagoya Sakae"],{title:"矢場町 → 栄",steps:[{k:"train",b:"名城線 → 栄 M05",s:"矢場町 M04 往「栄・大曽根」方向 1 站，約 2 分"},{k:"walk",b:"走路也行",s:"松坂屋 → 飯店約 10 分，平路"}],fare:["大人 ¥210，或 ¥0 走路"]},
   links:[["矢場とん 本店",GM("矢場とん 矢場町本店")],["松坂屋 南館",GM("松坂屋名古屋店 南館")]]},
 
  {iso:"2026-11-14",md:"11/14",dow:"六",n:8,e:2,emoji:"🛬",title:"回家囉",ja:"栄 → 金山 → 中部国際空港 → 台北", wear:"機場移動為主。早上退房 8–10° 穿外套出門，回台灣 19:10 約 22° 可脫", exp:"airport",
@@ -352,7 +353,7 @@ const DAYS = [
   maybe:[["機場逛逛","13:30–14:10 開櫃前的空檔，T1 有商店和餐廳"]],
   food:"機場或機上",
   tip:"錯過 12:02 就搭下一班經金山的車，仍留轉乘緩衝。唯一機場備案：特急 330 金山 13:05 → 13:36。延誤就放棄逛街，報到優先 ✈️",
-  rg:{title:"飯店 → 中部国際空港（約 90 分）",steps:[
+  rg:nav:["KOKO HOTEL Nagoya Sakae","中部国際空港 第1ターミナル"],{title:"飯店 → 中部国際空港（約 90 分）",steps:[
     {k:"walk",b:"飯店 → 栄站 M05 3 號月台",s:"帶大行李走電梯，留 15–20 分"},
     {k:"train",b:"名城線 12:02 → 金山 M01",s:"往「金山／名古屋港」方向，4 站 12:10 到"},
     {k:"walk",b:"金山 轉名鐵，留 25 分",s:"跟「名鉄」指標上樓；搬行李、電梯、買票各留一些"},
@@ -460,6 +461,7 @@ function routeHTML(r){
     <ol class="route">${r.steps.map(s=>`<li><span class="n ${s.k}">${icon[s.k]||"·"}</span><div><b>${zh(esc(s.b)).replace(/\b([HMETL]\d{2}|AN\d{2})\b/g,'<span class="code">$1</span>')}</b>${s.s?`<small>${zh(esc(s.s))}</small>`:""}</div></li>`).join("")}</ol>
     ${r.fare?`<div class="fare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M7 7h7a3 3 0 0 1 0 6H8M7 13h8"/></svg><ul>${r.fare.map(f=>`<li>${zh(esc(f))}</li>`).join("")}</ul></div>`:""}
     ${r.flag?`<p class="flag">${esc(r.flag)}</p>`:""}
+    ${r.nav?`<div class="actions" style="margin-top:10px"><a class="btn primary" href="${GNAV(r.nav[0],r.nav[1])}" target="_blank" rel="noopener">🗺️ Google Maps 導航</a></div>`:""}
   </details>`;
 }
 // 穿著建議：依當天預報（氣溫、降雨）＋行程類型自動組句；沒有預報就用預設文字

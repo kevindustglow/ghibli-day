@@ -71,7 +71,7 @@ a{color:inherit}
 .wx .d b{font-family:var(--f-mono);font-size:.78rem;color:inherit}
 .wx .d .r{font-size:.66rem}
 .wx .d.sel b{color:var(--bg)}
-.wx a.more{flex:none;align-self:center;font-size:.72rem;color:var(--muted);padding:0 6px;white-space:nowrap}
+.wx a.more{flex:none;align-self:center;font-size:.7rem;color:var(--muted);padding:0 6px;white-space:nowrap;line-height:1.3;text-align:center}
 .wxday{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:-4px}
 .wxday .i{font-size:1.3rem}
 
@@ -390,7 +390,10 @@ const INFO = {
 };
 
 // ===== 天氣（Open-Meteo，免金鑰；名古屋 35.17,136.91）=====
-const WX_URL = "https://api.open-meteo.com/v1/forecast?latitude=35.17&longitude=136.91&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16";
+// 主模型 ECMWF AIFS（AI 模型，Kevin 指定）；降雨機率 AIFS 單一模型沒有，從 best_match 補；AIFS 失敗就整個用 best_match
+const WX_BASE = "https://api.open-meteo.com/v1/forecast?latitude=35.17&longitude=136.91&timezone=Asia%2FTokyo&forecast_days=16";
+const WX_URL_AI = WX_BASE + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&models=ecmwf_aifs025_single";
+const WX_URL_BM = WX_BASE + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max";
 const ACCU = "https://www.accuweather.com/zh/jp/nagoya-shi/223191/daily-weather-forecast/223191";
 const WX_ICON = c => c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=49?"🌫️":c<=57?"🌦️":c<=67?"🌧️":c<=79?"🌨️":c<=82?"🌧️":c<=86?"🌨️":"⛈️";
 const WX_TXT = c => c===0?"晴":c<=2?"多雲時晴":c===3?"陰":c<=49?"霧":c<=57?"毛毛雨":c<=67?"雨":c<=79?"雪":c<=82?"陣雨":c<=86?"陣雪":"雷雨";
@@ -400,8 +403,15 @@ async function loadWx(){
   if(!WX){ WX = store.get("wx", null); if(WX&&WX.days){ renderWx(); if(view==="day") renderDay(); } }
   if (WX && Date.now()-WX.at < 3600e3) return;
   try{
-    const r = await fetch(WX_URL); const j = await r.json(); const d = j.daily;
-    WX = {at:Date.now(), days:d.time.map((iso,i)=>({iso,code:d.weather_code[i],hi:Math.round(d.temperature_2m_max[i]),lo:Math.round(d.temperature_2m_min[i]),rain:d.precipitation_probability_max[i]}))};
+    const get = async u => { const r = await fetch(u); if(!r.ok) throw 0; const j = await r.json(); if(!j.daily||!j.daily.time) throw 0; return j.daily; };
+    const [ai, bm] = await Promise.all([get(WX_URL_AI).catch(()=>null), get(WX_URL_BM).catch(()=>null)]);
+    const main = ai || bm; if(!main) return;
+    const bmAt = iso => bm ? bm.time.indexOf(iso) : -1;
+    WX = {at:Date.now(), src: ai ? "ECMWF AIFS" : "Open-Meteo", days: main.time.map((iso,i)=>{
+      const j = bmAt(iso);
+      const code = (main.weather_code&&main.weather_code[i]!=null) ? main.weather_code[i] : (j>=0 ? bm.weather_code[j] : 3);
+      return {iso, code, hi:Math.round(main.temperature_2m_max[i]), lo:Math.round(main.temperature_2m_min[i]), rain: j>=0 ? bm.precipitation_probability_max[j] : null, mm: main.precipitation_sum ? main.precipitation_sum[i] : null};
+    })};
     store.set("wx", WX); renderWx(); if(view==="day") renderDay();
   }catch(e){}
 }
@@ -412,7 +422,7 @@ function renderWx(){
   const days = WX.days.filter(d=>d.iso>=TODAY).slice(0,7);
   el.innerHTML = days.map(d=>{ const dt=new Date(d.iso+"T00:00:00"); const md=(dt.getMonth()+1)+"/"+dt.getDate(); const dow="日一二三四五六"[dt.getDay()];
     return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md} ${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°/${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
-    + `<a class="more" href="${ACCU}" target="_blank" rel="noopener">AccuWeather ↗</a>`;
+    + `<a class="more" href="${ACCU}" target="_blank" rel="noopener">${WX.src||""}<br>AccuWeather ↗</a>`;
   el.hidden = false;
   el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } else window.open(ACCU,"_blank","noopener"); });
 }

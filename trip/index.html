@@ -62,6 +62,19 @@ a{color:inherit}
 .chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chips button.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
 
+.wx{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px;align-items:stretch}
+.wx::-webkit-scrollbar{display:none}
+.wx .d{flex:none;width:52px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:14px;font-size:.72rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
+.wx .d.trip{border-color:var(--forest);box-shadow:inset 0 0 0 1px var(--forest)}
+.wx .d.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.wx .d .i{font-size:1.25rem;line-height:1.2}
+.wx .d b{font-family:var(--f-mono);font-size:.78rem;color:inherit}
+.wx .d .r{font-size:.66rem}
+.wx .d.sel b{color:var(--bg)}
+.wx a.more{flex:none;align-self:center;font-size:.72rem;color:var(--muted);padding:0 6px;white-space:nowrap}
+.wxday{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:-4px}
+.wxday .i{font-size:1.3rem}
+
 /* cards */
 .stack{display:flex;flex-direction:column;gap:12px}
 .card{position:relative;background:var(--card);border-radius:24px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 0 var(--line),0 10px 24px -18px rgba(24,38,58,.35)}
@@ -195,6 +208,7 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
       <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3" fill="var(--sky-soft)" stroke="var(--sky)"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="var(--sky)"/><path d="M9 11v6M15 11v6" stroke="var(--sky)"/><circle cx="8" cy="21" r="1" fill="var(--sky)" stroke="none"/><circle cx="16" cy="21" r="1" fill="var(--sky)" stroke="none"/></svg>名古屋八日</div>
     </div>
     <div class="chips" id="chips" role="group" aria-label="選擇日期"></div>
+    <div class="wx" id="wx" hidden></div>
   </div>
 
   <section id="v-day" class="stack"></section>
@@ -375,6 +389,34 @@ const INFO = {
   ],
 };
 
+// ===== 天氣（Open-Meteo，免金鑰；名古屋 35.17,136.91）=====
+const WX_URL = "https://api.open-meteo.com/v1/forecast?latitude=35.17&longitude=136.91&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16";
+const ACCU = "https://www.accuweather.com/zh/jp/nagoya-shi/223191/daily-weather-forecast/223191";
+const WX_ICON = c => c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=49?"🌫️":c<=57?"🌦️":c<=67?"🌧️":c<=79?"🌨️":c<=82?"🌧️":c<=86?"🌨️":"⛈️";
+const WX_TXT = c => c===0?"晴":c<=2?"多雲時晴":c===3?"陰":c<=49?"霧":c<=57?"毛毛雨":c<=67?"雨":c<=79?"雪":c<=82?"陣雨":c<=86?"陣雪":"雷雨";
+let WX = null;
+function wxFor(iso){ if(!WX||!WX.days) return null; return WX.days.find(d=>d.iso===iso)||null; }
+async function loadWx(){
+  if(!WX){ WX = store.get("wx", null); if(WX&&WX.days){ renderWx(); if(view==="day") renderDay(); } }
+  if (WX && Date.now()-WX.at < 3600e3) return;
+  try{
+    const r = await fetch(WX_URL); const j = await r.json(); const d = j.daily;
+    WX = {at:Date.now(), days:d.time.map((iso,i)=>({iso,code:d.weather_code[i],hi:Math.round(d.temperature_2m_max[i]),lo:Math.round(d.temperature_2m_min[i]),rain:d.precipitation_probability_max[i]}))};
+    store.set("wx", WX); renderWx(); if(view==="day") renderDay();
+  }catch(e){}
+}
+function renderWx(){
+  const el = $("#wx"); if(!WX||!WX.days){ el.hidden=true; return; }
+  const sel = DAYS[dayIdx].iso;
+  const tripSet = new Set(DAYS.map(d=>d.iso));
+  const days = WX.days.filter(d=>d.iso>=TODAY).slice(0,7);
+  el.innerHTML = days.map(d=>{ const dt=new Date(d.iso+"T00:00:00"); const md=(dt.getMonth()+1)+"/"+dt.getDate(); const dow="日一二三四五六"[dt.getDay()];
+    return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md} ${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°/${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
+    + `<a class="more" href="${ACCU}" target="_blank" rel="noopener">AccuWeather ↗</a>`;
+  el.hidden = false;
+  el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } else window.open(ACCU,"_blank","noopener"); });
+}
+
 // ===== 狀態 =====
 const store = {get(k,d){try{const v=localStorage.getItem("trip-"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("trip-"+k,JSON.stringify(v))}catch(e){}}};
 const jstToday = () => { const d = new Date(Date.now() + 9*3600e3); return d.toISOString().slice(0,10); };
@@ -415,6 +457,7 @@ function renderDay(){
     <div class="eyebrow"><span>DAY ${d.n} · ${d.md}（${d.dow}）</span><span class="dots">${dots(d.e)}</span><span>${energyLabel(d.e)}</span></div>
     <h2>${d.emoji} ${esc(d.title)}</h2>
     <p class="ja">${esc(d.ja)}</p>
+    ${(w=>w?`<div class="wxday"><span class="i">${WX_ICON(w.code)}</span><span>${WX_TXT(w.code)} ${w.hi}°／${w.lo}°${w.rain!=null?" · 降雨 "+w.rain+"%":""}${(new Date(d.iso)-new Date(TODAY))/864e5>7?"（遠期預報，僅供參考）":""}</span><a href="${ACCU}" target="_blank" rel="noopener" style="margin-left:auto;font-size:.8rem">AccuWeather ↗</a></div>`:"")(wxFor(d.iso))}
     <div class="times"><div><span>${esc(d.departLabel)}</span><b>${esc(d.depart)}</b></div><div><span>${esc(d.backLabel)}</span><b>${esc(d.back)}</b></div></div>
     ${d.ghibli?`<div class="actions"><a class="btn ghibli wide" href="${GHIBLI}">打開吉卜力攻略頁 →</a></div>`:""}
     <ol class="plan">${d.plan.map(([t,b,s])=>`<li><span class="t ${t?"":"blank"}">${esc(t)}</span><div><b>${zh(esc(b))}</b>${s?`<small>${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ol>
@@ -495,6 +538,8 @@ function show(v){
   ["day","all","prep","info"].forEach(k=>{ $("#v-"+k).hidden = k!==v; });
   $("#dock").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.view===v));
   $("#chips").hidden = v!=="day";
+  $("#wx").hidden = v!=="day" || !(WX&&WX.days);
+  if(v==="day") renderWx();
   if(v==="day"){ renderChips(); renderDay(); }
   if(v==="all") renderAll();
   if(v==="prep") renderPrep();
@@ -509,6 +554,7 @@ $("#dock").querySelectorAll("button").forEach(b=>b.onclick=()=>{ show(b.dataset.
   else if (["all","prep","info"].includes(h)) show(h);
   else show("day");
 })();
+loadWx();
 try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}
 </script>
 </body>

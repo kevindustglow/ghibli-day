@@ -422,9 +422,9 @@ function renderWx(){
   const days = WX.days.filter(d=>d.iso>=TODAY).slice(0,7);
   el.innerHTML = days.map(d=>{ const dt=new Date(d.iso+"T00:00:00"); const md=(dt.getMonth()+1)+"/"+dt.getDate(); const dow="日一二三四五六"[dt.getDay()];
     return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md} ${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°/${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
-    + `<a class="more" href="${ACCU}" target="_blank" rel="noopener">${WX.src||""}<br>AccuWeather ↗</a>`;
+    ;
   el.hidden = false;
-  el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } else window.open(ACCU,"_blank","noopener"); });
+  el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } });
 }
 
 // ===== 狀態 =====
@@ -467,7 +467,7 @@ function renderDay(){
     <div class="eyebrow"><span>DAY ${d.n} · ${d.md}（${d.dow}）</span><span class="dots">${dots(d.e)}</span><span>${energyLabel(d.e)}</span></div>
     <h2>${d.emoji} ${esc(d.title)}</h2>
     <p class="ja">${esc(d.ja)}</p>
-    ${(w=>w?`<div class="wxday"><span class="i">${WX_ICON(w.code)}</span><span>${WX_TXT(w.code)} ${w.hi}°／${w.lo}°${w.rain!=null?" · 降雨 "+w.rain+"%":""}${(new Date(d.iso)-new Date(TODAY))/864e5>7?"（遠期預報，僅供參考）":""}</span><a href="${ACCU}" target="_blank" rel="noopener" style="margin-left:auto;font-size:.8rem">AccuWeather ↗</a></div>`:"")(wxFor(d.iso))}
+    ${(w=>w?`<div class="wxday"><span class="i">${WX_ICON(w.code)}</span><span>${WX_TXT(w.code)} ${w.hi}°／${w.lo}°${w.rain!=null?" · 降雨 "+w.rain+"%":""}${(new Date(d.iso)-new Date(TODAY))/864e5>7?"（遠期預報，僅供參考）":""}</span></div>`:"")(wxFor(d.iso))}
     <div class="times"><div><span>${esc(d.departLabel)}</span><b>${esc(d.depart)}</b></div><div><span>${esc(d.backLabel)}</span><b>${esc(d.back)}</b></div></div>
     ${d.ghibli?`<div class="actions"><a class="btn ghibli wide" href="${GHIBLI}">打開吉卜力攻略頁 →</a></div>`:""}
     <ol class="plan">${d.plan.map(([t,b,s])=>`<li><span class="t ${t?"":"blank"}">${esc(t)}</span><div><b>${zh(esc(b))}</b>${s?`<small>${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ol>

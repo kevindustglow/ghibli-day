@@ -62,14 +62,13 @@ a{color:inherit}
 .chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chips button.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
 
-.wx{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px;align-items:stretch}
-.wx::-webkit-scrollbar{display:none}
-.wx .d{flex:none;width:52px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:14px;font-size:.72rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
+.wx{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wx .d{min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:12px;font-size:.68rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
 .wx .d.trip{border-color:var(--forest);box-shadow:inset 0 0 0 1px var(--forest)}
 .wx .d.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.wx .d .i{font-size:1.25rem;line-height:1.2}
-.wx .d b{font-family:var(--f-mono);font-size:.78rem;color:inherit}
-.wx .d .r{font-size:.66rem}
+.wx .d .i{font-size:1.2rem;line-height:1.2}
+.wx .d b{font-family:var(--f-mono);font-size:.74rem;color:inherit;line-height:1.15}
+.wx .d .r{font-size:.62rem}
 .wx .d.sel b{color:var(--bg)}
 .wx a.more{flex:none;align-self:center;font-size:.7rem;color:var(--muted);padding:0 6px;white-space:nowrap;line-height:1.3;text-align:center}
 .wxday{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:-4px}
@@ -422,7 +421,7 @@ function renderWx(){
   const tripSet = new Set(DAYS.map(d=>d.iso));
   const days = WX.days.filter(d=>d.iso>=TODAY).slice(0,7);
   el.innerHTML = days.map(d=>{ const dt=new Date(d.iso+"T00:00:00"); const md=(dt.getMonth()+1)+"/"+dt.getDate(); const dow="日一二三四五六"[dt.getDay()];
-    return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md} ${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°/${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
+    return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md}</span><span>${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°</b><b style="opacity:.7">${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
     ;
   el.hidden = false;
   el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } });
@@ -515,7 +514,7 @@ function chkList(key){
 function renderPrep(){
   const daysLeft = Math.round((new Date(TRIP_START) - new Date(TODAY))/864e5);
   const count = key=>{const a=listItems(key);return a.filter(i=>i.done).length+"/"+a.length;};
-  let h = `<div class="card hero"><div class="eyebrow"><span>距離出發</span></div><div class="count"><b class="mono">${daysLeft>0?daysLeft:0}</b><span>天 ✈️ 11/7（六）07:30 家門口上車</span></div><p class="note">清單可以直接新增、移除、打勾，只存在這支手機裡。</p></div>`;
+  let h = `<div class="card hero"><div class="eyebrow"><span>距離出發</span></div><div class="count"><b class="mono">${daysLeft>0?daysLeft:0}</b><span>天 ✈️ 11/7（六）07:30 家門口上車</span></div><p class="note">清單可以直接新增、移除、打勾。勾選和修改只存在各自手機，家人各看各的 📱</p></div>`;
   h += LISTS.map(([key,title])=>`<div class="card group"><h3>${esc(title)} <small>${count(key)}</small></h3>${chkList(key)}</div>`).join("");
   h += `<div class="card"><p class="note">備忘點一下文字就能改 ✏️</p><div class="actions"><button class="linkbtn" id="uncheckAll">全部取消打勾</button><button class="linkbtn" id="resetChk">還原成預設清單</button></div></div>`;
   $("#v-prep").innerHTML = h;

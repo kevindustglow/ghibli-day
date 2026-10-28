@@ -269,7 +269,7 @@ const DAYS = [
   rb:{title:"東山公園 → 栄",steps:[{k:"train",b:"東山線 → 栄 H10",s:"往「高畑」方向，坐 6 站，2 號月台下車"},{k:"walk",b:"栄 2 號出口 → 飯店",s:"或走オアシス21 電梯上地面"}],fare:["大人 ¥240"]},
   links:[["動物園官網","https://www.higashiyama.city.nagoya.jp/"],["地圖",GM("東山動植物園")]]},
 
- {iso:"2026-11-09",md:"11/9",dow:"一",n:3,e:3,emoji:"🧱",title:"LEGOLAND",ja:"レゴランド・ジャパン（樂高樂園）", wear:"靠海空曠、風大，體感比市區冷。三人毛帽＋防風外套，推車小毯子帶著 🧣", exp:"sea",
+ {iso:"2026-11-09",md:"11/9",dow:"一",n:3,e:3,emoji:"🧱",title:"LEGOLAND",ja:"レゴランド・ジャパン（樂高樂園）", wear:"靠海空曠、風大，體感比市區冷。三人毛帽＋防風外套，推車小毯子帶著 🧣", exp:"sea", buy:"d0",
   depart:"08:00",back:"17:30",departLabel:"出門",backLabel:"回飯店約",
   plan:[["08:00","出門","門到門留 75–90 分"],["09:15","到入口排隊","10:00 開園；09:30 前到就排前段 🧱"],["10:00","🎉 入園","先玩 Amber 身高能玩的：DUPLO、Mini-land、Submarine Adventure"],["12:00","園內午餐、休息","人少時段先吃，避開排隊"],["16:00","離園","Amber 累了可提早；17:00 閉園"],["17:30","回到飯店","洗澡、早點睡"]],
   maybe:[["Maker's Pier 晚餐","車站旁商場，不想回榮再吃可以在這裡"]],
@@ -284,7 +284,7 @@ const DAYS = [
   rb:{title:"金城ふ頭 → 栄（75–90 分）",steps:[{k:"train",b:"あおなみ線 → 名古屋",s:"終點站，約 24 分"},{k:"walk",b:"名古屋站 轉東山線",s:"跟「地下鉄東山線」指標，留 20 分"},{k:"train",b:"東山線 → 栄 H10",s:"往「藤が丘」方向，2 站"}],fare:["同去程 ¥570／大人"]},
   links:[["LEGOLAND 官網","https://www.legoland.jp/"],["營業日曆","https://www.legoland.jp/hours-and-calendar/"],["地圖",GM("LEGOLAND Japan")]]},
 
- {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）", wear:"水族館靠海，館外風大、館內舒適。防風外套進館脫，推車小毯子帶著", exp:"sea",
+ {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）", wear:"水族館靠海，館外風大、館內舒適。防風外套進館脫，推車小毯子帶著", exp:"sea", buy:"d1",
   depart:"08:30",back:"14:30",departLabel:"出門",backLabel:"離館",
   plan:[["08:30","出門","門到門留 50–60 分"],["09:30","開館入館，先逛北館","虎鯨、白鯨在北館 🐋"],["10:45","北館 3F 表演場入座","海豚秀前 15 分先坐好"],["11:00","🐬 海豚表演（20 分）","唯一備案 13:00 場；不等 15:30"],["11:30","午餐、休息","館內餐廳或帶出去吃"],["12:15","南館","企鵝 🐧、海龜、大水槽"],["14:30","離館","不戀棧，Amber 下午電力有限 🔋"]],
   maybe:[["LaLaport 名古屋港 AQULS","15:15–16:45。名古屋港站搭 2 站到港区役所，步行 5 分。累就直接回飯店"]],
@@ -480,7 +480,10 @@ function renderDay(){
   </article>`;
   if (d.maybe&&d.maybe.length) h += `<article class="card maybe"><div class="eyebrow"><span class="tag ghost">看情況 🤔</span></div><ul class="pts">${d.maybe.map(([b,s])=>`<li><div><b>${zh(esc(b))}</b>${s?`<small class="note" style="display:block">${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ul></article>`;
   if (d.food) h += `<article class="card"><div class="eyebrow"><span class="tag sun">吃什麼 🍽️</span><span>只是參考，當天想吃什麼就吃什麼</span></div><p>${zh(esc(d.food))}</p></article>`;
-  if (d.tip) h += `<article class="card warm"><p>${zh(esc(d.tip))}</p></article>`;
+  // 準備頁「還沒買」打勾後，提醒改成已買（只看這支手機的勾選）
+  const bought = d.buy && ((store.get("buy",{}).done||{})[d.buy]);
+  const tip = d.tip && bought ? d.tip.replace("⚠️ 門票還沒買。","✅ 門票已買。") : d.tip;
+  if (tip) h += `<article class="card warm"><p>${zh(esc(tip))}</p></article>`;
   const prev = DAYS[dayIdx-1], next = DAYS[dayIdx+1];
   h += `<div class="actions">${prev?`<button class="btn" data-day="${dayIdx-1}">← ${prev.md}</button>`:""}${next?`<button class="btn primary" data-day="${dayIdx+1}">${next.md} →</button>`:""}</div>`;
   $("#v-day").innerHTML = h;

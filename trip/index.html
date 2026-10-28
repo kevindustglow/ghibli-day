@@ -62,9 +62,9 @@ a{color:inherit}
 .chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chips button.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
 
-.wx{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.wx .d{min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:12px;font-size:.68rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
-.wx .d.trip{border-color:var(--forest);box-shadow:inset 0 0 0 1px var(--forest)}
+.wx{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.wx .d{min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:12px;font-size:.66rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
+.wx .d.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
 .wx .d.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .wx .d .i{font-size:1.2rem;line-height:1.2}
 .wx .d b{font-family:var(--f-mono);font-size:.74rem;color:inherit;line-height:1.15}
@@ -206,8 +206,7 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
     <div class="top-row">
       <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3" fill="var(--sky-soft)" stroke="var(--sky)"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="var(--sky)"/><path d="M9 11v6M15 11v6" stroke="var(--sky)"/><circle cx="8" cy="21" r="1" fill="var(--sky)" stroke="none"/><circle cx="16" cy="21" r="1" fill="var(--sky)" stroke="none"/></svg>名古屋八日</div>
     </div>
-    <div class="chips" id="chips" role="group" aria-label="選擇日期"></div>
-    <div class="wx" id="wx" hidden></div>
+    <div class="wx" id="wx" role="group" aria-label="選擇日期"></div>
   </div>
 
   <section id="v-day" class="stack"></section>
@@ -401,7 +400,7 @@ let WX = null;
 function wxFor(iso){ if(!WX||!WX.days) return null; return WX.days.find(d=>d.iso===iso)||null; }
 async function loadWx(){
   if(!WX){ WX = store.get("wx", null); if(WX&&WX.days){ renderWx(); if(view==="day") renderDay(); } }
-  if (WX && Date.now()-WX.at < 3600e3) return;
+  // 每次重整都重抓；快取只在沒網路時當備援
   try{
     const get = async u => { const r = await fetch(u); if(!r.ok) throw 0; const j = await r.json(); if(!j.daily||!j.daily.time) throw 0; return j.daily; };
     const [ai, bm] = await Promise.all([get(WX_URL_AI).catch(()=>null), get(WX_URL_BM).catch(()=>null)]);
@@ -416,15 +415,12 @@ async function loadWx(){
   }catch(e){}
 }
 function renderWx(){
-  const el = $("#wx"); if(!WX||!WX.days){ el.hidden=true; return; }
+  const el = $("#wx");
   const sel = DAYS[dayIdx].iso;
-  const tripSet = new Set(DAYS.map(d=>d.iso));
-  const days = WX.days.filter(d=>d.iso>=TODAY).slice(0,7);
-  el.innerHTML = days.map(d=>{ const dt=new Date(d.iso+"T00:00:00"); const md=(dt.getMonth()+1)+"/"+dt.getDate(); const dow="日一二三四五六"[dt.getDay()];
-    return `<button class="d ${tripSet.has(d.iso)?"trip":""} ${d.iso===sel?"sel":""}" data-iso="${d.iso}" title="${WX_TXT(d.code)}"><span>${md}</span><span>${dow}</span><span class="i">${WX_ICON(d.code)}</span><b>${d.hi}°</b><b style="opacity:.7">${d.lo}°</b><span class="r">${d.rain!=null?"☔"+d.rain+"%":""}</span></button>`; }).join("")
-    ;
+  el.innerHTML = DAYS.map(d=>{ const w = wxFor(d.iso);
+    return `<button class="d ${d.iso===sel?"sel":""} ${d.iso===TODAY?"today":""}" data-iso="${d.iso}" aria-pressed="${d.iso===sel}" title="${w?WX_TXT(w.code):"尚無預報"}"><span>${d.md}</span><span>${d.dow}</span><span class="i">${w?WX_ICON(w.code):"·"}</span><b>${w?w.hi+"°":"—"}</b><b style="opacity:.7">${w?w.lo+"°":""}</b><span class="r">${w&&w.rain!=null?"☔"+w.rain+"%":""}</span></button>`; }).join("");
   el.hidden = false;
-  el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); } });
+  el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); window.scrollTo({top:0}); } });
 }
 
 // ===== 狀態 =====
@@ -443,11 +439,6 @@ const energyLabel = e => ["","輕鬆","普通","大日子"][e];
 function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("on"),1600); }
 
 // ===== 今天／某一天 =====
-function renderChips(){
-  $("#chips").innerHTML = DAYS.map((d,i)=>`<button aria-pressed="${i===dayIdx}" class="${d.iso===TODAY?"today":""}" data-i="${i}"><span>${d.md}</span><small>${d.dow}</small></button>`).join("");
-  $("#chips").querySelectorAll("button").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.i; show("day"); });
-  const on=$("#chips button[aria-pressed='true']"); on && on.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
-}
 function routeHTML(r){
   if(!r) return "";
   const icon = {walk:"步",train:"車",taxi:"計",fly:"機"};
@@ -547,10 +538,9 @@ function show(v){
   view = v;
   ["day","all","prep","info"].forEach(k=>{ $("#v-"+k).hidden = k!==v; });
   $("#dock").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.view===v));
-  $("#chips").hidden = v!=="day";
-  $("#wx").hidden = v!=="day" || !(WX&&WX.days);
+  $("#wx").hidden = v!=="day";
   if(v==="day") renderWx();
-  if(v==="day"){ renderChips(); renderDay(); }
+  if(v==="day"){ renderDay(); }
   if(v==="all") renderAll();
   if(v==="prep") renderPrep();
   if(v==="info") renderInfo();

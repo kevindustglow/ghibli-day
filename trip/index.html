@@ -65,6 +65,7 @@ a{color:inherit}
 .wx{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
 .wx .d{min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;border-radius:12px;font-size:.66rem;color:var(--muted);line-height:1.15;background:var(--card);border:1px solid var(--line)}
 .wx .d.today{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun)}
+.wx .d.past:not(.sel){opacity:.55}
 .wx .d.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .wx .d .i{font-size:1.2rem;line-height:1.2}
 .wx .d b{font-family:var(--f-mono);font-size:.74rem;color:inherit;line-height:1.15}
@@ -390,7 +391,7 @@ const INFO = {
 
 // ===== 天氣（Open-Meteo，免金鑰；名古屋 35.17,136.91）=====
 // 主模型 ECMWF AIFS（AI 模型，Kevin 指定）；降雨機率 AIFS 單一模型沒有，從 best_match 補；AIFS 失敗就整個用 best_match
-const WX_BASE = "https://api.open-meteo.com/v1/forecast?latitude=35.17&longitude=136.91&timezone=Asia%2FTokyo&forecast_days=16";
+const WX_BASE = "https://api.open-meteo.com/v1/forecast?latitude=35.17&longitude=136.91&timezone=Asia%2FTokyo&forecast_days=16&past_days=8";
 const WX_URL_AI = WX_BASE + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&models=ecmwf_aifs025_single";
 const WX_URL_BM = WX_BASE + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max";
 const ACCU = "https://www.accuweather.com/zh/jp/nagoya-shi/223191/daily-weather-forecast/223191";
@@ -418,7 +419,7 @@ function renderWx(){
   const el = $("#wx");
   const sel = DAYS[dayIdx].iso;
   el.innerHTML = DAYS.map(d=>{ const w = wxFor(d.iso);
-    return `<button class="d ${d.iso===sel?"sel":""} ${d.iso===TODAY?"today":""}" data-iso="${d.iso}" aria-pressed="${d.iso===sel}" title="${w?WX_TXT(w.code):"尚無預報"}"><span>${d.md}</span><span>${d.dow}</span><span class="i">${w?WX_ICON(w.code):"·"}</span><b>${w?w.hi+"°":"—"}</b><b style="opacity:.7">${w?w.lo+"°":""}</b><span class="r">${w&&w.rain!=null?"☔"+w.rain+"%":""}</span></button>`; }).join("");
+    return `<button class="d ${d.iso===sel?"sel":""} ${d.iso===TODAY?"today":""} ${d.iso<TODAY?"past":""}" data-iso="${d.iso}" aria-pressed="${d.iso===sel}" title="${w?WX_TXT(w.code):"尚無預報"}"><span>${d.md}</span><span>${d.dow}</span><span class="i">${w?WX_ICON(w.code):"·"}</span><b>${w?w.hi+"°":"—"}</b><b style="opacity:.7">${w?w.lo+"°":""}</b><span class="r">${w&&w.rain!=null?"☔"+w.rain+"%":""}</span></button>`; }).join("");
   el.hidden = false;
   el.querySelectorAll("button.d").forEach(b=>b.onclick=()=>{ const i=DAYS.findIndex(x=>x.iso===b.dataset.iso); if(i>=0){ dayIdx=i; show("day"); window.scrollTo({top:0}); } });
 }

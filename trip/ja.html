@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>日文會話</title>
+<meta name="theme-color" content="#EEF3F7">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#EEF3F7; --card:#FFFFFF; --ink:#18263A; --muted:#647387; --line:#D8E1EA; --sky-top:#CFE4F3;
+  --forest:#3F7D5C; --forest-soft:#E1EFE6; --sky:#3C78B4; --sky-soft:#E0ECF7;
+  --sun:#C9821C; --sun-soft:#FBEED6; --rose:#B8524F; --rose-soft:#F9E3E2;
+  --f-display:"Huninn","Noto Sans TC","PingFang TC",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-ja:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545; --sky-top:#16243A;
+  --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
+  --sun:#F0B455; --sun-soft:#33281A; --rose:#F0908D; --rose-soft:#3A2224; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1623; --card:#18222F; --ink:#E8EEF5; --muted:#93A2B5; --line:#283545; --sky-top:#16243A;
+  --forest:#86C7A2; --forest-soft:#1C2E27; --sky:#8DBBE8; --sky-soft:#1A2A3C;
+  --sun:#F0B455; --sun-soft:#33281A; --rose:#F0908D; --rose-soft:#3A2224; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:linear-gradient(to bottom,var(--sky-top),var(--bg) 260px) no-repeat,var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;padding:0 16px calc(32px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--forest);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);margin-inline:-16px;padding:8px 16px 10px;border-radius:0 0 20px 20px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px}
+.back{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 12px 0 8px;border-radius:999px;background:var(--card);border:1px solid var(--line);text-decoration:none;font-size:.9rem}
+h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;flex:1}
+.slow{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.85rem;white-space:nowrap}
+.slow[aria-pressed="true"]{background:var(--sky);color:#fff;border-color:var(--sky)}
+.search{position:relative}
+.search input{width:100%;min-height:50px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:0 44px 0 44px;font-size:1rem}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .clr{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;color:var(--muted);font-size:1.2rem;border-radius:50%}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:0 16px 2px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;min-height:40px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.9rem;color:var(--muted);white-space:nowrap}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hint{font-size:.85rem;color:var(--muted);margin:12px 4px 6px}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.sec{font-family:var(--f-display);font-size:1.05rem;margin:14px 4px 2px;color:var(--muted)}
+.p{background:var(--card);border-radius:20px;padding:12px 12px 12px 10px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 2px 0 var(--line)}
+.p.kid{box-shadow:0 2px 0 var(--line),inset 4px 0 0 var(--sun)}
+.say{flex:none;width:52px;height:52px;border-radius:16px;border:0;background:var(--forest);color:#fff;display:flex;align-items:center;justify-content:center}
+.say.on{background:var(--sun)}
+.tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.zh{font-size:.95rem;color:var(--muted)}
+.ja{font-family:var(--f-ja);font-size:1.25rem;line-height:1.4;font-weight:500;word-break:break-word}
+.kana{font-size:.85rem;color:var(--muted);font-family:var(--f-ja)}
+.note{font-size:.8rem;color:var(--sky);margin-top:2px}
+.side{flex:none;display:flex;flex-direction:column;gap:4px}
+.ic{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.ic.fav[aria-pressed="true"]{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.warn{background:var(--rose-soft);color:var(--rose);border-radius:16px;padding:10px 14px;font-size:.9rem;margin-top:10px}
+/* 給店員看：全螢幕大字 */
+.show{position:fixed;inset:0;z-index:50;background:var(--card);display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));gap:16px}
+.show[hidden]{display:none}
+.show .big{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.show .bja{font-family:var(--f-ja);font-size:clamp(1.9rem,8.5vw,3rem);line-height:1.35;font-weight:600;word-break:break-word}
+.show .bzh{font-size:1.05rem;color:var(--muted)}
+.show .bar{display:flex;gap:10px}
+.show .bar button{min-height:56px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:0 18px;font-size:1rem;display:flex;align-items:center;gap:6px}
+.show .bar .play{background:var(--forest);color:#fff;border-color:var(--forest);flex:1;justify-content:center}
+.show.rot .big{transform:rotate(180deg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="row">
+      <a class="back" href="./" aria-label="回到名古屋八日">‹ 行程</a>
+      <h1>🗣️ 日文會話</h1>
+      <button class="slow" id="slow" aria-pressed="false" title="放慢語速">🐢 慢速</button>
+    </div>
+    <div class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="用中文搜尋：廁所、推車、過敏…" autocomplete="off" enterkeyhint="search" aria-label="搜尋會話">
+      <button class="clr" id="clr" aria-label="清除" hidden>✕</button>
+    </div>
+    <div class="tabs" id="tabs" role="group" aria-label="分類"></div>
+  </div>
+  <div id="warn"></div>
+  <div class="list" id="list"></div>
+  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。</p>
+</div>
+
+<div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="給店員看">
+  <div class="big"><div class="bja" id="bja"></div><div class="bzh" id="bzh"></div></div>
+  <div class="bar">
+    <button class="play" id="bplay">🔊 播放</button>
+    <button id="brot" aria-label="翻轉畫面給對面的人看">🔄 翻轉</button>
+    <button id="bclose">關閉</button>
+  </div>
+</div>
+
+<script>
+// 每句：c 分類, zh 中文, ja 日文, k 讀音（平假名／羅馬拼音輔助）, n 小提醒, kid 帶小孩相關, kw 額外搜尋字
+const CATS=[
+  ["fav","⭐ 收藏"],["basic","👋 基本"],["kid","👧 帶小孩"],["move","🚇 交通"],["taxi","🚕 計程車"],
+  ["food","🍜 吃飯"],["shop","🛍️ 購物"],["hotel","🏨 飯店"],["park","🎢 樂園景點"],["sos","🆘 緊急"],["num","🔢 數字"]
+];
+const P=[
+// 基本
+{c:"basic",zh:"你好",ja:"こんにちは",k:"konnichiwa"},
+{c:"basic",zh:"早安",ja:"おはようございます",k:"ohayō gozaimasu"},
+{c:"basic",zh:"謝謝",ja:"ありがとうございます",k:"arigatō gozaimasu"},
+{c:"basic",zh:"不好意思／打擾一下（叫人、道歉都能用）",ja:"すみません",k:"sumimasen",n:"萬用句，叫店員也用這句"},
+{c:"basic",zh:"對不起",ja:"ごめんなさい",k:"gomennasai"},
+{c:"basic",zh:"是／好的",ja:"はい",k:"hai"},
+{c:"basic",zh:"不用了，謝謝",ja:"大丈夫です、ありがとうございます",k:"daijōbu desu, arigatō gozaimasu",n:"婉拒袋子、試吃、推銷都好用"},
+{c:"basic",zh:"請再說一次",ja:"もう一度お願いします",k:"mō ichido onegaishimasu"},
+{c:"basic",zh:"請說慢一點",ja:"ゆっくり話してください",k:"yukkuri hanashite kudasai"},
+{c:"basic",zh:"我不會說日文",ja:"日本語が話せません",k:"nihongo ga hanasemasen"},
+{c:"basic",zh:"我們從台灣來的",ja:"台湾から来ました",k:"taiwan kara kimashita"},
+{c:"basic",zh:"可以說英文嗎？",ja:"英語は話せますか？",k:"eigo wa hanasemasu ka"},
+{c:"basic",zh:"請寫下來給我看",ja:"ここに書いてもらえますか？",k:"koko ni kaite moraemasu ka",n:"搭配手機備忘錄給對方打字"},
+{c:"basic",zh:"可以幫我們拍照嗎？",ja:"写真を撮ってもらえますか？",k:"shashin o totte moraemasu ka"},
+{c:"basic",zh:"可以拍照嗎？",ja:"写真を撮ってもいいですか？",k:"shashin o tottemo ii desu ka"},
+{c:"basic",zh:"廁所在哪裡？",ja:"トイレはどこですか？",k:"toire wa doko desu ka",kw:"洗手間 化妝室"},
+{c:"basic",zh:"請給我這個",ja:"これをください",k:"kore o kudasai",n:"手指著東西說"},
+{c:"basic",zh:"多少錢？",ja:"いくらですか？",k:"ikura desu ka",kw:"價錢 價格"},
+{c:"basic",zh:"沒問題／我沒事",ja:"大丈夫です",k:"daijōbu desu"},
+{c:"basic",zh:"再見（店家常說謝謝光臨）",ja:"さようなら",k:"sayōnara"},
+
+// 帶小孩
+{c:"kid",kid:1,zh:"有推車可以走的路嗎？",ja:"ベビーカーで通れる道はありますか？",k:"bebīkā de tooreru michi wa arimasu ka",kw:"嬰兒車 娃娃車"},
+{c:"kid",kid:1,zh:"電梯在哪裡？（推推車）",ja:"エレベーターはどこですか？",k:"erebētā wa doko desu ka",kw:"推車 嬰兒車"},
+{c:"kid",kid:1,zh:"推車可以帶進去嗎？",ja:"ベビーカーのまま入れますか？",k:"bebīkā no mama hairemasu ka",kw:"嬰兒車"},
+{c:"kid",kid:1,zh:"推車可以放在哪裡？",ja:"ベビーカー置き場はどこですか？",k:"bebīkā okiba wa doko desu ka",kw:"嬰兒車 停放"},
+{c:"kid",kid:1,zh:"有兒童椅嗎？",ja:"子ども用の椅子はありますか？",k:"kodomo-yō no isu wa arimasu ka",kw:"寶寶椅 餐椅"},
+{c:"kid",kid:1,zh:"有兒童餐具嗎？",ja:"子ども用の食器はありますか？",k:"kodomo-yō no shokki wa arimasu ka",kw:"湯匙 叉子 碗"},
+{c:"kid",kid:1,zh:"有兒童餐嗎？",ja:"お子様ランチはありますか？",k:"okosama ranchi wa arimasu ka"},
+{c:"kid",kid:1,zh:"有尿布台／哺乳室嗎？",ja:"おむつ交換台はありますか？",k:"omutsu kōkandai wa arimasu ka",kw:"換尿布 育嬰室 授乳室"},
+{c:"kid",kid:1,zh:"孩子 5 歲，要買票嗎？",ja:"5歳の子どもはチケットが必要ですか？",k:"go-sai no kodomo wa chiketto ga hitsuyō desu ka",kw:"小孩 兒童票 幼兒 免費"},
+{c:"kid",kid:1,zh:"這個小孩可以玩嗎？（身高限制）",ja:"子どもも乗れますか？",k:"kodomo mo noremasu ka",kw:"設施 身高"},
+{c:"kid",kid:1,zh:"可以分一個空盤給小孩嗎？",ja:"取り皿をもう一枚もらえますか？",k:"torizara o mō ichimai moraemasu ka",kw:"小碗 分食"},
+{c:"kid",kid:1,zh:"這個會辣嗎？",ja:"これは辛いですか？",k:"kore wa karai desu ka"},
+{c:"kid",kid:1,zh:"可以做不辣的嗎？",ja:"辛くしないでもらえますか？",k:"karaku shinaide moraemasu ka",kw:"不要辣 小孩吃"},
+{c:"kid",kid:1,zh:"可以裝冰塊少一點／不加冰嗎？",ja:"氷なしでお願いします",k:"kōri nashi de onegaishimasu",kw:"去冰 飲料"},
+{c:"kid",kid:1,zh:"我的孩子走失了！",ja:"子どもが迷子になりました！",k:"kodomo ga maigo ni narimashita",n:"女兒 5 歲，穿什麼顏色先想好",kw:"走丟 不見 迷路 Amber"},
+{c:"kid",kid:1,zh:"她是 5 歲女生，叫 Amber",ja:"5歳の女の子で、名前はアンバーです",k:"go-sai no onna no ko de, namae wa anbā desu",kw:"走失 女兒 名字"},
+{c:"kid",kid:1,zh:"附近有公園／可以讓小孩跑的地方嗎？",ja:"近くに子どもが遊べる場所はありますか？",k:"chikaku ni kodomo ga asoberu basho wa arimasu ka",kw:"遊樂場 放電"},
+{c:"kid",kid:1,zh:"孩子不舒服，可以借地方休息嗎？",ja:"子どもの具合が悪いので、少し休めるところはありますか？",k:"kodomo no guai ga warui node, sukoshi yasumeru tokoro wa arimasu ka",kw:"生病 休息 救護"},
+{c:"kid",kid:1,zh:"可以先讓小孩上廁所嗎？",ja:"子どもが先にトイレに行ってもいいですか？",k:"kodomo ga saki ni toire ni itte mo ii desu ka",kw:"急 尿尿"},
+{c:"kid",kid:1,zh:"（對 Amber）好棒！好可愛！",ja:"すごい！かわいい！",k:"sugoi! kawaii!",n:"日本人常對小孩說，聽到可以回「ありがとう」"},
+
+// 交通
+{c:"move",zh:"___ 站在哪裡？",ja:"___駅はどこですか？",k:"___ eki wa doko desu ka",kw:"車站 地鐵"},
+{c:"move",zh:"這班車有到 ___ 嗎？",ja:"この電車は___に行きますか？",k:"kono densha wa ___ ni ikimasu ka",kw:"電車 地鐵 方向"},
+{c:"move",zh:"要在哪一站換車？",ja:"どこで乗り換えですか？",k:"doko de norikae desu ka",kw:"轉車 轉乘"},
+{c:"move",zh:"幾號月台？",ja:"何番線ですか？",k:"nan-bansen desu ka",kw:"月台"},
+{c:"move",zh:"幾號出口？",ja:"何番出口ですか？",k:"nan-ban deguchi desu ka",kw:"出口"},
+{c:"move",zh:"走路要多久？",ja:"歩いて何分ですか？",k:"aruite nan-pun desu ka",kw:"步行 時間"},
+{c:"move",zh:"公車站在哪裡？",ja:"バス停はどこですか？",k:"basutei wa doko desu ka",kw:"巴士"},
+{c:"move",zh:"可以用西瓜卡／manaca 嗎？",ja:"交通系ICカードは使えますか？",k:"kōtsūkei IC kādo wa tsukaemasu ka",kw:"IC卡 Suica 西瓜卡 manaca 刷卡"},
+{c:"move",zh:"我想加值",ja:"チャージしたいです",k:"chāji shitai desu",kw:"儲值 IC卡"},
+{c:"move",zh:"我坐過站了／買錯票了",ja:"乗り越してしまいました",k:"norikoshite shimaimashita",n:"到出口旁的精算機補票，或找站務員",kw:"補票 精算"},
+{c:"move",zh:"我要去中部國際機場",ja:"中部国際空港に行きたいです",k:"chūbu kokusai kūkō ni ikitai desu",kw:"機場 セントレア"},
+{c:"move",zh:"名鐵特急指定席，2 大人 1 小孩",ja:"ミュースカイ、大人2枚と子ども1枚お願いします",k:"myūsukai, otona ni-mai to kodomo ichi-mai onegaishimasu",kw:"機場 快車 μSKY 買票"},
+{c:"move",zh:"我把東西忘在車上了",ja:"電車に忘れ物をしました",k:"densha ni wasuremono o shimashita",kw:"遺失 掉東西"},
+
+// 計程車
+{c:"taxi",zh:"請到這個地址（給司機看手機）",ja:"ここまでお願いします",k:"koko made onegaishimasu",n:"拿出地圖或飯店卡片給司機看",kw:"地址 目的地"},
+{c:"taxi",zh:"請到 ___ 飯店",ja:"___ホテルまでお願いします",k:"___ hoteru made onegaishimasu"},
+{c:"taxi",zh:"可以放推車進後車廂嗎？",ja:"ベビーカーをトランクに入れてもいいですか？",k:"bebīkā o toranku ni irete mo ii desu ka",kw:"嬰兒車 行李"},
+{c:"taxi",zh:"大概要多少錢？",ja:"だいたいいくらぐらいですか？",k:"daitai ikura gurai desu ka",kw:"車資 價錢"},
+{c:"taxi",zh:"可以刷卡嗎？",ja:"カードで払えますか？",k:"kādo de haraemasu ka",kw:"信用卡 付款"},
+{c:"taxi",zh:"請在這裡停",ja:"ここで止めてください",k:"koko de tomete kudasai",kw:"下車"},
+{c:"taxi",zh:"可以幫我叫計程車嗎？",ja:"タクシーを呼んでもらえますか？",k:"takushī o yonde moraemasu ka",n:"對飯店櫃檯或店員說",kw:"叫車"},
+{c:"taxi",zh:"請給我收據",ja:"領収書をください",k:"ryōshūsho o kudasai",kw:"收據"},
+
+// 吃飯
+{c:"food",zh:"3 位（2 大人 1 小孩）",ja:"3人です。大人2人と子ども1人です",k:"san-nin desu. otona futari to kodomo hitori desu",kw:"幾位 人數"},
+{c:"food",zh:"要等多久？",ja:"どのくらい待ちますか？",k:"dono kurai machimasu ka",kw:"排隊 候位"},
+{c:"food",zh:"有中文／英文菜單嗎？",ja:"中国語か英語のメニューはありますか？",k:"chūgokugo ka eigo no menyū wa arimasu ka",kw:"菜單"},
+{c:"food",zh:"推薦哪一道？",ja:"おすすめは何ですか？",k:"osusume wa nan desu ka",kw:"招牌"},
+{c:"food",zh:"我要點這個（指菜單）",ja:"これをお願いします",k:"kore o onegaishimasu",kw:"點菜"},
+{c:"food",zh:"我有過敏，不能吃 ___",ja:"アレルギーがあって、___が食べられません",k:"arerugī ga atte, ___ ga taberaremasen",kw:"過敏"},
+{c:"food",zh:"這個有蛋／牛奶／蝦嗎？",ja:"これに卵、乳製品、えびは入っていますか？",k:"kore ni tamago, nyūseihin, ebi wa haitte imasu ka",kw:"過敏 成分 海鮮"},
+{c:"food",zh:"請給我水",ja:"お水をください",k:"omizu o kudasai"},
+{c:"food",zh:"可以外帶嗎？",ja:"持ち帰りできますか？",k:"mochikaeri dekimasu ka",kw:"打包 外帶"},
+{c:"food",zh:"內用",ja:"店内で食べます",k:"tennai de tabemasu"},
+{c:"food",zh:"買單",ja:"お会計お願いします",k:"okaikei onegaishimasu",kw:"結帳 埋單"},
+{c:"food",zh:"可以分開結帳嗎？",ja:"別々に払えますか？",k:"betsubetsu ni haraemasu ka"},
+{c:"food",zh:"很好吃！謝謝招待",ja:"ごちそうさまでした！おいしかったです",k:"gochisōsama deshita! oishikatta desu",n:"離開時說，店員會很開心"},
+{c:"food",zh:"鰻魚飯三吃怎麼吃？",ja:"ひつまぶしの食べ方を教えてください",k:"hitsumabushi no tabekata o oshiete kudasai",kw:"鰻魚 名古屋 美食 蓬萊軒"},
+{c:"food",zh:"味噌豬排一份，飯要小份",ja:"みそかつを一つ、ご飯少なめでお願いします",k:"misokatsu o hitotsu, gohan sukuname de onegaishimasu",kw:"矢場とん 豬排"},
+
+// 購物
+{c:"shop",zh:"有 ___ 嗎？",ja:"___はありますか？",k:"___ wa arimasu ka",kw:"找東西"},
+{c:"shop",zh:"可以試穿嗎？",ja:"試着してもいいですか？",k:"shichaku shite mo ii desu ka",kw:"試衣"},
+{c:"shop",zh:"有大／小一號的嗎？",ja:"大きい・小さいサイズはありますか？",k:"ōkii / chiisai saizu wa arimasu ka",kw:"尺寸"},
+{c:"shop",zh:"可以免稅嗎？",ja:"免税できますか？",k:"menzei dekimasu ka",n:"要帶護照正本",kw:"退稅 tax free"},
+{c:"shop",zh:"這是免稅價嗎？",ja:"これは税込みですか？",k:"kore wa zeikomi desu ka",kw:"含稅 退稅"},
+{c:"shop",zh:"可以刷卡嗎？",ja:"カードは使えますか？",k:"kādo wa tsukaemasu ka",kw:"信用卡 付款"},
+{c:"shop",zh:"不用袋子",ja:"袋はいりません",k:"fukuro wa irimasen",kw:"塑膠袋 購物袋"},
+{c:"shop",zh:"可以幫我包成禮物嗎？",ja:"プレゼント用に包んでもらえますか？",k:"purezento-yō ni tsutsunde moraemasu ka",kw:"包裝 送禮"},
+{c:"shop",zh:"有兒童尺寸嗎？",ja:"子ども用のサイズはありますか？",k:"kodomo-yō no saizu wa arimasu ka",kid:1,kw:"小孩 衣服"},
+{c:"shop",zh:"藥局在哪裡？",ja:"薬局はどこですか？",k:"yakkyoku wa doko desu ka",kw:"藥妝 藥房"},
+{c:"shop",zh:"小孩可以吃這個藥嗎？",ja:"この薬は子どもでも飲めますか？",k:"kono kusuri wa kodomo demo nomemasu ka",kid:1,kw:"藥局 兒童藥"},
+{c:"shop",zh:"有退燒藥／感冒藥嗎？",ja:"熱さましの薬・風邪薬はありますか？",k:"netsusamashi no kusuri / kazegusuri wa arimasu ka",kw:"藥局 發燒 感冒"},
+{c:"shop",zh:"有 OK 繃嗎？",ja:"絆創膏はありますか？",k:"bansōkō wa arimasu ka",kw:"藥局 受傷 擦傷"},
+
+// 飯店
+{c:"hotel",zh:"我要辦入住，訂房名字是 ___",ja:"チェックインをお願いします。予約名は___です",k:"chekku-in o onegaishimasu. yoyakumei wa ___ desu",kw:"check in 入住"},
+{c:"hotel",zh:"可以先寄放行李嗎？",ja:"荷物を預かってもらえますか？",k:"nimotsu o azukatte moraemasu ka",kw:"寄放 行李"},
+{c:"hotel",zh:"退房",ja:"チェックアウトをお願いします",k:"chekku-auto o onegaishimasu",kw:"check out"},
+{c:"hotel",zh:"Wi-Fi 密碼是什麼？",ja:"Wi-Fiのパスワードは何ですか？",k:"waifai no pasuwādo wa nan desu ka",kw:"網路"},
+{c:"hotel",zh:"可以多給一條毛巾嗎？",ja:"タオルをもう一枚もらえますか？",k:"taoru o mō ichimai moraemasu ka"},
+{c:"hotel",zh:"有兒童睡衣／牙刷嗎？",ja:"子ども用のパジャマや歯ブラシはありますか？",k:"kodomo-yō no pajama ya haburashi wa arimasu ka",kid:1,kw:"備品"},
+{c:"hotel",zh:"冷氣／暖氣怎麼用？",ja:"エアコンの使い方を教えてください",k:"eakon no tsukaikata o oshiete kudasai",kw:"空調 暖氣"},
+{c:"hotel",zh:"附近有便利商店嗎？",ja:"近くにコンビニはありますか？",k:"chikaku ni konbini wa arimasu ka",kw:"超商"},
+{c:"hotel",zh:"投幣洗衣機在哪裡？",ja:"コインランドリーはどこですか？",k:"koin randorī wa doko desu ka",kw:"洗衣"},
+
+// 樂園景點
+{c:"park",zh:"售票處在哪裡？",ja:"チケット売り場はどこですか？",k:"chiketto uriba wa doko desu ka",kw:"買票"},
+{c:"park",zh:"大人 2 張、小孩 1 張",ja:"大人2枚、子ども1枚お願いします",k:"otona ni-mai, kodomo ichi-mai onegaishimasu",kw:"買票 門票"},
+{c:"park",zh:"入口在哪裡？",ja:"入口はどこですか？",k:"iriguchi wa doko desu ka"},
+{c:"park",zh:"這個要排多久？",ja:"待ち時間はどのくらいですか？",k:"machi jikan wa dono kurai desu ka",kw:"排隊 LEGOLAND 樂高"},
+{c:"park",zh:"身高幾公分可以玩？",ja:"身長制限は何センチですか？",k:"shinchō seigen wa nan-senchi desu ka",kid:1,kw:"LEGOLAND 樂高 設施"},
+{c:"park",zh:"大人可以陪小孩一起坐嗎？",ja:"大人も一緒に乗れますか？",k:"otona mo issho ni noremasu ka",kid:1,kw:"LEGOLAND 樂高"},
+{c:"park",zh:"海豚表演幾點開始？",ja:"イルカショーは何時からですか？",k:"iruka shō wa nanji kara desu ka",kw:"水族館 名古屋港"},
+{c:"park",zh:"可以再入場嗎？",ja:"再入場はできますか？",k:"sai-nyūjō wa dekimasu ka",kw:"出去再進來"},
+{c:"park",zh:"大倉庫在哪裡？",ja:"ジブリの大倉庫はどこですか？",k:"jiburi no daisōko wa doko desu ka",kw:"吉卜力 ジブリ"},
+{c:"park",zh:"龍貓的家要往哪走？",ja:"サツキとメイの家はどちらですか？",k:"satsuki to mei no ie wa dochira desu ka",kw:"吉卜力 龍貓 どんどこ森"},
+{c:"park",zh:"天守閣可以進去嗎？",ja:"天守閣には入れますか？",k:"tenshukaku ni wa hairemasu ka",n:"名古屋城天守目前封閉整修，本丸御殿可參觀",kw:"名古屋城"},
+{c:"park",zh:"有寄物櫃嗎？",ja:"コインロッカーはありますか？",k:"koin rokkā wa arimasu ka",kw:"置物櫃 寄物"},
+{c:"park",zh:"可以借推車嗎？",ja:"ベビーカーを借りられますか？",k:"bebīkā o kariraremasu ka",kid:1,kw:"租 嬰兒車"},
+{c:"park",zh:"失物招領在哪裡？",ja:"落とし物はどこに届いていますか？",k:"otoshimono wa doko ni todoite imasu ka",kw:"遺失"},
+
+// 緊急
+{c:"sos",zh:"救命！",ja:"助けてください！",k:"tasukete kudasai",kw:"幫忙"},
+{c:"sos",zh:"請叫救護車",ja:"救急車を呼んでください",k:"kyūkyūsha o yonde kudasai",n:"日本救護車／消防：119",kw:"醫院 受傷 119"},
+{c:"sos",zh:"請叫警察",ja:"警察を呼んでください",k:"keisatsu o yonde kudasai",n:"日本警察：110",kw:"110 報警"},
+{c:"sos",zh:"附近有醫院嗎？",ja:"近くに病院はありますか？",k:"chikaku ni byōin wa arimasu ka",kw:"診所 看醫生"},
+{c:"sos",zh:"孩子發燒了",ja:"子どもが熱を出しました",k:"kodomo ga netsu o dashimashita",kid:1,kw:"生病 發燒"},
+{c:"sos",zh:"孩子吐了",ja:"子どもが吐いてしまいました",k:"kodomo ga haite shimaimashita",kid:1,kw:"嘔吐 生病"},
+{c:"sos",zh:"孩子跌倒受傷了",ja:"子どもが転んでけがをしました",k:"kodomo ga koronde kega o shimashita",kid:1,kw:"受傷 跌倒"},
+{c:"sos",zh:"這裡痛",ja:"ここが痛いです",k:"koko ga itai desu",kw:"疼痛 不舒服"},
+{c:"sos",zh:"我錢包／護照不見了",ja:"財布・パスポートをなくしました",k:"saifu / pasupōto o nakushimashita",kw:"遺失 掉了"},
+{c:"sos",zh:"我迷路了",ja:"道に迷いました",k:"michi ni mayoimashita",kw:"走丟"},
+{c:"sos",zh:"有會說中文的人嗎？",ja:"中国語が話せる人はいますか？",k:"chūgokugo ga hanaseru hito wa imasu ka",kw:"翻譯"},
+
+// 數字
+{c:"num",zh:"一、二、三",ja:"いち、に、さん",k:"ichi, ni, san"},
+{c:"num",zh:"四、五、六",ja:"よん、ご、ろく",k:"yon, go, roku"},
+{c:"num",zh:"七、八、九、十",ja:"なな、はち、きゅう、じゅう",k:"nana, hachi, kyū, jū"},
+{c:"num",zh:"一個、兩個、三個（點餐數量）",ja:"ひとつ、ふたつ、みっつ",k:"hitotsu, futatsu, mittsu",kw:"數量"},
+{c:"num",zh:"一位、兩位、三位",ja:"ひとり、ふたり、さんにん",k:"hitori, futari, sannin",kw:"人數"},
+{c:"num",zh:"100 日圓",ja:"百円",k:"hyaku en",kw:"錢"},
+{c:"num",zh:"1000 日圓",ja:"千円",k:"sen en",kw:"錢"},
+{c:"num",zh:"幾點？",ja:"何時ですか？",k:"nanji desu ka",kw:"時間"},
+];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let FAV=new Set(), slow=false, cat="basic";
+try{FAV=new Set(JSON.parse(localStorage.getItem("trip-ja-fav")||"[]"))}catch(e){}
+try{slow=localStorage.getItem("trip-ja-slow")==="1"}catch(e){}
+try{const c=localStorage.getItem("trip-ja-cat"); if(c && CATS.some(x=>x[0]===c)) cat=c}catch(e){}
+const saveFav=()=>{try{localStorage.setItem("trip-ja-fav",JSON.stringify([...FAV]))}catch(e){}};
+P.forEach((p,i)=>p.id=p.c+":"+p.ja);
+
+// 發音
+let voice=null;
+function pickVoice(){ if(!("speechSynthesis" in window)) return; const vs=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang)); voice=vs.find(v=>/Kyoko|O-ren|Google|Nanami|Haruka/i.test(v.name))||vs[0]||null; }
+if("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+let playing=null;
+function speak(text,btn){
+  if(!("speechSynthesis" in window)){ $("#warn").innerHTML='<div class="warn">這支手機的瀏覽器不支援語音，可以按 📱 讓對方看大字。</div>'; return; }
+  speechSynthesis.cancel();
+  document.querySelectorAll(".say.on").forEach(b=>b.classList.remove("on"));
+  const u=new SpeechSynthesisUtterance(text.replace(/___/g,"、"));
+  u.lang="ja-JP"; if(voice) u.voice=voice; u.rate=slow?0.6:0.9;
+  if(btn){ btn.classList.add("on"); u.onend=u.onerror=()=>btn.classList.remove("on"); }
+  speechSynthesis.speak(u);
+}
+
+// 搜尋：中文（含繁簡常見字）、日文、羅馬拼音都可
+function norm(s){return String(s).toLowerCase().replace(/[\s、，,。？?！!／\/・]/g,"").replace(/[āáà]/g,"a").replace(/[ūú]/g,"u").replace(/[ōó]/g,"o").replace(/[ēé]/g,"e").replace(/[īí]/g,"i")}
+function hl(text,q){ if(!q) return esc(text); const i=text.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return esc(text); return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
+
+const SPK='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+function card(p,q){
+  const i=P.indexOf(p);
+  return `<div class="p${p.kid?" kid":""}">
+    <button class="say" data-i="${i}" aria-label="播放日文：${esc(p.ja)}">${SPK}</button>
+    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${esc(p.n)}</div>`:""}</div>
+    <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button></div>
+  </div>`;
+}
+function renderTabs(){
+  $("#tabs").innerHTML=CATS.map(([k,l])=>`<button data-c="${k}" aria-pressed="${!q()&&cat===k}">${l}${k==="fav"&&FAV.size?" "+FAV.size:""}</button>`).join("");
+}
+const q=()=>$("#q").value.trim();
+function render(){
+  const qs=q(); $("#clr").hidden=!qs; renderTabs();
+  let html="";
+  if(qs){
+    const n=norm(qs);
+    const hits=P.filter(p=>norm(p.zh+p.ja+p.k+(p.kw||"")+(p.n||"")).includes(n));
+    html=hits.length?`<p class="hint">找到 ${hits.length} 句</p>`+hits.map(p=>card(p,qs)).join(""):`<div class="empty">找不到「${esc(qs)}」😅<br>換個說法試試，例如「錢」「車」「痛」</div>`;
+  }else if(cat==="fav"){
+    const f=P.filter(p=>FAV.has(p.id));
+    html=f.length?f.map(p=>card(p)).join(""):`<div class="empty">還沒有收藏 ⭐<br>點句子右邊的星星，常用句就會集中在這裡。</div>`;
+  }else{
+    html=P.filter(p=>p.c===cat).map(p=>card(p)).join("");
+  }
+  $("#list").innerHTML=html;
+}
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-c]"); if(!b) return; cat=b.dataset.c; $("#q").value=""; try{localStorage.setItem("trip-ja-cat",cat)}catch(_){} render(); window.scrollTo({top:0});});
+$("#q").addEventListener("input",render);
+$("#clr").addEventListener("click",()=>{$("#q").value="";render();$("#q").focus();});
+$("#list").addEventListener("click",e=>{
+  const s=e.target.closest(".say"), f=e.target.closest("[data-f]"), b=e.target.closest("[data-s]");
+  if(s) speak(P[s.dataset.i].ja,s);
+  if(f){ const p=P[f.dataset.f]; FAV.has(p.id)?FAV.delete(p.id):FAV.add(p.id); saveFav(); f.setAttribute("aria-pressed",FAV.has(p.id)); f.textContent=FAV.has(p.id)?"★":"☆"; renderTabs(); }
+  if(b) openShow(P[b.dataset.s]);
+});
+const slowBtn=$("#slow");
+slowBtn.setAttribute("aria-pressed",slow);
+slowBtn.addEventListener("click",()=>{slow=!slow; slowBtn.setAttribute("aria-pressed",slow); try{localStorage.setItem("trip-ja-slow",slow?"1":"0")}catch(e){}});
+let cur=null;
+function openShow(p){cur=p; $("#bja").textContent=p.ja; $("#bzh").textContent=p.zh; $("#show").classList.remove("rot"); $("#show").hidden=false;}
+$("#bplay").onclick=()=>cur&&speak(cur.ja);
+$("#brot").onclick=()=>$("#show").classList.toggle("rot");
+$("#bclose").onclick=()=>{$("#show").hidden=true; try{speechSynthesis.cancel()}catch(e){}};
+document.addEventListener("keydown",e=>{if(e.key==="Escape") $("#show").hidden=true;});
+render();
+try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}
+</script>
+</body>
+</html>

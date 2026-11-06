@@ -113,7 +113,7 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
 // 每句：c 分類, zh 中文, ja 日文, k 讀音（平假名／羅馬拼音輔助）, n 小提醒, kid 帶小孩相關, kw 額外搜尋字
 const CATS=[
   ["fav","⭐ 收藏"],["basic","👋 基本"],["kid","👧 帶小孩"],["air","✈️ 機場出入境"],["way","🧭 問路"],["move","🚇 交通"],["taxi","🚕 計程車"],
-  ["food","🍜 吃飯"],["shop","🛍️ 購物"],["pay","🏪 超商結帳"],["hotel","🏨 飯店"],["park","🎢 樂園景點"],["sos","🆘 緊急"],["num","🔢 數字"]
+  ["food","🍜 吃飯"],["shop","🛍️ 購物"],["pay","🏪 超商結帳"],["hotel","🏨 飯店"],["park","🎢 樂園景點"],["sos","🆘 緊急"],["ear","👂 聽懂對方"],["num","🔢 數字"]
 ];
 const P=[
 // 基本
@@ -136,6 +136,12 @@ const P=[
 {c:"basic",zh:"請給我這個",ja:"これをください",k:"kore o kudasai",n:"手指著東西說"},
 {c:"basic",zh:"多少錢？",ja:"いくらですか？",k:"ikura desu ka",kw:"價錢 價格"},
 {c:"basic",zh:"沒問題",ja:"大丈夫です",k:"daijōbu desu"},
+{c:"basic",zh:"幾點開門？",ja:"何時に開きますか？",k:"nanji ni akimasu ka",kw:"營業 時間 開店"},
+{c:"basic",zh:"幾點關門？",ja:"何時に閉まりますか？",k:"nanji ni shimarimasu ka",kw:"營業 時間 打烊"},
+{c:"basic",zh:"今天有營業嗎？",ja:"今日は開いていますか？",k:"kyō wa aite imasu ka",kw:"營業 公休"},
+{c:"basic",zh:"我們有預約（給看畫面）",ja:"予約しています",k:"yoyaku shite imasu",kw:"預約 訂位 門票 QR"},
+{c:"basic",zh:"可以借雨傘嗎？",ja:"傘を借りられますか？",k:"kasa o kariraremasu ka",kw:"下雨 雨天"},
+{c:"basic",zh:"有賣雨傘嗎？",ja:"傘は売っていますか？",k:"kasa wa utte imasu ka",kw:"下雨 雨天 超商"},
 
 // 帶小孩
 {c:"kid",kid:1,zh:"電梯在哪裡？（推推車）",ja:"エレベーターはどこですか？",k:"erebētā wa doko desu ka",kw:"推車 嬰兒車"},
@@ -149,6 +155,13 @@ const P=[
 {c:"kid",kid:1,zh:"附近有公園嗎？",ja:"近くに公園はありますか？",k:"chikaku ni kōen wa arimasu ka",kw:"放電"},
 {c:"kid",kid:1,zh:"孩子不舒服，可以借地方休息嗎？",ja:"子どもの具合が悪いので、少し休めるところはありますか？",k:"kodomo no guai ga warui node, sukoshi yasumeru tokoro wa arimasu ka",kw:"生病 休息 救護"},
 {c:"kid",kid:1,zh:"可以先讓小孩上廁所嗎？",ja:"子どもが先にトイレに行ってもいいですか？",k:"kodomo ga saki ni toire ni itte mo ii desu ka",kw:"急 尿尿"},
+{c:"kid",kid:1,zh:"小孩吵到您了，不好意思",ja:"うるさくてすみません",k:"urusakute sumimasen",n:"餐廳、電車裡很好用，日本人會回「大丈夫ですよ」",kw:"吵 道歉 哭"},
+{c:"kid",kid:1,zh:"小孩打翻了，不好意思，可以給我抹布嗎？",ja:"こぼしてしまいました。すみません、布巾をもらえますか？",k:"koboshite shimaimashita. sumimasen, fukin o moraemasu ka",kw:"打翻 弄髒 道歉 餐廳"},
+{c:"kid",kid:1,zh:"她想睡了，有可以坐下的地方嗎？",ja:"子どもが眠くなったので、座れる場所はありますか？",k:"kodomo ga nemuku natta node, suwareru basho wa arimasu ka",kw:"想睡 累 休息 椅子"},
+{c:"kid",kid:1,zh:"可以讓小孩摸嗎？",ja:"子どもが触ってもいいですか？",k:"kodomo ga sawatte mo ii desu ka",kw:"動物 展示 水族館 動物園"},
+{c:"kid",kid:1,zh:"可以要一杯溫水嗎？（給小孩）",ja:"子ども用にぬるいお湯をもらえますか？",k:"kodomo-yō ni nurui oyu o moraemasu ka",kw:"溫水 熱水 奶粉 餐廳"},
+{c:"kid",kid:1,zh:"可以幫我把小孩的食物加熱嗎？",ja:"子どもの食べ物を温めてもらえますか？",k:"kodomo no tabemono o atatamete moraemasu ka",kw:"加熱 副食品 微波 餐廳"},
+{c:"kid",kid:1,zh:"小孩可以帶自己的食物進去嗎？",ja:"子どもの食べ物を持ち込んでもいいですか？",k:"kodomo no tabemono o mochikonde mo ii desu ka",n:"吉卜力園區內禁止外食，問了才不會踩雷",kw:"外食 自備 零食 餐廳"},
 
 // 機場出入境
 {c:"air",zh:"我們是一家三口：我、太太、5 歲女兒",ja:"家族3人です。私と妻と5歳の娘です",k:"kazoku san-nin desu. watashi to tsuma to go-sai no musume desu",kw:"入境 家庭 海關"},
@@ -205,6 +218,10 @@ const P=[
 {c:"move",zh:"我要去機場",ja:"空港に行きたいです",k:"kūkō ni ikitai desu",kw:"機場 セントレア 中部"},
 {c:"move",zh:"（指車種）這班車，2 大人 1 小孩",ja:"この電車、大人2枚と子ども1枚お願いします",k:"kono densha, otona ni-mai to kodomo ichi-mai onegaishimasu",kw:"買票 指定席 μSKY 名鐵 機場"},
 {c:"move",zh:"我把東西忘在車上了",ja:"電車に忘れ物をしました",k:"densha ni wasuremono o shimashita",kw:"遺失 掉東西"},
+{c:"move",zh:"有地鐵一日券嗎？",ja:"地下鉄の一日乗車券はありますか？",k:"chikatetsu no ichinichi jōshaken wa arimasu ka",n:"名古屋地鐵一日券 ¥760、週末環保券 ¥620；一天搭 3 趟以上才划算",kw:"一日券 票 划算"},
+{c:"move",zh:"末班車幾點？",ja:"終電は何時ですか？",k:"shūden wa nanji desu ka",kw:"最後 電車 晚上"},
+{c:"move",zh:"請坐（讓座給別人）",ja:"どうぞ",k:"dōzo",n:"讓座、讓路、請對方先走都用這句",kw:"讓座 讓路 禮貌"},
+{c:"move",zh:"電梯壞了嗎？",ja:"エレベーターは使えませんか？",k:"erebētā wa tsukaemasen ka",kw:"推車 故障"},
 
 // 計程車
 {c:"taxi",zh:"請到這個地址（給司機看手機）",ja:"ここまでお願いします",k:"koko made onegaishimasu",n:"拿出地圖或飯店卡片給司機看",kw:"地址 目的地"},
@@ -215,6 +232,9 @@ const P=[
 {c:"taxi",zh:"請在這裡停",ja:"ここで止めてください",k:"koko de tomete kudasai",kw:"下車"},
 {c:"taxi",zh:"可以幫我叫計程車嗎？",ja:"タクシーを呼んでもらえますか？",k:"takushī o yonde moraemasu ka",n:"對飯店櫃檯或店員說",kw:"叫車"},
 {c:"taxi",zh:"請給我收據",ja:"領収書をください",k:"ryōshūsho o kudasai",kw:"收據"},
+{c:"taxi",zh:"請開慢一點",ja:"ゆっくり走ってください",k:"yukkuri hashitte kudasai",kw:"安全 小孩"},
+{c:"taxi",zh:"請到最近的車站",ja:"一番近い駅までお願いします",k:"ichiban chikai eki made onegaishimasu",kw:"車站"},
+{c:"taxi",zh:"請等我一下",ja:"ちょっと待ってください",k:"chotto matte kudasai",kw:"等 稍等"},
 
 // 吃飯
 {c:"food",zh:"3 位（我們夫妻＋5 歲女兒）",ja:"3人です。大人2人と子ども1人です",k:"san-nin desu. otona futari to kodomo hitori desu",kw:"幾位 人數"},
@@ -255,6 +275,16 @@ const P=[
 {c:"food",zh:"買單",ja:"お会計お願いします",k:"okaikei onegaishimasu",kw:"結帳 埋單"},
 {c:"food",zh:"很好吃！謝謝招待",ja:"ごちそうさまでした！おいしかったです",k:"gochisōsama deshita! oishikatta desu",n:"離開時說，店員會很開心"},
 {c:"food",zh:"（指菜單）這個怎麼吃？",ja:"これはどうやって食べますか？",k:"kore wa dō yatte tabemasu ka",n:"ひつまぶし（鰻魚飯三吃）問這句，店員會教",kw:"鰻魚 名古屋 美食 吃法"},
+{c:"food",zh:"現在有位子嗎？",ja:"今、席は空いていますか？",k:"ima, seki wa aite imasu ka",kw:"候位 排隊 空位"},
+{c:"food",zh:"要在哪裡登記候位？",ja:"順番待ちはどこで登録しますか？",k:"junban-machi wa doko de tōroku shimasu ka",n:"很多店門口有候位表或機器，先寫名字再等",kw:"排隊 候位 登記 名字"},
+{c:"food",zh:"可以坐這裡嗎？",ja:"ここに座ってもいいですか？",k:"koko ni suwatte mo ii desu ka",kw:"位子 座位"},
+{c:"food",zh:"有限時嗎？",ja:"時間制限はありますか？",k:"jikan seigen wa arimasu ka",kw:"用餐 時間 小時"},
+{c:"food",zh:"這不是我點的",ja:"これは頼んでいません",k:"kore wa tanonde imasen",kw:"送錯 錯誤"},
+{c:"food",zh:"我點的還沒來",ja:"まだ来ていないものがあります",k:"mada kite inai mono ga arimasu",kw:"還沒來 漏單 等很久"},
+{c:"food",zh:"可以換成這個嗎？",ja:"これに変えてもらえますか？",k:"kore ni kaete moraemasu ka",kw:"更換 改點"},
+{c:"food",zh:"可以在哪裡付錢？",ja:"お会計はどこですか？",k:"okaikei wa doko desu ka",n:"日本很多店是拿單子到櫃檯付",kw:"結帳 櫃檯 買單"},
+{c:"food",zh:"有賣飲料嗎？（自動販賣機也可）",ja:"飲み物はありますか？",k:"nomimono wa arimasu ka",kw:"飲料 水"},
+{c:"food",zh:"可以在這裡吃嗎？",ja:"ここで食べてもいいですか？",k:"koko de tabete mo ii desu ka",n:"日本路上邊走邊吃不禮貌，問一下再坐著吃",kw:"休息區 外食 座位"},
 
 // 購物
 {c:"shop",zh:"（指著）這個多少錢？",ja:"これはいくらですか？",k:"kore wa ikura desu ka",n:"沒標價時用",kw:"價錢 價格 沒標價"},
@@ -308,6 +338,16 @@ const P=[
 {c:"hotel",zh:"冷氣怎麼用？",ja:"エアコンの使い方を教えてください",k:"eakon no tsukaikata o oshiete kudasai",kw:"空調"},
 {c:"hotel",zh:"暖氣怎麼開？",ja:"暖房はどうやってつけますか？",k:"danbō wa dō yatte tsukemasu ka",kw:"空調 冷"},
 {c:"hotel",zh:"投幣洗衣機在哪裡？",ja:"コインランドリーはどこですか？",k:"koin randorī wa doko desu ka",kw:"洗衣"},
+{c:"hotel",zh:"早餐幾點到幾點？",ja:"朝食は何時から何時までですか？",k:"chōshoku wa nanji kara nanji made desu ka",kw:"早餐 時間"},
+{c:"hotel",zh:"今天不用打掃",ja:"今日は掃除は不要です",k:"kyō wa sōji wa fuyō desu",kw:"清潔 打掃 房間"},
+{c:"hotel",zh:"請幫我打掃房間",ja:"部屋の掃除をお願いします",k:"heya no sōji o onegaishimasu",kw:"清潔 打掃"},
+{c:"hotel",zh:"房卡不能用了",ja:"カードキーが使えません",k:"kādo kī ga tsukaemasen",kw:"鑰匙 門 消磁"},
+{c:"hotel",zh:"可以晚一點退房嗎？",ja:"レイトチェックアウトはできますか？",k:"reito chekku-auto wa dekimasu ka",kw:"延後 退房"},
+{c:"hotel",zh:"行李可以寄放到幾點？",ja:"荷物は何時まで預かってもらえますか？",k:"nimotsu wa nanji made azukatte moraemasu ka",n:"11/14 退房後到出發前用",kw:"寄放 行李 退房"},
+{c:"hotel",zh:"有加濕器嗎？",ja:"加湿器はありますか？",k:"kashitsuki wa arimasu ka",n:"11 月日本飯店很乾，小孩容易咳",kw:"乾燥 咳嗽 房間"},
+{c:"hotel",zh:"房間太冷了",ja:"部屋が寒いです",k:"heya ga samui desu",kw:"暖氣 溫度"},
+{c:"hotel",zh:"可以借體溫計嗎？",ja:"体温計を借りられますか？",k:"taionkei o kariraremasu ka",kw:"發燒 小孩 生病"},
+{c:"hotel",zh:"可以借雨傘嗎？",ja:"傘を借りられますか？",k:"kasa o kariraremasu ka",kw:"下雨 雨天"},
 
 // 樂園景點
 {c:"park",zh:"售票處在哪裡？",ja:"チケット売り場はどこですか？",k:"chiketto uriba wa doko desu ka",kw:"買票"},
@@ -326,6 +366,12 @@ const P=[
 {c:"park",zh:"有寄物櫃嗎？",ja:"コインロッカーはありますか？",k:"koin rokkā wa arimasu ka",kw:"置物櫃 寄物"},
 {c:"park",zh:"可以借推車嗎？",ja:"ベビーカーを借りられますか？",k:"bebīkā o kariraremasu ka",kid:1,kw:"租 嬰兒車"},
 {c:"park",zh:"失物招領在哪裡？",ja:"落とし物はどこに届いていますか？",k:"otoshimono wa doko ni todoite imasu ka",kw:"遺失"},
+{c:"park",zh:"最後入場是幾點？",ja:"最終入場は何時ですか？",k:"saishū nyūjō wa nanji desu ka",kw:"關門 時間"},
+{c:"park",zh:"這裡可以吃東西嗎？",ja:"ここで食べてもいいですか？",k:"koko de tabete mo ii desu ka",n:"吉卜力園區只能在指定區域吃",kw:"外食 休息區 野餐"},
+{c:"park",zh:"哪裡可以坐下休息？",ja:"休憩できる場所はどこですか？",k:"kyūkei dekiru basho wa doko desu ka",kw:"休息 椅子 累"},
+{c:"park",zh:"紀念品店在哪裡？",ja:"お土産屋さんはどこですか？",k:"omiyage-ya san wa doko desu ka",kw:"商店 伴手禮 禮品"},
+{c:"park",zh:"有雨天用的地方嗎？",ja:"雨の日でも遊べる場所はありますか？",k:"ame no hi demo asoberu basho wa arimasu ka",kw:"下雨 室內 備案"},
+{c:"park",zh:"推車可以帶進表演場嗎？",ja:"ショー会場にベビーカーを持ち込めますか？",k:"shō kaijō ni bebīkā o mochikomemasu ka",kid:1,kw:"推車 表演 水族館"},
 
 // 緊急
 {c:"sos",zh:"救命！",ja:"助けてください！",k:"tasukete kudasai",kw:"幫忙"},
@@ -339,6 +385,35 @@ const P=[
 {c:"sos",zh:"我錢包不見了",ja:"財布をなくしました",k:"saifu o nakushimashita",kw:"遺失 掉了"},
 {c:"sos",zh:"我護照不見了",ja:"パスポートをなくしました",k:"pasupōto o nakushimashita",n:"先報警拿遺失證明，再聯絡駐大阪辦事處",kw:"遺失 掉了"},
 {c:"sos",zh:"有會說中文的人嗎？",ja:"中国語が話せる人はいますか？",k:"chūgokugo ga hanaseru hito wa imasu ka",kw:"翻譯"},
+{c:"sos",zh:"孩子拉肚子",ja:"子どもが下痢をしています",k:"kodomo ga geri o shite imasu",kid:1,kw:"腹瀉 生病 藥局"},
+{c:"sos",zh:"孩子被蚊蟲咬了",ja:"子どもが虫に刺されました",k:"kodomo ga mushi ni sasaremashita",kid:1,kw:"止癢 藥局"},
+{c:"sos",zh:"有退熱貼嗎？",ja:"冷却シートはありますか？",k:"reikyaku shīto wa arimasu ka",kid:1,kw:"發燒 藥局 小孩"},
+{c:"sos",zh:"有兒童用的暈車藥嗎？",ja:"子ども用の酔い止めはありますか？",k:"kodomo-yō no yoidome wa arimasu ka",kid:1,kw:"暈車 藥局 小孩"},
+{c:"sos",zh:"有會說英文的醫生嗎？",ja:"英語が話せる医者はいますか？",k:"eigo ga hanaseru isha wa imasu ka",kw:"醫院 看診"},
+{c:"sos",zh:"我有旅遊保險",ja:"海外旅行保険に入っています",k:"kaigai ryokō hoken ni haitte imasu",n:"看診前先說，請醫院開收據與診斷書回台灣申請",kw:"醫院 看診 收據"},
+{c:"sos",zh:"請幫我開收據和診斷書",ja:"領収書と診断書をお願いします",k:"ryōshūsho to shindansho o onegaishimasu",kw:"醫院 保險"},
+{c:"sos",zh:"請幫我聯絡台灣的辦事處",ja:"台湾の事務所（台北駐日経済文化代表処）に連絡してください",k:"taiwan no jimusho ni renraku shite kudasai",n:"駐大阪辦事處緊急電話在行程頁「資訊」",kw:"護照 遺失 大使館"},
+
+// 聽懂對方（店員常說的話，按喇叭聽發音）
+{c:"ear",zh:"歡迎光臨",ja:"いらっしゃいませ",k:"irasshaimase",n:"不用回",kw:"店員 聽"},
+{c:"ear",zh:"請問幾位？",ja:"何名様ですか？",k:"nan-mei sama desu ka",n:"回「3人です」或比 3",kw:"店員 餐廳 聽"},
+{c:"ear",zh:"請稍等",ja:"少々お待ちください",k:"shōshō omachi kudasai",kw:"店員 聽"},
+{c:"ear",zh:"這邊請",ja:"こちらへどうぞ",k:"kochira e dōzo",kw:"店員 帶位 聽"},
+{c:"ear",zh:"有會員卡嗎？",ja:"ポイントカードはお持ちですか？",k:"pointo kādo wa omochi desu ka",n:"回「大丈夫です」",kw:"店員 超商 聽"},
+{c:"ear",zh:"需要袋子嗎？",ja:"袋はご利用ですか？",k:"fukuro wa goriyō desu ka",n:"要：はい／不要：大丈夫です",kw:"店員 超商 聽"},
+{c:"ear",zh:"要加熱嗎？",ja:"温めますか？",k:"atatamemasu ka",kw:"店員 超商 聽"},
+{c:"ear",zh:"要筷子／湯匙嗎？",ja:"お箸はお付けしますか？",k:"ohashi wa otsuke shimasu ka",kw:"店員 超商 聽"},
+{c:"ear",zh:"以上這樣可以嗎？（確認點餐）",ja:"以上でよろしいですか？",k:"ijō de yoroshii desu ka",n:"回「はい」",kw:"店員 餐廳 聽"},
+{c:"ear",zh:"總共 ___ 日圓",ja:"お会計は___円になります",k:"okaikei wa ___ en ni narimasu",n:"看收銀機螢幕最準",kw:"店員 結帳 聽"},
+{c:"ear",zh:"付款方式？",ja:"お支払いはどうされますか？",k:"oshiharai wa dō saremasu ka",n:"回「カードで」「現金で」",kw:"店員 結帳 聽"},
+{c:"ear",zh:"內用還是外帶？",ja:"店内でお召し上がりですか？",k:"tennai de omeshiagari desu ka",n:"內用：はい／外帶：持ち帰りで",kw:"店員 聽"},
+{c:"ear",zh:"賣完了",ja:"売り切れです",k:"urikire desu",kw:"店員 聽 沒了"},
+{c:"ear",zh:"今天公休",ja:"本日はお休みです",k:"honjitsu wa oyasumi desu",kw:"店員 聽"},
+{c:"ear",zh:"請拿號碼牌",ja:"整理券をお取りください",k:"seiriken o otori kudasai",kw:"排隊 聽"},
+{c:"ear",zh:"這裡禁止進入",ja:"立ち入り禁止です",k:"tachiiri kinshi desu",kw:"聽 警告"},
+{c:"ear",zh:"請注意腳步（手扶梯、階梯）",ja:"足元にご注意ください",k:"ashimoto ni gochūi kudasai",kw:"廣播 聽"},
+{c:"ear",zh:"下一站 ___（車上廣播）",ja:"次は___です",k:"tsugi wa ___ desu",kw:"廣播 電車 聽"},
+{c:"ear",zh:"沒關係／不客氣",ja:"大丈夫ですよ",k:"daijōbu desu yo",n:"你道歉後對方常這樣回",kw:"聽 回應"},
 
 // 數字
 {c:"num",zh:"一、二、三",ja:"いち、に、さん",k:"ichi, ni, san"},

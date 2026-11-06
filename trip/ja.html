@@ -174,7 +174,9 @@ const P=[
 {c:"air",zh:"可以安排我們三人坐一起嗎？",ja:"3人一緒の席にしてもらえますか？",k:"san-nin issho no seki ni shite moraemasu ka",kw:"座位 報到 出境"},
 {c:"air",zh:"這個可以帶上飛機嗎？",ja:"これは機内に持ち込めますか？",k:"kore wa kinai ni mochikomemasu ka",kw:"手提 液體 安檢 出境"},
 {c:"air",zh:"小孩的水／牛奶可以帶過安檢嗎？",ja:"子どもの飲み物は持ち込めますか？",k:"kodomo no nomimono wa mochikomemasu ka",kid:1,kw:"安檢 液體 出境"},
-{c:"air",zh:"免稅品退稅櫃檯在哪裡？",ja:"免税の手続きカウンターはどこですか？",k:"menzei no tetsuzuki kauntā wa doko desu ka",kw:"退稅 出境 海關"},
+{c:"air",zh:"免稅的海關確認機在哪裡？",ja:"免税の税関確認はどこでできますか？",k:"menzei no zeikan kakunin wa doko de dekimasu ka",n:"託運行李「之前」先做：出境大廳海關 kiosk 刷護照。綠燈直接走，紅燈要把全部免稅品拿給海關看",kw:"退稅 免稅 出境 海關"},
+{c:"air",zh:"免稅品都在這個行李箱裡",ja:"免税品はこのスーツケースに入っています",k:"menzeihin wa kono sūtsukēsu ni haitte imasu",kw:"退稅 海關 檢查"},
+{c:"air",zh:"都還沒開封",ja:"まだ開けていません",k:"mada akete imasen",n:"藥妝、食品出境前不能拆開或吃掉，否則不退",kw:"退稅 海關"},
 {c:"air",zh:"登機口幾號？",ja:"搭乗口は何番ですか？",k:"tōjōguchi wa nan-ban desu ka",kw:"出境 登機"},
 
 // 問路
@@ -234,10 +236,14 @@ const P=[
 
 // 購物
 {c:"shop",zh:"有 ___ 嗎？",ja:"___はありますか？",k:"___ wa arimasu ka",kw:"找東西"},
+{c:"shop",zh:"有大一號的嗎？",ja:"ワンサイズ大きいのはありますか？",k:"wan saizu ōkii no wa arimasu ka",kw:"尺寸 大號"},
+{c:"shop",zh:"有小一號的嗎？",ja:"ワンサイズ小さいのはありますか？",k:"wan saizu chiisai no wa arimasu ka",kw:"尺寸 小號"},
 {c:"shop",zh:"可以試穿嗎？",ja:"試着してもいいですか？",k:"shichaku shite mo ii desu ka",kw:"試衣"},
-{c:"shop",zh:"有大／小一號的嗎？",ja:"大きい・小さいサイズはありますか？",k:"ōkii / chiisai saizu wa arimasu ka",kw:"尺寸"},
-{c:"shop",zh:"可以免稅嗎？",ja:"免税できますか？",k:"menzei dekimasu ka",n:"要帶護照正本",kw:"退稅 tax free"},
-{c:"shop",zh:"這是含稅價嗎？",ja:"これは税込みですか？",k:"kore wa zeikomi desu ka",kw:"含稅 退稅"},
+{c:"shop",zh:"這個可以免稅嗎？",ja:"これは免税の対象ですか？",k:"kore wa menzei no taishō desu ka",n:"2026/11 新制：店裡先付含稅價，出境時海關確認後才退稅",kw:"退稅 tax free 免稅"},
+{c:"shop",zh:"請幫我辦免稅，這是護照",ja:"免税の手続きをお願いします。パスポートはこちらです",k:"menzei no tetsuzuki o onegaishimasu. pasupōto wa kochira desu",n:"要護照正本，照片不行；同店同日合計通常要未稅 ¥5,000 以上",kw:"退稅 免稅 護照"},
+{c:"shop",zh:"退稅請退到信用卡",ja:"還付はクレジットカードでお願いします",k:"kanpu wa kurejitto kādo de onegaishimasu",n:"退款方式在結帳時登記，刷卡最省事",kw:"退稅 免稅 刷卡"},
+{c:"shop",zh:"退稅可以拿現金嗎？",ja:"還付は現金で受け取れますか？",k:"kanpu wa genkin de uketoremasu ka",n:"能不能現金、有沒有手續費，各店不同",kw:"退稅 免稅"},
+{c:"shop",zh:"可以合併成同一張免稅單嗎？",ja:"まとめて一つの免税手続きにしてもらえますか？",k:"matomete hitotsu no menzei tetsuzuki ni shite moraemasu ka",n:"新制一般品、消耗品可合算；海關以「一張收據」為單位，收據要留好",kw:"退稅 免稅 收據"},
 {c:"shop",zh:"可以刷卡嗎？",ja:"カードは使えますか？",k:"kādo wa tsukaemasu ka",kw:"信用卡 付款"},
 {c:"shop",zh:"不用袋子",ja:"袋はいりません",k:"fukuro wa irimasen",kw:"塑膠袋 購物袋"},
 {c:"shop",zh:"有兒童尺寸嗎？",ja:"子ども用のサイズはありますか？",k:"kodomo-yō no saizu wa arimasu ka",kid:1,kw:"小孩 衣服"},

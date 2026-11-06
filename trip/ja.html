@@ -105,7 +105,7 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
 <div class="wrap">
   <div class="top">
     <div class="row">
-      <a class="back" href="./" aria-label="回到名古屋八日">‹ 行程</a>
+      <a class="back" id="backlink" href="./" aria-label="回到名古屋八日">‹ 行程</a>
       <h1>🗣️ 日文會話</h1>
       <button class="slow" id="slow" aria-pressed="false" title="放慢語速">🐢 慢速</button>
     </div>
@@ -579,6 +579,7 @@ $("#bplay").onclick=()=>cur&&speak(cur.ja);
 $("#brot").onclick=()=>$("#show").classList.toggle("rot");
 $("#bclose").onclick=()=>{$("#show").hidden=true; try{speechSynthesis.cancel()}catch(e){}};
 document.addEventListener("keydown",e=>{if(e.key==="Escape") $("#show").hidden=true;});
+try{ $("#backlink").href="./?v="+Math.floor(Date.now()/60000); }catch(e){}
 $("#restore").onclick=()=>{ if(confirm("把移除、編輯過的內建句子全部還原？自己新增的會保留。")){ CUST.hide=[]; CUST.edit={}; saveCust(); location.reload(); } };
 render();
 try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}

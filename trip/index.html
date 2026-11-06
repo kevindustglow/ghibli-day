@@ -207,7 +207,7 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
   <div class="top">
     <div class="top-row">
       <a class="brand" href="./" id="home" aria-label="回到首頁" style="text-decoration:none;color:inherit"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3" fill="var(--sky-soft)" stroke="var(--sky)"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="var(--sky)"/><path d="M9 11v6M15 11v6" stroke="var(--sky)"/><circle cx="8" cy="21" r="1" fill="var(--sky)" stroke="none"/><circle cx="16" cy="21" r="1" fill="var(--sky)" stroke="none"/></svg>名古屋八日</a>
-      <a class="pillbtn" href="ja.html">🗣️ 日文會話</a>
+      <a class="pillbtn" id="jalink" href="ja.html?v=23">🗣️ 日文會話</a>
     </div>
     <div class="wx" id="wx" role="group" aria-label="選擇日期"></div>
   </div>
@@ -587,6 +587,7 @@ $("#dock").querySelectorAll("button").forEach(b=>b.onclick=()=>{ show(b.dataset.
   else show("day");
 })();
 loadWx();
+try{ const jl=document.getElementById("jalink"); if(jl) jl.href="ja.html?v="+Math.floor(Date.now()/60000); }catch(e){}
 try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}
 </script>
 </body>

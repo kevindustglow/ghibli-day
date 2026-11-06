@@ -62,6 +62,10 @@ h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;flex:
 .ja{font-family:var(--f-ja);font-size:1.25rem;line-height:1.4;font-weight:500;word-break:break-word}
 .kana{font-size:.85rem;color:var(--muted);font-family:var(--f-ja)}
 .note{font-size:.8rem;color:var(--sky);margin-top:2px}
+.re{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.re button{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--forest);background:var(--forest-soft);color:var(--forest);font-size:.9rem;display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;gap:1px}
+.re button small{font-size:.72rem;opacity:.8}
+.re button.on{background:var(--forest);color:#fff}
 .side{flex:none;display:flex;flex-direction:column;gap:4px}
 .ic{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
 .ic.fav[aria-pressed="true"]{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
@@ -421,24 +425,24 @@ const P=[
 
 // 聽懂對方（店員常說的話，按喇叭聽發音）
 {c:"ear",zh:"歡迎光臨",ja:"いらっしゃいませ",k:"irasshaimase",n:"不用回",kw:"店員 聽"},
-{c:"ear",zh:"請問幾位？",ja:"何名様ですか？",k:"nan-mei sama desu ka",n:"回「3人です」或比 3",kw:"店員 餐廳 聽"},
-{c:"ear",zh:"請稍等",ja:"少々お待ちください",k:"shōshō omachi kudasai",kw:"店員 聽"},
-{c:"ear",zh:"這邊請",ja:"こちらへどうぞ",k:"kochira e dōzo",kw:"店員 帶位 聽"},
-{c:"ear",zh:"有會員卡嗎？",ja:"ポイントカードはお持ちですか？",k:"pointo kādo wa omochi desu ka",n:"回「大丈夫です」",kw:"店員 超商 聽"},
-{c:"ear",zh:"需要袋子嗎？",ja:"袋はご利用ですか？",k:"fukuro wa goriyō desu ka",n:"要：はい／不要：大丈夫です",kw:"店員 超商 聽"},
-{c:"ear",zh:"要加熱嗎？",ja:"温めますか？",k:"atatamemasu ka",kw:"店員 超商 聽"},
-{c:"ear",zh:"要筷子／湯匙嗎？",ja:"お箸はお付けしますか？",k:"ohashi wa otsuke shimasu ka",kw:"店員 超商 聽"},
-{c:"ear",zh:"以上這樣可以嗎？（確認點餐）",ja:"以上でよろしいですか？",k:"ijō de yoroshii desu ka",n:"回「はい」",kw:"店員 餐廳 聽"},
+{c:"ear",zh:"請問幾位？",ja:"何名様ですか？",k:"nan-mei sama desu ka",n:"回「3人です」或比 3",r:[{zh:"3 位",ja:"3人です"}],kw:"店員 餐廳 聽"},
+{c:"ear",zh:"請稍等",ja:"少々お待ちください",k:"shōshō omachi kudasai",r:[{zh:"好的",ja:"はい"}],kw:"店員 聽"},
+{c:"ear",zh:"這邊請",ja:"こちらへどうぞ",k:"kochira e dōzo",r:[{zh:"謝謝",ja:"ありがとうございます"}],kw:"店員 帶位 聽"},
+{c:"ear",zh:"有會員卡嗎？",ja:"ポイントカードはお持ちですか？",k:"pointo kādo wa omochi desu ka",r:[{zh:"沒有",ja:"大丈夫です"}],kw:"店員 超商 聽"},
+{c:"ear",zh:"需要袋子嗎？",ja:"袋はご利用ですか？",k:"fukuro wa goriyō desu ka",r:[{zh:"要",ja:"はい、お願いします"},{zh:"不用",ja:"大丈夫です"}],kw:"店員 超商 聽"},
+{c:"ear",zh:"要加熱嗎？",ja:"温めますか？",k:"atatamemasu ka",r:[{zh:"要",ja:"はい、お願いします"},{zh:"不用",ja:"そのままで大丈夫です"}],kw:"店員 超商 聽"},
+{c:"ear",zh:"要筷子／湯匙嗎？",ja:"お箸はお付けしますか？",k:"ohashi wa otsuke shimasu ka",r:[{zh:"要",ja:"はい、お願いします"},{zh:"不用",ja:"大丈夫です"}],kw:"店員 超商 聽"},
+{c:"ear",zh:"以上這樣可以嗎？（確認點餐）",ja:"以上でよろしいですか？",k:"ijō de yoroshii desu ka",r:[{zh:"好",ja:"はい"},{zh:"我還要加點",ja:"追加お願いします"}],kw:"店員 餐廳 聽"},
 {c:"ear",zh:"總共 ___ 日圓",ja:"お会計は___円になります",k:"okaikei wa ___ en ni narimasu",n:"看收銀機螢幕最準",kw:"店員 結帳 聽"},
-{c:"ear",zh:"付款方式？",ja:"お支払いはどうされますか？",k:"oshiharai wa dō saremasu ka",n:"回「カードで」「現金で」",kw:"店員 結帳 聽"},
-{c:"ear",zh:"內用還是外帶？",ja:"店内でお召し上がりですか？",k:"tennai de omeshiagari desu ka",n:"內用：はい／外帶：持ち帰りで",kw:"店員 聽"},
-{c:"ear",zh:"賣完了",ja:"売り切れです",k:"urikire desu",kw:"店員 聽 沒了"},
-{c:"ear",zh:"今天公休",ja:"本日はお休みです",k:"honjitsu wa oyasumi desu",kw:"店員 聽"},
-{c:"ear",zh:"請拿號碼牌",ja:"整理券をお取りください",k:"seiriken o otori kudasai",kw:"排隊 聽"},
+{c:"ear",zh:"付款方式？",ja:"お支払いはどうされますか？",k:"oshiharai wa dō saremasu ka",r:[{zh:"信用卡",ja:"カードで"},{zh:"交通卡",ja:"交通系ICで"},{zh:"PayPay",ja:"PayPayで"},{zh:"現金",ja:"現金で"}],kw:"店員 結帳 聽"},
+{c:"ear",zh:"內用還是外帶？",ja:"店内でお召し上がりですか？",k:"tennai de omeshiagari desu ka",r:[{zh:"內用",ja:"店内で"},{zh:"外帶",ja:"持ち帰りで"}],kw:"店員 聽"},
+{c:"ear",zh:"賣完了",ja:"売り切れです",k:"urikire desu",r:[{zh:"知道了",ja:"わかりました"}],kw:"店員 聽 沒了"},
+{c:"ear",zh:"今天公休",ja:"本日はお休みです",k:"honjitsu wa oyasumi desu",r:[{zh:"知道了，謝謝",ja:"わかりました、ありがとうございます"}],kw:"店員 聽"},
+{c:"ear",zh:"請拿號碼牌",ja:"整理券をお取りください",k:"seiriken o otori kudasai",r:[{zh:"好的",ja:"はい"}],kw:"排隊 聽"},
 {c:"ear",zh:"這裡禁止進入",ja:"立ち入り禁止です",k:"tachiiri kinshi desu",kw:"聽 警告"},
 {c:"ear",zh:"請注意腳步（手扶梯、階梯）",ja:"足元にご注意ください",k:"ashimoto ni gochūi kudasai",kw:"廣播 聽"},
 {c:"ear",zh:"下一站 ___（車上廣播）",ja:"次は___です",k:"tsugi wa ___ desu",kw:"廣播 電車 聽"},
-{c:"ear",zh:"沒關係／不客氣",ja:"大丈夫ですよ",k:"daijōbu desu yo",n:"你道歉後對方常這樣回",kw:"聽 回應"},
+{c:"ear",zh:"沒關係／不客氣",ja:"大丈夫ですよ",k:"daijōbu desu yo",n:"你道歉後對方常這樣回",r:[{zh:"謝謝",ja:"ありがとうございます"}],kw:"聽 回應"},
 
 // 數字
 {c:"num",zh:"一、二、三",ja:"いち、に、さん",k:"ichi, ni, san"},
@@ -479,7 +483,7 @@ let playing=null;
 function speak(text,btn){
   if(!("speechSynthesis" in window)){ $("#warn").innerHTML='<div class="warn">這支手機的瀏覽器不支援語音，可以按 📱 讓對方看大字。</div>'; return; }
   speechSynthesis.cancel();
-  document.querySelectorAll(".say.on").forEach(b=>b.classList.remove("on"));
+  document.querySelectorAll(".say.on,.re .on").forEach(b=>b.classList.remove("on"));
   const u=new SpeechSynthesisUtterance(text.replace(/___/g,"、"));
   u.lang="ja-JP"; if(voice) u.voice=voice; u.rate=slow?0.6:0.9;
   if(btn){ btn.classList.add("on"); u.onend=u.onerror=()=>btn.classList.remove("on"); }
@@ -495,7 +499,7 @@ function card(p,q){
   const i=P.indexOf(p);
   return `<div class="p${p.kid?" kid":""}${p.mine?" mine":""}">
     <button class="say" data-i="${i}" aria-label="播放日文：${esc(p.ja)}">${SPK}</button>
-    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${esc(p.n)}</div>`:""}</div>
+    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${esc(p.n)}</div>`:""}${p.r?`<div class="re">${p.r.map((r,j)=>`<button data-r="${i}:${j}" aria-label="回答：${esc(r.ja)}">🔊 ${esc(r.ja)}<small>${esc(r.zh)}</small></button>`).join("")}</div>`:""}</div>
     <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button><button class="ic" data-e="${i}" aria-label="編輯或移除">⋯</button></div>
   </div>`;
 }
@@ -528,6 +532,7 @@ $("#list").addEventListener("click",e=>{
   if(f){ const p=P[f.dataset.f]; FAV.has(p.id)?FAV.delete(p.id):FAV.add(p.id); saveFav(); f.setAttribute("aria-pressed",FAV.has(p.id)); f.textContent=FAV.has(p.id)?"★":"☆"; renderTabs(); }
   if(b) openShow(P[b.dataset.s]);
   const ed=e.target.closest("[data-e]"); if(ed) openForm(P[ed.dataset.e]);
+  const rb=e.target.closest("[data-r]"); if(rb){ const [i,j]=rb.dataset.r.split(":"); document.querySelectorAll(".re .on").forEach(x=>x.classList.remove("on")); speak(P[i].r[j].ja,rb); }
 });
 // 新增／編輯表單
 let editing=null;

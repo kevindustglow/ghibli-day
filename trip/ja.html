@@ -504,7 +504,7 @@ function card(p,q){
   const i=P.indexOf(p);
   return `<div class="p${p.kid?" kid":""}${p.mine?" mine":""}">
     <button class="say" data-i="${i}" aria-label="播放日文：${esc(p.ja)}">${SPK}</button>
-    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${noteHtml(p.n)}</div>`:""}${p.r?`<div class="re">${p.r.map((r,j)=>`<button data-r="${i}:${j}" aria-label="回答：${esc(r.ja)}">🔊 <b>${esc(r.ja)}</b><small>${esc(r.zh)}</small></button>`).join("")}</div>`:""}</div>
+    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${noteHtml(p.n)}</div>`:""}${p.r?`<div class="re">${p.r.map((r,j)=>`<button data-r="${i}:${j}" aria-label="回答：${esc(r.ja)}"><b>${esc(r.ja)}</b><small>${esc(r.zh)}</small></button>`).join("")}</div>`:""}</div>
     <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button><button class="ic" data-e="${i}" aria-label="編輯或移除">⋯</button></div>
   </div>`;
 }

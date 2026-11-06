@@ -97,7 +97,7 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
   </div>
   <div id="warn"></div>
   <div class="list" id="list"></div>
-  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 若開靜音模式聽不到，請把側邊靜音鍵撥開或改用 📱 大字。</p>
+  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 靜音模式會聽不到，需要時把側邊靜音鍵撥開。</p>
 </div>
 
 <div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="給店員看">
@@ -113,7 +113,7 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
 // 每句：c 分類, zh 中文, ja 日文, k 讀音（平假名／羅馬拼音輔助）, n 小提醒, kid 帶小孩相關, kw 額外搜尋字
 const CATS=[
   ["fav","⭐ 收藏"],["basic","👋 基本"],["kid","👧 帶小孩"],["air","✈️ 機場出入境"],["way","🧭 問路"],["move","🚇 交通"],["taxi","🚕 計程車"],
-  ["food","🍜 吃飯"],["shop","🛍️ 購物"],["hotel","🏨 飯店"],["park","🎢 樂園景點"],["sos","🆘 緊急"],["num","🔢 數字"]
+  ["food","🍜 吃飯"],["shop","🛍️ 購物"],["pay","🏪 超商結帳"],["hotel","🏨 飯店"],["park","🎢 樂園景點"],["sos","🆘 緊急"],["num","🔢 數字"]
 ];
 const P=[
 // 基本
@@ -257,6 +257,7 @@ const P=[
 {c:"food",zh:"（指菜單）這個怎麼吃？",ja:"これはどうやって食べますか？",k:"kore wa dō yatte tabemasu ka",n:"ひつまぶし（鰻魚飯三吃）問這句，店員會教",kw:"鰻魚 名古屋 美食 吃法"},
 
 // 購物
+{c:"shop",zh:"（指著）這個多少錢？",ja:"これはいくらですか？",k:"kore wa ikura desu ka",n:"沒標價時用",kw:"價錢 價格 沒標價"},
 {c:"shop",zh:"（給看照片）有這個嗎？",ja:"これはありますか？",k:"kore wa arimasu ka",kw:"找東西 商品"},
 {c:"shop",zh:"有大一號的嗎？",ja:"ワンサイズ大きいのはありますか？",k:"wan saizu ōkii no wa arimasu ka",kw:"尺寸 大號"},
 {c:"shop",zh:"有小一號的嗎？",ja:"ワンサイズ小さいのはありますか？",k:"wan saizu chiisai no wa arimasu ka",kw:"尺寸 小號"},
@@ -266,13 +267,35 @@ const P=[
 {c:"shop",zh:"退稅請退到信用卡",ja:"還付はクレジットカードでお願いします",k:"kanpu wa kurejitto kādo de onegaishimasu",n:"退款方式在結帳時登記，刷卡最省事",kw:"退稅 免稅 刷卡"},
 {c:"shop",zh:"退稅可以拿現金嗎？",ja:"還付は現金で受け取れますか？",k:"kanpu wa genkin de uketoremasu ka",n:"能不能現金、有沒有手續費，各店不同",kw:"退稅 免稅"},
 {c:"shop",zh:"可以合併成同一張免稅單嗎？",ja:"まとめて一つの免税手続きにしてもらえますか？",k:"matomete hitotsu no menzei tetsuzuki ni shite moraemasu ka",n:"新制一般品、消耗品可合算；海關以「一張收據」為單位，收據要留好",kw:"退稅 免稅 收據"},
-{c:"shop",zh:"可以刷卡嗎？",ja:"カードは使えますか？",k:"kādo wa tsukaemasu ka",kw:"信用卡 付款"},
-{c:"shop",zh:"不用袋子",ja:"袋はいりません",k:"fukuro wa irimasen",kw:"塑膠袋 購物袋"},
 {c:"shop",zh:"有兒童尺寸嗎？",ja:"子ども用のサイズはありますか？",k:"kodomo-yō no saizu wa arimasu ka",kid:1,kw:"小孩 衣服"},
 {c:"shop",zh:"小孩可以吃這個藥嗎？",ja:"この薬は子どもでも飲めますか？",k:"kono kusuri wa kodomo demo nomemasu ka",kid:1,kw:"藥局 兒童藥"},
 {c:"shop",zh:"有退燒藥嗎？",ja:"熱さましの薬はありますか？",k:"netsusamashi no kusuri wa arimasu ka",kw:"藥局 發燒"},
 {c:"shop",zh:"有感冒藥嗎？",ja:"風邪薬はありますか？",k:"kazegusuri wa arimasu ka",kw:"藥局 感冒"},
 {c:"shop",zh:"有 OK 繃嗎？",ja:"絆創膏はありますか？",k:"bansōkō wa arimasu ka",kw:"藥局 受傷 擦傷"},
+
+// 超商結帳（店員會連珠炮問：點數卡？袋子？要加熱？付款方式？）
+{c:"pay",zh:"不用了，謝謝（萬用拒絕）",ja:"大丈夫です",k:"daijōbu desu",n:"被問會員卡、點數、集點貼紙，一律這句",kw:"拒絕 不用 會員卡 點數"},
+{c:"pay",zh:"我沒有會員卡",ja:"ポイントカードはありません",k:"pointo kādo wa arimasen",n:"店員問「ポイントカードはお持ちですか」就是在問這個",kw:"會員 點數"},
+{c:"pay",zh:"我是台灣來的觀光客",ja:"台湾からの観光客です",k:"taiwan kara no kankōkyaku desu",kw:"台灣人 外國人"},
+{c:"pay",zh:"不用袋子",ja:"袋はいりません",k:"fukuro wa irimasen",kw:"塑膠袋"},
+{c:"pay",zh:"我有自己的購物袋",ja:"袋は持っています",k:"fukuro wa motte imasu",kw:"環保袋 自備"},
+{c:"pay",zh:"請給我一個袋子",ja:"袋を一枚ください",k:"fukuro o ichimai kudasai",n:"日本塑膠袋要收 ¥3–5",kw:"塑膠袋"},
+{c:"pay",zh:"請幫我微波",ja:"温めてください",k:"atatamete kudasai",n:"店員問「温めますか」＝要加熱嗎",kw:"加熱 便當 微波"},
+{c:"pay",zh:"不用加熱",ja:"そのままで大丈夫です",k:"sono mama de daijōbu desu",kw:"微波"},
+{c:"pay",zh:"請給我筷子",ja:"お箸をください",k:"ohashi o kudasai",kw:"餐具"},
+{c:"pay",zh:"請給我湯匙",ja:"スプーンをください",k:"supūn o kudasai",kw:"餐具 小孩"},
+{c:"pay",zh:"請給我吸管",ja:"ストローをください",k:"sutorō o kudasai",kw:"飲料 小孩"},
+{c:"pay",zh:"用交通卡付（西瓜卡／manaca）",ja:"交通系ICで",k:"kōtsūkei aishī de",n:"刷卡機亮燈時再感應",kw:"西瓜卡 Suica manaca 付款 IC"},
+{c:"pay",zh:"用信用卡付",ja:"クレジットカードで",k:"kurejitto kādo de",kw:"刷卡 付款"},
+{c:"pay",zh:"用 PayPay 付",ja:"PayPayで",k:"peipei de",kw:"付款 行動支付"},
+{c:"pay",zh:"用 Apple Pay 付",ja:"Apple Payで",k:"appuru pei de",kw:"付款 手機"},
+{c:"pay",zh:"付現金",ja:"現金で",k:"genkin de",kw:"付款"},
+{c:"pay",zh:"我沒有現金",ja:"現金は持っていません",k:"genkin wa motte imasen",kw:"付款 刷卡"},
+{c:"pay",zh:"可以刷卡嗎？",ja:"カードは使えますか？",k:"kādo wa tsukaemasu ka",kw:"信用卡 付款"},
+{c:"pay",zh:"可以分開裝嗎？（冷的和熱的）",ja:"別々に入れてください",k:"betsubetsu ni irete kudasai",kw:"袋子 分裝"},
+{c:"pay",zh:"請給我收據",ja:"レシートをください",k:"reshīto o kudasai",kw:"發票"},
+{c:"pay",zh:"廁所可以借用嗎？",ja:"トイレを借りてもいいですか？",k:"toire o karite mo ii desu ka",kw:"超商 廁所"},
+{c:"pay",zh:"有 ATM 嗎？",ja:"ATMはありますか？",k:"ētīemu wa arimasu ka",kw:"領錢 提款 7-11"},
 
 // 飯店
 {c:"hotel",zh:"（給看訂房畫面）我要辦入住",ja:"チェックインをお願いします。予約はこちらです",k:"chekku-in o onegaishimasu. yoyaku wa kochira desu",kw:"check in 入住 訂房"},
@@ -342,14 +365,7 @@ let voice=null;
 function pickVoice(){ if(!("speechSynthesis" in window)) return; const vs=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang)); voice=vs.find(v=>/Kyoko|O-ren|Google|Nanami|Haruka/i.test(v.name))||vs[0]||null; }
 if("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
 let playing=null;
-// iPhone 靜音鍵會關掉語音。先用 <audio> 播一段無聲音檔，把音訊切到「播放」類別，之後語音多半能在靜音模式發聲
-let unlocked=false, silent=null;
-function unlock(){
-  if(unlocked) return; unlocked=true;
-  try{ silent=new Audio("data:audio/wav;base64,UklGRsQPAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAPAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA"); silent.loop=true; silent.volume=0.01; silent.setAttribute("playsinline",""); silent.play().catch(()=>{}); }catch(e){}
-}
 function speak(text,btn){
-  unlock();
   if(!("speechSynthesis" in window)){ $("#warn").innerHTML='<div class="warn">這支手機的瀏覽器不支援語音，可以按 📱 讓對方看大字。</div>'; return; }
   speechSynthesis.cancel();
   document.querySelectorAll(".say.on").forEach(b=>b.classList.remove("on"));

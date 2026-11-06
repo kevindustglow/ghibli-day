@@ -67,6 +67,20 @@ h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;flex:
 .ic.fav[aria-pressed="true"]{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
 mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
 .empty{text-align:center;color:var(--muted);padding:40px 10px}
+.p.mine{box-shadow:0 2px 0 var(--line),inset 4px 0 0 var(--sky)}
+.fab{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;width:60px;height:60px;border-radius:20px;border:0;background:var(--ink);color:var(--bg);font-size:1.8rem;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}
+.sheet[hidden]{display:none}
+.sheet form{width:100%;background:var(--card);border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px;max-height:90vh;overflow:auto}
+.sheet h2{font-family:var(--f-display);font-weight:400;font-size:1.2rem}
+.sheet label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.sheet input,.sheet select{min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:1rem;color:var(--ink)}
+.sheet .ja-in{font-family:var(--f-ja);font-size:1.15rem}
+.sheet .acts{display:flex;gap:8px;margin-top:6px}
+.sheet .acts button{min-height:52px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:0 16px;font-size:1rem}
+.sheet .acts .ok{background:var(--forest);color:#fff;border-color:var(--forest);flex:1}
+.sheet .acts .del{color:var(--rose);border-color:var(--rose)}
+.sheet .tip{font-size:.8rem;color:var(--muted)}
 .warn{background:var(--rose-soft);color:var(--rose);border-radius:16px;padding:10px 14px;font-size:.9rem;margin-top:10px}
 /* 給店員看：全螢幕大字 */
 .show{position:fixed;inset:0;z-index:50;background:var(--card);display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));gap:16px}
@@ -97,7 +111,21 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
   </div>
   <div id="warn"></div>
   <div class="list" id="list"></div>
-  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 靜音模式會聽不到，需要時把側邊靜音鍵撥開。</p>
+  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 靜音模式會聽不到，需要時把側邊靜音鍵撥開。<br>⋯ 可編輯或移除句子，左下角 ＋ 新增；只存在這支手機。<button type="button" id="restore" style="border:0;background:none;color:var(--sky);font-size:inherit;text-decoration:underline">還原所有內建句子</button></p>
+</div>
+
+<button class="fab" id="fab" aria-label="新增會話">＋</button>
+
+<div class="sheet" id="sheet" hidden>
+  <form id="form">
+    <h2 id="ftitle">新增會話</h2>
+    <label>中文（自己看得懂就好）<input id="fzh" required maxlength="60" placeholder="例：可以幫我熱牛奶嗎？"></label>
+    <label>日文<input id="fja" class="ja-in" required maxlength="80" lang="ja" placeholder="例：ミルクを温めてもらえますか？"></label>
+    <label>讀音（選填，可留空）<input id="fk" maxlength="80" placeholder="miruku o atatamete moraemasu ka"></label>
+    <label>分類<select id="fc"></select></label>
+    <p class="tip">不會日文怎麼寫？用翻譯 App 翻好貼過來，喇叭鍵一樣能念。句子只存在這支手機。</p>
+    <div class="acts"><button type="submit" class="ok">儲存</button><button type="button" class="del" id="fdel" hidden>移除</button><button type="button" id="fcancel">取消</button></div>
+  </form>
 </div>
 
 <div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="給店員看">
@@ -332,7 +360,6 @@ const P=[
 {c:"hotel",zh:"Wi-Fi 密碼是什麼？",ja:"Wi-Fiのパスワードは何ですか？",k:"waifai no pasuwādo wa nan desu ka",kw:"網路"},
 {c:"hotel",zh:"可以多給一條毛巾嗎？",ja:"タオルをもう一枚もらえますか？",k:"taoru o mō ichimai moraemasu ka"},
 {c:"hotel",zh:"有兒童睡衣嗎？",ja:"子ども用のパジャマはありますか？",k:"kodomo-yō no pajama wa arimasu ka",kid:1,kw:"備品"},
-{c:"hotel",zh:"有兒童牙刷嗎？",ja:"子ども用の歯ブラシはありますか？",k:"kodomo-yō no haburashi wa arimasu ka",kid:1,kw:"備品"},
 {c:"hotel",zh:"冷氣怎麼用？",ja:"エアコンの使い方を教えてください",k:"eakon no tsukaikata o oshiete kudasai",kw:"空調"},
 {c:"hotel",zh:"暖氣怎麼開？",ja:"暖房はどうやってつけますか？",k:"danbō wa dō yatte tsukemasu ka",kw:"空調 冷"},
 {c:"hotel",zh:"投幣洗衣機在哪裡？",ja:"コインランドリーはどこですか？",k:"koin randorī wa doko desu ka",kw:"洗衣"},
@@ -432,6 +459,17 @@ try{slow=localStorage.getItem("trip-ja-slow")==="1"}catch(e){}
 try{const c=localStorage.getItem("trip-ja-cat"); if(c && CATS.some(x=>x[0]===c)) cat=c}catch(e){}
 const saveFav=()=>{try{localStorage.setItem("trip-ja-fav",JSON.stringify([...FAV]))}catch(e){}};
 P.forEach((p,i)=>p.id=p.c+":"+p.ja);
+// 自訂：新增／編輯／隱藏，存在這支手機（localStorage trip-ja-custom）
+let CUST={add:[],hide:[],edit:{}};
+try{ const c=JSON.parse(localStorage.getItem("trip-ja-custom")||"null"); if(c&&c.add) CUST=c; }catch(e){}
+const saveCust=()=>{try{localStorage.setItem("trip-ja-custom",JSON.stringify(CUST))}catch(e){}};
+function applyCust(){
+  // 移除舊的自訂句，再套用
+  for(let i=P.length-1;i>=0;i--) if(P[i].mine) P.splice(i,1);
+  CUST.add.forEach(a=>P.push({...a,mine:true}));
+  P.forEach(p=>{ const e=CUST.edit[p.id]; if(e){ p.zh=e.zh; p.ja=e.ja; p.k=e.k||""; if(e.c) p.c=e.c; } p.hidden=CUST.hide.includes(p.id); });
+}
+applyCust();
 
 // 發音
 let voice=null;
@@ -455,10 +493,10 @@ function hl(text,q){ if(!q) return esc(text); const i=text.toLowerCase().indexOf
 const SPK='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 function card(p,q){
   const i=P.indexOf(p);
-  return `<div class="p${p.kid?" kid":""}">
+  return `<div class="p${p.kid?" kid":""}${p.mine?" mine":""}">
     <button class="say" data-i="${i}" aria-label="播放日文：${esc(p.ja)}">${SPK}</button>
     <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${esc(p.n)}</div>`:""}</div>
-    <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button></div>
+    <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button><button class="ic" data-e="${i}" aria-label="編輯或移除">⋯</button></div>
   </div>`;
 }
 function renderTabs(){
@@ -470,13 +508,14 @@ function render(){
   let html="";
   if(qs){
     const n=norm(qs);
-    const hits=P.filter(p=>norm(p.zh+p.ja+p.k+(p.kw||"")+(p.n||"")).includes(n));
+    const hits=P.filter(p=>!p.hidden).filter(p=>norm(p.zh+p.ja+p.k+(p.kw||"")+(p.n||"")).includes(n));
     html=hits.length?`<p class="hint">找到 ${hits.length} 句</p>`+hits.map(p=>card(p,qs)).join(""):`<div class="empty">找不到「${esc(qs)}」😅<br>換個說法試試，例如「錢」「車」「痛」</div>`;
   }else if(cat==="fav"){
-    const f=P.filter(p=>FAV.has(p.id));
+    const f=P.filter(p=>!p.hidden&&FAV.has(p.id));
     html=f.length?f.map(p=>card(p)).join(""):`<div class="empty">還沒有收藏 ⭐<br>點句子右邊的星星，常用句就會集中在這裡。</div>`;
   }else{
-    html=P.filter(p=>p.c===cat).map(p=>card(p)).join("");
+    html=P.filter(p=>!p.hidden&&p.c===cat).map(p=>card(p)).join("");
+    if(!html) html=`<div class="empty">這個分類的句子都被移除了。<br>按左下角「＋」可以新增。</div>`;
   }
   $("#list").innerHTML=html;
 }
@@ -488,7 +527,38 @@ $("#list").addEventListener("click",e=>{
   if(s) speak(P[s.dataset.i].ja,s);
   if(f){ const p=P[f.dataset.f]; FAV.has(p.id)?FAV.delete(p.id):FAV.add(p.id); saveFav(); f.setAttribute("aria-pressed",FAV.has(p.id)); f.textContent=FAV.has(p.id)?"★":"☆"; renderTabs(); }
   if(b) openShow(P[b.dataset.s]);
+  const ed=e.target.closest("[data-e]"); if(ed) openForm(P[ed.dataset.e]);
 });
+// 新增／編輯表單
+let editing=null;
+const sheet=$("#sheet");
+$("#fc").innerHTML=CATS.filter(c=>c[0]!=="fav").map(([k,l])=>`<option value="${k}">${l}</option>`).join("");
+function openForm(p){
+  editing=p||null;
+  $("#ftitle").textContent=p?"編輯會話":"新增會話";
+  $("#fzh").value=p?p.zh:""; $("#fja").value=p?p.ja:""; $("#fk").value=p?(p.k||""):""; $("#fc").value=p?p.c:(cat==="fav"?"basic":cat);
+  $("#fdel").hidden=!p;
+  sheet.hidden=false; if(!p) setTimeout(()=>$("#fzh").focus(),50);
+}
+function closeForm(){ sheet.hidden=true; editing=null; }
+$("#fab").onclick=()=>openForm(null);
+$("#fcancel").onclick=closeForm;
+sheet.addEventListener("click",e=>{ if(e.target===sheet) closeForm(); });
+$("#form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const zh=$("#fzh").value.trim(), ja=$("#fja").value.trim(), k=$("#fk").value.trim(), c=$("#fc").value;
+  if(!zh||!ja) return;
+  if(editing&&editing.mine){ const a=CUST.add.find(x=>x.id===editing.id); if(a){ a.zh=zh; a.ja=ja; a.k=k; a.c=c; } }
+  else if(editing){ CUST.edit[editing.id]={zh,ja,k,c}; }
+  else { CUST.add.push({id:"mine:"+Date.now(),c,zh,ja,k,kw:""}); cat=c; try{localStorage.setItem("trip-ja-cat",cat)}catch(_){} }
+  saveCust(); applyCust(); closeForm(); render();
+});
+$("#fdel").onclick=()=>{
+  if(!editing) return;
+  if(editing.mine){ CUST.add=CUST.add.filter(x=>x.id!==editing.id); FAV.delete(editing.id); saveFav(); }
+  else if(!CUST.hide.includes(editing.id)) CUST.hide.push(editing.id);
+  saveCust(); applyCust(); closeForm(); render();
+};
 const slowBtn=$("#slow");
 slowBtn.setAttribute("aria-pressed",slow);
 slowBtn.addEventListener("click",()=>{slow=!slow; slowBtn.setAttribute("aria-pressed",slow); try{localStorage.setItem("trip-ja-slow",slow?"1":"0")}catch(e){}});
@@ -498,6 +568,7 @@ $("#bplay").onclick=()=>cur&&speak(cur.ja);
 $("#brot").onclick=()=>$("#show").classList.toggle("rot");
 $("#bclose").onclick=()=>{$("#show").hidden=true; try{speechSynthesis.cancel()}catch(e){}};
 document.addEventListener("keydown",e=>{if(e.key==="Escape") $("#show").hidden=true;});
+$("#restore").onclick=()=>{ if(confirm("把移除、編輯過的內建句子全部還原？自己新增的會保留。")){ CUST.hide=[]; CUST.edit={}; saveCust(); location.reload(); } };
 render();
 try{ if("serviceWorker" in navigator && location.protocol==="https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("../sw.js"); }catch(e){}
 </script>

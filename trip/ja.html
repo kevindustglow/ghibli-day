@@ -66,6 +66,9 @@ h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;flex:
 .re button{min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--forest);background:var(--forest-soft);color:var(--forest);font-size:.9rem;display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;gap:1px}
 .re button small{font-size:.72rem;opacity:.8}
 .re button.on{background:var(--forest);color:#fff}
+.re button b{font-family:var(--f-ja);font-weight:600;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.lnk{border:0;background:none;padding:0;font:inherit;font-family:var(--f-ja);color:var(--forest);font-weight:600;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.lnk.on{background:var(--forest-soft);border-radius:4px}
 .side{flex:none;display:flex;flex-direction:column;gap:4px}
 .ic{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
 .ic.fav[aria-pressed="true"]{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
@@ -115,7 +118,7 @@ mark{background:var(--sun-soft);color:inherit;border-radius:4px;padding:0 2px}
   </div>
   <div id="warn"></div>
   <div class="list" id="list"></div>
-  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 靜音模式會聽不到，需要時把側邊靜音鍵撥開。<br>⋯ 可編輯或移除句子，左下角 ＋ 新增；只存在這支手機。<button type="button" id="restore" style="border:0;background:none;color:var(--sky);font-size:inherit;text-decoration:underline">還原所有內建句子</button></p>
+  <p class="hint" style="text-align:center;margin-top:24px">🟢 點左邊按鈕聽發音 · <u>底線的日文</u>點了也會念 · 📱 讓店員看大字 · ⭐ 收藏常用句<br>發音用手機內建語音，第一次可能要等一下下。<br>iPhone 靜音模式會聽不到，需要時把側邊靜音鍵撥開。<br>⋯ 可編輯或移除句子，左下角 ＋ 新增；只存在這支手機。<button type="button" id="restore" style="border:0;background:none;color:var(--sky);font-size:inherit;text-decoration:underline">還原所有內建句子</button></p>
 </div>
 
 <button class="fab" id="fab" aria-label="新增會話">＋</button>
@@ -483,7 +486,7 @@ let playing=null;
 function speak(text,btn){
   if(!("speechSynthesis" in window)){ $("#warn").innerHTML='<div class="warn">這支手機的瀏覽器不支援語音，可以按 📱 讓對方看大字。</div>'; return; }
   speechSynthesis.cancel();
-  document.querySelectorAll(".say.on,.re .on").forEach(b=>b.classList.remove("on"));
+  document.querySelectorAll(".say.on,.re .on,.lnk.on").forEach(b=>b.classList.remove("on"));
   const u=new SpeechSynthesisUtterance(text.replace(/___/g,"、"));
   u.lang="ja-JP"; if(voice) u.voice=voice; u.rate=slow?0.6:0.9;
   if(btn){ btn.classList.add("on"); u.onend=u.onerror=()=>btn.classList.remove("on"); }
@@ -495,11 +498,13 @@ function norm(s){return String(s).toLowerCase().replace(/[\s、，,。？?！!�
 function hl(text,q){ if(!q) return esc(text); const i=text.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return esc(text); return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
 
 const SPK='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+// 提醒裡「」內若是日文（含假名）就變成可點發音的底線字
+function noteHtml(n){ return esc(n).replace(/「([^」]*[ぁ-んァ-ン][^」]*)」/g,(m,t)=>`「<button class="lnk" data-say="${t}">${t}</button>」`); }
 function card(p,q){
   const i=P.indexOf(p);
   return `<div class="p${p.kid?" kid":""}${p.mine?" mine":""}">
     <button class="say" data-i="${i}" aria-label="播放日文：${esc(p.ja)}">${SPK}</button>
-    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${esc(p.n)}</div>`:""}${p.r?`<div class="re">${p.r.map((r,j)=>`<button data-r="${i}:${j}" aria-label="回答：${esc(r.ja)}">🔊 ${esc(r.ja)}<small>${esc(r.zh)}</small></button>`).join("")}</div>`:""}</div>
+    <div class="tx"><div class="zh">${hl(p.zh,q)}</div><div class="ja" lang="ja">${hl(p.ja,q)}</div><div class="kana">${esc(p.k)}</div>${p.n?`<div class="note">💡 ${noteHtml(p.n)}</div>`:""}${p.r?`<div class="re">${p.r.map((r,j)=>`<button data-r="${i}:${j}" aria-label="回答：${esc(r.ja)}">🔊 <b>${esc(r.ja)}</b><small>${esc(r.zh)}</small></button>`).join("")}</div>`:""}</div>
     <div class="side"><button class="ic fav" data-f="${i}" aria-pressed="${FAV.has(p.id)}" aria-label="收藏">${FAV.has(p.id)?"★":"☆"}</button><button class="ic" data-s="${i}" aria-label="放大給對方看">📱</button><button class="ic" data-e="${i}" aria-label="編輯或移除">⋯</button></div>
   </div>`;
 }
@@ -532,6 +537,7 @@ $("#list").addEventListener("click",e=>{
   if(f){ const p=P[f.dataset.f]; FAV.has(p.id)?FAV.delete(p.id):FAV.add(p.id); saveFav(); f.setAttribute("aria-pressed",FAV.has(p.id)); f.textContent=FAV.has(p.id)?"★":"☆"; renderTabs(); }
   if(b) openShow(P[b.dataset.s]);
   const ed=e.target.closest("[data-e]"); if(ed) openForm(P[ed.dataset.e]);
+  const lk=e.target.closest("[data-say]"); if(lk){ speak(lk.dataset.say,lk); return; }
   const rb=e.target.closest("[data-r]"); if(rb){ const [i,j]=rb.dataset.r.split(":"); document.querySelectorAll(".re .on").forEach(x=>x.classList.remove("on")); speak(P[i].r[j].ja,rb); }
 });
 // 新增／編輯表單

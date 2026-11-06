@@ -163,17 +163,17 @@ const P=[
 // 機場出入境
 {c:"air",zh:"我們是一家三口：我、太太、5 歲女兒",ja:"家族3人です。私と妻と5歳の娘です",k:"kazoku san-nin desu. watashi to tsuma to go-sai no musume desu",kw:"入境 家庭 海關"},
 {c:"air",zh:"來觀光的，待 8 天",ja:"観光です。8日間滞在します",k:"kankō desu. yōkakan taizai shimasu",n:"入境審查最常被問的兩件事：目的、天數",kw:"入境 審查 旅遊 目的"},
-{c:"air",zh:"住在名古屋榮的飯店",ja:"名古屋の栄のホテルに泊まります",k:"nagoya no sakae no hoteru ni tomarimasu",kw:"入境 住宿 住哪"},
+{c:"air",zh:"（給看訂房畫面）住這家飯店",ja:"このホテルに泊まります",k:"kono hoteru ni tomarimasu",kw:"入境 住宿 住哪"},
 {c:"air",zh:"我有 Visit Japan Web 的 QR code",ja:"Visit Japan WebのQRコードがあります",k:"bijitto japan webu no QR kōdo ga arimasu",n:"入境＋海關申報用同一個畫面",kw:"入境 海關 申報 VJW"},
 {c:"air",zh:"沒有要申報的東西",ja:"申告するものはありません",k:"shinkoku suru mono wa arimasen",kw:"海關 申報"},
-{c:"air",zh:"這是小孩的藥",ja:"これは子どもの薬です",k:"kore wa kodomo no kusuri desu",kid:1,kw:"海關 檢查 行李"},
+{c:"air",zh:"（指著）這是小孩的藥",ja:"これは子どもの薬です",k:"kore wa kodomo no kusuri desu",kid:1,kw:"海關 檢查 行李"},
 {c:"air",zh:"這是小孩的副食品",ja:"これは子どもの食べ物です",k:"kore wa kodomo no tabemono desu",kid:1,kw:"海關 檢查 行李 零食"},
 {c:"air",zh:"行李轉盤在哪裡？",ja:"手荷物受取所はどこですか？",k:"tenimotsu uketorijo wa doko desu ka",kw:"領行李 入境"},
 {c:"air",zh:"我的行李沒出來",ja:"荷物が出てきません",k:"nimotsu ga dete kimasen",kw:"行李 遺失 入境"},
 {c:"air",zh:"推車可以在哪裡領？",ja:"ベビーカーはどこで受け取れますか？",k:"bebīkā wa doko de uketoremasu ka",kid:1,kw:"嬰兒車 登機口 入境 行李"},
 {c:"air",zh:"可以借機場的推車嗎？",ja:"空港のベビーカーを借りられますか？",k:"kūkō no bebīkā o kariraremasu ka",kid:1,kw:"嬰兒車 機場"},
 {c:"air",zh:"名鐵車站往哪邊？",ja:"名鉄の駅はどちらですか？",k:"meitetsu no eki wa dochira desu ka",kw:"機場 出口 交通"},
-{c:"air",zh:"國泰航空的櫃檯在哪裡？",ja:"キャセイパシフィックのカウンターはどこですか？",k:"kyasei pashifikku no kauntā wa doko desu ka",kw:"回程 報到 機場 出境 CX"},
+{c:"air",zh:"（給看機票）這家航空的櫃檯在哪裡？",ja:"この航空会社のカウンターはどこですか？",k:"kono kōkūgaisha no kauntā wa doko desu ka",kw:"回程 報到 機場 出境 國泰"},
 {c:"air",zh:"推車可以推到登機口嗎？",ja:"ベビーカーは搭乗口まで使えますか？",k:"bebīkā wa tōjōguchi made tsukaemasu ka",kid:1,kw:"嬰兒車 出境 登機"},
 {c:"air",zh:"可以安排我們三人坐一起嗎？",ja:"3人一緒の席にしてもらえますか？",k:"san-nin issho no seki ni shite moraemasu ka",kw:"座位 報到 出境"},
 {c:"air",zh:"這個可以帶上飛機嗎？",ja:"これは機内に持ち込めますか？",k:"kore wa kinai ni mochikomemasu ka",kw:"手提 液體 安檢 出境"},
@@ -185,7 +185,7 @@ const P=[
 {c:"air",zh:"登機口幾號？",ja:"搭乗口は何番ですか？",k:"tōjōguchi wa nan-ban desu ka",kw:"出境 登機"},
 
 // 問路
-{c:"way",zh:"請問 ___ 在哪裡？",ja:"すみません、___はどこですか？",k:"sumimasen, ___ wa doko desu ka",kw:"找地方"},
+{c:"way",zh:"（給對方看）請問這個在哪裡？",ja:"すみません、これはどこですか？",k:"sumimasen, kore wa doko desu ka",kw:"找地方 地點"},
 {c:"way",zh:"我想去這裡（給對方看地圖）",ja:"ここに行きたいです",k:"koko ni ikitai desu",n:"Google 地圖放大給對方看最快",kw:"地圖 目的地"},
 {c:"way",zh:"往哪邊走？",ja:"どちらに行けばいいですか？",k:"dochira ni ikeba ii desu ka",kw:"方向"},
 {c:"way",zh:"直走嗎？",ja:"まっすぐですか？",k:"massugu desu ka"},
@@ -201,8 +201,8 @@ const P=[
 {c:"way",zh:"謝謝，我知道了",ja:"ありがとうございます、わかりました",k:"arigatō gozaimasu, wakarimashita"},
 
 // 交通
-{c:"move",zh:"___ 站在哪裡？",ja:"___駅はどこですか？",k:"___ eki wa doko desu ka",kw:"車站 地鐵"},
-{c:"move",zh:"這班車有到 ___ 嗎？",ja:"この電車は___に行きますか？",k:"kono densha wa ___ ni ikimasu ka",kw:"電車 地鐵 方向"},
+{c:"move",zh:"（指站名）這一站在哪裡？",ja:"この駅はどこですか？",k:"kono eki wa doko desu ka",kw:"車站 地鐵"},
+{c:"move",zh:"（指站名）這班車有到這裡嗎？",ja:"この電車はここに行きますか？",k:"kono densha wa koko ni ikimasu ka",kw:"電車 地鐵 方向"},
 {c:"move",zh:"要在哪一站換車？",ja:"どこで乗り換えですか？",k:"doko de norikae desu ka",kw:"轉車 轉乘"},
 {c:"move",zh:"幾號月台？",ja:"何番線ですか？",k:"nan-bansen desu ka",kw:"月台"},
 {c:"move",zh:"幾號出口？",ja:"何番出口ですか？",k:"nan-ban deguchi desu ka",kw:"出口"},
@@ -212,13 +212,13 @@ const P=[
 {c:"move",zh:"我想加值",ja:"チャージしたいです",k:"chāji shitai desu",kw:"儲值 IC卡"},
 {c:"move",zh:"我坐過站了",ja:"乗り越してしまいました",k:"norikoshite shimaimashita",n:"到出口旁的精算機補票，或找站務員",kw:"補票 精算"},
 {c:"move",zh:"我買錯票了",ja:"切符を間違えて買いました",k:"kippu o machigaete kaimashita",n:"找站務員，差額補票",kw:"補票 車票"},
-{c:"move",zh:"我要去中部國際機場",ja:"中部国際空港に行きたいです",k:"chūbu kokusai kūkō ni ikitai desu",kw:"機場 セントレア"},
-{c:"move",zh:"名鐵特急指定席，2 大人 1 小孩",ja:"ミュースカイ、大人2枚と子ども1枚お願いします",k:"myūsukai, otona ni-mai to kodomo ichi-mai onegaishimasu",kw:"機場 快車 μSKY 買票"},
+{c:"move",zh:"我要去機場",ja:"空港に行きたいです",k:"kūkō ni ikitai desu",kw:"機場 セントレア 中部"},
+{c:"move",zh:"（指車種）這班車，2 大人 1 小孩",ja:"この電車、大人2枚と子ども1枚お願いします",k:"kono densha, otona ni-mai to kodomo ichi-mai onegaishimasu",kw:"買票 指定席 μSKY 名鐵 機場"},
 {c:"move",zh:"我把東西忘在車上了",ja:"電車に忘れ物をしました",k:"densha ni wasuremono o shimashita",kw:"遺失 掉東西"},
 
 // 計程車
 {c:"taxi",zh:"請到這個地址（給司機看手機）",ja:"ここまでお願いします",k:"koko made onegaishimasu",n:"拿出地圖或飯店卡片給司機看",kw:"地址 目的地"},
-{c:"taxi",zh:"請到 ___ 飯店",ja:"___ホテルまでお願いします",k:"___ hoteru made onegaishimasu"},
+{c:"taxi",zh:"（給看飯店卡）請到這家飯店",ja:"このホテルまでお願いします",k:"kono hoteru made onegaishimasu",kw:"飯店 回去"},
 {c:"taxi",zh:"可以放推車進後車廂嗎？",ja:"ベビーカーをトランクに入れてもいいですか？",k:"bebīkā o toranku ni irete mo ii desu ka",kw:"嬰兒車 行李"},
 {c:"taxi",zh:"大概要多少錢？",ja:"だいたいいくらぐらいですか？",k:"daitai ikura gurai desu ka",kw:"車資 價錢"},
 {c:"taxi",zh:"可以刷卡嗎？",ja:"カードで払えますか？",k:"kādo de haraemasu ka",kw:"信用卡 付款"},
@@ -249,7 +249,7 @@ const P=[
 {c:"food",zh:"冰的",ja:"アイスで",k:"aisu de",kw:"點菜 飲料"},
 {c:"food",zh:"先這樣就好",ja:"以上でお願いします",k:"ijō de onegaishimasu",n:"點完收尾用這句",kw:"點菜 點完"},
 {c:"food",zh:"我要再加點",ja:"追加お願いします",k:"tsuika onegaishimasu",kw:"點菜 加點"},
-{c:"food",zh:"我有過敏，不能吃 ___",ja:"アレルギーがあって、___が食べられません",k:"arerugī ga atte, ___ ga taberaremasen",kw:"過敏"},
+{c:"food",zh:"（指著）我對這個過敏",ja:"これにアレルギーがあります",k:"kore ni arerugī ga arimasu",kw:"過敏 不能吃"},
 {c:"food",zh:"這個有蛋嗎？",ja:"これに卵は入っていますか？",k:"kore ni tamago wa haitte imasu ka",kw:"過敏 成分"},
 {c:"food",zh:"這個有牛奶嗎？",ja:"これに乳製品は入っていますか？",k:"kore ni nyūseihin wa haitte imasu ka",kw:"過敏 成分 乳製品"},
 {c:"food",zh:"這個有蝦嗎？",ja:"これにえびは入っていますか？",k:"kore ni ebi wa haitte imasu ka",kw:"過敏 成分 海鮮"},
@@ -258,10 +258,10 @@ const P=[
 {c:"food",zh:"內用",ja:"店内で食べます",k:"tennai de tabemasu"},
 {c:"food",zh:"買單",ja:"お会計お願いします",k:"okaikei onegaishimasu",kw:"結帳 埋單"},
 {c:"food",zh:"很好吃！謝謝招待",ja:"ごちそうさまでした！おいしかったです",k:"gochisōsama deshita! oishikatta desu",n:"離開時說，店員會很開心"},
-{c:"food",zh:"鰻魚飯三吃怎麼吃？",ja:"ひつまぶしの食べ方を教えてください",k:"hitsumabushi no tabekata o oshiete kudasai",kw:"鰻魚 名古屋 美食 蓬萊軒"},
+{c:"food",zh:"（指菜單）這個怎麼吃？",ja:"これはどうやって食べますか？",k:"kore wa dō yatte tabemasu ka",n:"ひつまぶし（鰻魚飯三吃）問這句，店員會教",kw:"鰻魚 名古屋 美食 吃法"},
 
 // 購物
-{c:"shop",zh:"有 ___ 嗎？",ja:"___はありますか？",k:"___ wa arimasu ka",kw:"找東西"},
+{c:"shop",zh:"（給看照片）有這個嗎？",ja:"これはありますか？",k:"kore wa arimasu ka",kw:"找東西 商品"},
 {c:"shop",zh:"有大一號的嗎？",ja:"ワンサイズ大きいのはありますか？",k:"wan saizu ōkii no wa arimasu ka",kw:"尺寸 大號"},
 {c:"shop",zh:"有小一號的嗎？",ja:"ワンサイズ小さいのはありますか？",k:"wan saizu chiisai no wa arimasu ka",kw:"尺寸 小號"},
 {c:"shop",zh:"可以試穿嗎？",ja:"試着してもいいですか？",k:"shichaku shite mo ii desu ka",kw:"試衣"},
@@ -280,7 +280,7 @@ const P=[
 {c:"shop",zh:"有 OK 繃嗎？",ja:"絆創膏はありますか？",k:"bansōkō wa arimasu ka",kw:"藥局 受傷 擦傷"},
 
 // 飯店
-{c:"hotel",zh:"我要辦入住，訂房名字是 ___",ja:"チェックインをお願いします。予約名は___です",k:"chekku-in o onegaishimasu. yoyakumei wa ___ desu",kw:"check in 入住"},
+{c:"hotel",zh:"（給看訂房畫面）我要辦入住",ja:"チェックインをお願いします。予約はこちらです",k:"chekku-in o onegaishimasu. yoyaku wa kochira desu",kw:"check in 入住 訂房"},
 {c:"hotel",zh:"可以先寄放行李嗎？",ja:"荷物を預かってもらえますか？",k:"nimotsu o azukatte moraemasu ka",kw:"寄放 行李"},
 {c:"hotel",zh:"退房",ja:"チェックアウトをお願いします",k:"chekku-auto o onegaishimasu",kw:"check out"},
 {c:"hotel",zh:"Wi-Fi 密碼是什麼？",ja:"Wi-Fiのパスワードは何ですか？",k:"waifai no pasuwādo wa nan desu ka",kw:"網路"},
@@ -304,8 +304,7 @@ const P=[
 {c:"park",zh:"下一場是幾點？",ja:"次の回は何時ですか？",k:"tsugi no kai wa nanji desu ka",kw:"表演 秀 時間 場次"},
 {c:"park",zh:"表演在哪裡看？",ja:"ショーはどこで見られますか？",k:"shō wa doko de miraremasu ka",kw:"表演 秀 會場 位置"},
 {c:"park",zh:"可以再入場嗎？",ja:"再入場はできますか？",k:"sai-nyūjō wa dekimasu ka",kw:"出去再進來"},
-{c:"park",zh:"大倉庫在哪裡？",ja:"ジブリの大倉庫はどこですか？",k:"jiburi no daisōko wa doko desu ka",kw:"吉卜力 ジブリ"},
-{c:"park",zh:"龍貓的家要往哪走？",ja:"サツキとメイの家はどちらですか？",k:"satsuki to mei no ie wa dochira desu ka",kw:"吉卜力 龍貓 どんどこ森"},
+{c:"park",zh:"（指地圖）這裡怎麼走？",ja:"ここへはどう行きますか？",k:"koko e wa dō ikimasu ka",kw:"吉卜力 大倉庫 龍貓 園區 地圖"},
 {c:"park",zh:"有寄物櫃嗎？",ja:"コインロッカーはありますか？",k:"koin rokkā wa arimasu ka",kw:"置物櫃 寄物"},
 {c:"park",zh:"可以借推車嗎？",ja:"ベビーカーを借りられますか？",k:"bebīkā o kariraremasu ka",kid:1,kw:"租 嬰兒車"},
 {c:"park",zh:"失物招領在哪裡？",ja:"落とし物はどこに届いていますか？",k:"otoshimono wa doko ni todoite imasu ka",kw:"遺失"},

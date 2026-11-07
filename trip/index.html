@@ -233,6 +233,7 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
 <script>
 // ===== 資料：以 Google 文件 2026/10/27 總覽表為準；吃的只是參考 =====
 const GNAV = (o,d) => "https://www.google.com/maps/dir/?api=1&travelmode=transit&origin=" + encodeURIComponent(o) + "&destination=" + encodeURIComponent(d);
+const HOTEL_MAP = "https://maps.app.goo.gl/8vWHaJr6cvqPJ6VRA"; // Kevin 2026-11-07 給的飯店正確位置
 const GM = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 const GHIBLI = "../";
 
@@ -260,7 +261,7 @@ const DAYS = [
     {k:"walk",b:"金山 轉地鐵名城線",s:"出名鐵剪票口，跟「地下鉄」指標下一層；搬行李留 15–20 分。金山站有電梯，依標示"},
     {k:"train",b:"名城線 右回り → 栄 M05",s:"往「栄・大曽根」方向，4 站約 8 分。栄站出口 2 就是飯店"},
   ],fare:["名鐵 機場→金山 大人 ¥910；指定席券每人 ¥450（不分年齡，Amber 坐位子也要）","地鐵 金山→栄 大人 ¥210","Amber 地鐵免費；名鐵一般車免費（坐指定席才要券＋兒童票）"],flag:"名鐵車次請看月台顯示終點不是「中部国際空港」即可；班次改點出發前再查"},
-  links:[["飯店位置",GM("KOKO HOTEL Nagoya Sakae")],["名鐵查詢","https://www.meitetsu.co.jp/"]]},
+  links:[["飯店位置",HOTEL_MAP],["名鐵查詢","https://www.meitetsu.co.jp/"]]},
 
  {iso:"2026-11-08",md:"11/8",dow:"日",n:2,e:1,emoji:"🐨",title:"東山動植物園",ja:"東山動植物園（ひがしやま）", wear:"體感比台灣同溫暖 2–3°。白天薄外套、早晚加刷毛；Amber 洋蔥式好穿脫", exp:"park",
   depart:"10:00",back:"下午",departLabel:"出門",backLabel:"看狀況",
@@ -558,7 +559,7 @@ function renderInfo(){
   const cp = (t,label) => `<button class="copy" data-copy="${esc(t)}">${label||"複製"}</button>`;
   let h = `<div class="card"><div class="eyebrow"><span class="tag">住宿 🏨</span></div><h3>${esc(I.hotel.name)}</h3>
     <dl class="kv"><div><dt>給司機看</dt><dd>${esc(I.hotel.ja)}<br>${esc(I.hotel.addr)} ${cp(I.hotel.ja+" "+I.hotel.addr)}</dd></div><div><dt>電話</dt><dd class="mono">${esc(I.hotel.tel)} ${cp(I.hotel.tel)}</dd></div><div><dt>時間</dt><dd>${esc(I.hotel.io)}</dd></div><div><dt>房型</dt><dd>${esc(I.hotel.room)}</dd></div><div><dt>怎麼去</dt><dd>${esc(I.hotel.go)}</dd></div></dl>
-    <div class="actions"><a class="btn primary" href="${GM("KOKO HOTEL Nagoya Sakae")}" target="_blank" rel="noopener">地圖導航 ↗</a></div></div>`;
+    <div class="actions"><a class="btn primary" href="${HOTEL_MAP}" target="_blank" rel="noopener">地圖導航 ↗</a></div></div>`;
   h += `<div class="card"><div class="eyebrow"><span class="tag rose">航班 ✈️</span><span>座位與訂位代號看電子機票</span></div><dl class="kv">${I.flights.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd><b class="mono">${esc(b)}</b><br>${esc(c)}</dd></div>`).join("")}</dl></div>`;
   h += `<div class="card"><div class="eyebrow"><span class="tag sun">台灣機場接送 🚕</span><span>已預約</span></div><dl class="kv">${I.taxi.map(([a,b,c])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}<br><small class="note">${esc(c)}</small></dd></div>`).join("")}</dl><p class="note">司機與車牌資料在叫車 App，這裡不放。</p></div>`;
   h += `<div class="card"><div class="eyebrow"><span class="tag sky">車資速查 💴</span><span>大人單程，IC 卡同價</span></div><ul class="fares">${I.fares.map(([a,b])=>`<li><span>${zh(esc(a))}</span><b class="mono">${esc(b)}</b></li>`).join("")}</ul><p class="note">查證日 2026/10/28（ekitan、名鐵官網）。以售票機顯示為準。</p></div>`;

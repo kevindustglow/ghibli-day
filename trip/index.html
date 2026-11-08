@@ -342,17 +342,46 @@ const DAYS = [
 
  {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）", wear:"水族館靠海，館外風大、館內舒適。防風外套進館脫，推車小毯子帶著", exp:"sea", buy:"d1",
   depart:"08:30",back:"14:30",departLabel:"出門",backLabel:"離館",
-  plan:[["08:30","出門","門到門留 50–60 分"],["09:30","開館入館，先逛北館","虎鯨、白鯨在北館 🐋"],["10:45","北館 3F 表演場入座","海豚秀前 15 分先坐好"],["11:00","🐬 海豚表演（20 分）","唯一備案 13:00 場；不等 15:30"],["11:30","午餐、休息","館內餐廳或帶出去吃"],["12:15","南館","企鵝 🐧、海龜、大水槽"],["14:30","離館","不戀棧，Amber 下午電力有限 🔋"]],
+  plan:[["08:30","出門，先在便利商店買午餐","飯團、麵包帶著。北館 3F 看台可以吃自己帶的食物，午餐不用移動 🍙"],["09:30","開館入館，先逛北館","虎鯨、白鯨 🐋 詳細順序看下面「館內攻略」"],["11:00","🐬 海豚表演","10:45 前入座"],["11:20","看台吃午餐，原位等虎鯨","不用搶第二次位子"],["12:00","🐋 虎鯨公開訓練","看完走連絡通路去南館"],["13:00","🐟 沙丁魚龍捲風","南館 2F 黒潮大水槽"],["14:30","離館","不戀棧，昨天樂高累過，明天也是輕鬆日 🔋"]],
+  park:{
+    key:"aq-timer", mustTitle:"必看排名 🏆", mustSub:"官網 10/1–11/29 平日場次・查證 11/8",
+    stopsTitle:"館內攻略 ⏱️", stopsSub:"北館看表演 → 南館慢慢逛 → 南館出口",
+    must:[
+      ["イルカパフォーマンス","海豚表演","北館 3F","平日 11:00／13:00／15:30・20 分","⏰ 有場次","3,000 人大看台，最推"],
+      ["シャチ公開トレーニング","虎鯨公開訓練","北館 3F","平日 12:00／14:30・15 分","⏰ 有場次","日本只有少數水族館有虎鯨，跟海豚同一個看台"],
+      ["マイワシのトルネード","沙丁魚龍捲風","南館 2F","平日 11:00／13:00／15:30・約 10 分","⏰ 有場次","上萬隻沙丁魚一起轉圈，Amber 會尖叫"],
+      ["ベルーガ（オーロラの海）","白鯨","北館 2F・3F","隨時看","","2F 從水下看、3F 從上面看，還有北極熊巢穴模型可以鑽"],
+      ["ペンギン（南極の海）","企鵝","南館 3F","平日餵食 13:00／16:00","","我們 13:10 到，餵食剛結束，企鵝還是很多"],
+      ["ウミガメ","海龜餵食","南館 3F","每天 13:30・10 分","⏰ 有場次","大海龜搶食物，很近"],
+      ["タッチタンク","觸摸池","南館 1F","隨時","","可以摸海洋生物，小孩最愛"],
+      ["くらげなごりうむ","水母區","南館 1F","隨時","","暗暗的很漂亮，推車慢慢走"]],
+    cut:"不在今天路線：名古屋港 Garden Pier 的南極觀測船「ふじ」、名古屋港ポートビル（展望室）8/1–11/30 整修休館（官網公告）。館內推車只租 7–24 個月（¥100），Amber 請帶自己的推車；兩館都有電梯、全館無障礙。",
+    stops:[
+      ["09:30",35,"日本の海・シャチ","虎鯨與海豚水中窗 ①","北館","北館 2F 入口進去就是，大玻璃窗看虎鯨游過去。寄物櫃在入口左手邊（¥200–400）","人太多擠不到前面 → 先去看白鯨，回程再看"],
+      ["10:05",30,"オーロラの海・ベルーガ","白鯨 ②","北館","2F 水下看完，搭電梯上 3F 從上面看，順便鑽北極熊巢穴","Amber 想上廁所 → 2F 有嬰兒室與廁所，先處理"],
+      ["10:35",10,"スタジアム","移動、上廁所、找位子 ③","北館","3F 看台，中後段比較好看全場；前排可能被潑到水（一般經驗）","—"],
+      ["10:45",35,"イルカパフォーマンス","🐬 海豚表演 ④","北館","11:00 開始，20 分。先坐好","錯過 → 13:00 場（但會跟沙丁魚撞期，二選一）"],
+      ["11:20",40,"スタジアムでランチ","看台吃午餐 ⑤","北館","吃早上買的飯團；看台可以吃自己帶的食物（官網）。原位等下一場","想吃熱的 → 南館 2F アリバダ餐廳／3F トータス（丼飯、麵），10:00 開"],
+      ["12:00",20,"シャチ公開トレーニング","🐋 虎鯨公開訓練 ⑥","北館","同一個看台，15 分","Amber 坐不住 → 先走，去南館"],
+      ["12:20",10,"連絡通路","走連絡通路到南館 ⑦","南館","約 3 分，2F 相連。順便上廁所","—"],
+      ["12:30",40,"黒潮大水槽・トンネル水槽","黒潮大水槽＋隧道 ⑧","南館","2F。13:00 沙丁魚龍捲風，12:50 先站到大水槽前","Amber 太累 → 看完龍捲風就往出口走"],
+      ["13:10",20,"南極の海・ペンギン","企鵝 🐧 ⑨","南館","上 3F。企鵝游泳很快，大玻璃看得到","—"],
+      ["13:30",15,"ウミガメ回遊水槽","海龜餵食 ⑩","南館","3F，13:30 開始 10 分","—"],
+      ["13:45",25,"タッチタンク・くらげなごりうむ","觸摸池＋水母 ⑪","南館","搭電梯下 1F。摸完記得洗手","Amber 沒電 → 跳過，直接去出口"],
+      ["14:10",20,"ミュージアムショップ","南館商店買紀念品 ⑫","南館","南館 1F 出口旁，最後再買","14:30 離館；想再進場要在出口蓋手背章"]],
+    backup:"昨天樂高玩了一整天。如果 Amber 一早就沒電：看完 11:00 海豚表演、在看台吃完午餐，直接走南館看 13:00 沙丁魚龍捲風，13:30 離館回飯店午睡。看到海豚就值回票價了 👍",
+    map:{zh:"aquarium-map-zh.webp?v=1",alt:"名古屋港水族館 中文路線圖",page:"https://nagoyaaqua.jp/floormap/",note:"這張是依官網樓層介紹自己畫的中文示意圖，不是官方平面圖，位置比例不精準；現場以館內指標為準。"}
+  },
   maybe:[["LaLaport 名古屋港 AQULS","15:15–16:45。名古屋港站搭 2 站到港区役所，步行 5 分。累就直接回飯店"]],
-  food:"館內或 LaLaport 美食街",
-  tip:"⚠️ 門票還沒買。成人 ¥2,030、Amber（4 歲以上）¥500，三人約 ¥4,560。週一休館，11/10 週二正常。",
+  food:"早上便利商店買飯團，在北館 3F 看台吃（官網允許）。館內餐廳：南館 2F アリバダ（餐廳）、3F トータス（丼飯、麵），10:00 到閉館前 15 分，最後點餐閉館前 45 分。晚餐可在 LaLaport 或回榮",
+  tip:"⚠️ 門票還沒買。成人 ¥2,030、Amber（4 歲以上）¥500，三人約 ¥4,560。週一休館，11/10 週二正常。營業時間官網一般寫 9:30–17:30（16:30 停止入館）；11 月日曆網頁讀不到，出門前再看一次。表演會因動物狀況取消或改時間。",
   rg:{nav:[HOTEL_Q,"名古屋港水族館"],title:"栄 → 名古屋港（50–60 分）",steps:[SAKAE_H,
     {k:"train",b:"名城線 左回り → 金山 M01",s:"往「金山」方向。看月台顯示：寫「名古屋港」的車可以直達不用換；寫「左回り」的在金山下車"},
     {k:"train",b:"金山 轉名港線 → 名古屋港 E07",s:"同月台或對面月台換「名古屋港」行，終點站約 11 分"},
     {k:"walk",b:"3 號出口 → 水族館",s:"步行約 5 分，平路；推車依電梯標示"}],
     fare:["大人 ¥270（3 區）","Amber 免費"]},
   rb:{nav:["名古屋港水族館",HOTEL_Q],title:"名古屋港 → 栄",steps:[{k:"train",b:"名港線 → 金山 → 栄",s:"「栄・大曽根」方向直達車最省事，否則金山換名城線右回り"},{k:"walk",b:"栄 2 號出口 → 飯店",s:""}],fare:["大人 ¥270"]},
-  links:[["水族館官網","https://nagoyaaqua.jp/"],["表演時間表","https://nagoyaaqua.jp/schedule/"],["地圖",GM("名古屋港水族館")]]},
+  links:[["水族館官網","https://nagoyaaqua.jp/"],["營業時間・場次","https://nagoyaaqua.jp/calendar/"],["樓層介紹","https://nagoyaaqua.jp/floormap/"],["導航",GM("名古屋港水族館")]]},
 
  {iso:"2026-11-11",md:"11/11",dow:"三",n:5,e:1,emoji:"🏯",title:"名古屋城半天",ja:"名古屋城（なごやじょう）", wear:"市區半天，白天 17–18° 薄外套就好；下午回飯店休息不用多帶", exp:"city",
   depart:"08:45",back:"12:30",departLabel:"出門",backLabel:"回榮",
@@ -564,14 +593,14 @@ function renderDay(){
 
 // ===== 樂高園內攻略：必玩排名＋每站計時 =====
 const mmss = sec => { const a=Math.abs(Math.round(sec)); return (sec<0?"+":"")+String(Math.floor(a/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0"); };
-const AREA_ZH={"レゴ・シティ":"樂高城市","ナイト・キングダム":"騎士王國","アドベンチャー":"冒險區","パイレーツ・ショア":"海盜海岸","ブリックトピア":"積木烏托邦","ミニランド":"迷你世界","ファクトリー":"工廠"};
-const areaTxt = a => AREA_ZH[a] ? `${AREA_ZH[a]} ${a}` : a;
+const AREA_ZH={"北館":"North","南館":"South","レゴ・シティ":"樂高城市","ナイト・キングダム":"騎士王國","アドベンチャー":"冒險區","パイレーツ・ショア":"海盜海岸","ブリックトピア":"積木烏托邦","ミニランド":"迷你世界","ファクトリー":"工廠"};
+const areaTxt = a => (AREA_ZH[a] && !/^(North|South)$/.test(AREA_ZH[a])) ? `${AREA_ZH[a]} ${a}` : a;
 function parkHTML(P){
-  const T = store.get("lego-timer", null);
-  let h = `<article class="card"><div class="eyebrow"><span class="tag sun">必玩排名 🏆</span><span>Amber 108cm・官網查證 11/8</span></div>
-  <ol class="must">${P.must.map(([ja,zhn,area,rule,solo,why],i)=>`<li><span class="rk mono">${i+1}</span><div><b>${esc(zhn)}</b><small class="jp">${esc(ja)}</small><span class="badges"><span class="tag ${solo?"":"sky"}">${solo?"自己坐 ✓":"大人陪"}</span><span class="tag ghost">${esc(rule)}</span></span><small>${esc(why)}・${esc(areaTxt(area))}</small></div></li>`).join("")}</ol>
+  const TK = P.key||"lego-timer", T = store.get(TK, null);
+  let h = `<article class="card"><div class="eyebrow"><span class="tag sun">${esc(P.mustTitle||"必玩排名 🏆")}</span><span>${esc(P.mustSub||"Amber 108cm・官網查證 11/8")}</span></div>
+  <ol class="must">${P.must.map(([ja,zhn,area,rule,solo,why],i)=>`<li><span class="rk mono">${i+1}</span><div><b>${esc(zhn)}</b><small class="jp">${esc(ja)}</small><span class="badges">${typeof solo==="boolean"?`<span class="tag ${solo?"":"sky"}">${solo?"自己坐 ✓":"大人陪"}</span>`:(solo?`<span class="tag sun">${esc(solo)}</span>`:"")}<span class="tag ghost">${esc(rule)}</span></span><small>${esc(why)}・${esc(areaTxt(area))}</small></div></li>`).join("")}</ol>
   <p class="note">${esc(P.cut)}</p></article>`;
-  h += `<article class="card"><div class="eyebrow"><span class="tag">園內攻略 ⏱️</span><span>照區域排，少走回頭路</span></div>
+  h += `<article class="card"><div class="eyebrow"><span class="tag">${esc(P.stopsTitle||"園內攻略 ⏱️")}</span><span>${esc(P.stopsSub||"照區域排，少走回頭路")}</span></div>
   <p class="note">每站按左邊按鈕開始倒數，時間到就看「跳過規則」，不硬排。</p>
   <ol class="stops">${P.stops.map(([t,min,ja,zhn,area,note,skip],i)=>{
     const run = T && T.i===i;
@@ -579,23 +608,23 @@ function parkHTML(P){
       <div class="sh"><span class="mono t">${esc(t)}</span><span class="tag ghost">${esc(areaTxt(area))}</span></div>
       <b>${esc(zhn)}</b><small class="jp">${esc(ja)}</small>
       <small>${esc(note)}</small>
-      <p class="skip">↪ ${esc(skip)}</p>
+      ${skip&&skip!=="—"?`<p class="skip">↪ ${esc(skip)}</p>`:""}
       <div class="actions">${run?`<button class="btn primary tbtn" data-stop="${i}">■ 結束 <span class="mono tleft" data-left="${i}">${mmss(min*60-(Date.now()-T.at)/1000)}</span></button>`:`<button class="btn tbtn" data-start="${i}">▶ 開始 · ${min} 分</button>`}</div>
     </li>`;}).join("")}</ol>
   <div class="card warm" style="box-shadow:none"><p>🔋 ${esc(P.backup)}</p></div></article>`;
   h += `<article class="card"><div class="eyebrow"><span class="tag sky">中文路線地圖 🗺️</span><span>紅色數字＝上面的站</span></div>
-  <a href="${P.map.zh}" target="_blank" rel="noopener" class="pmap"><img src="${P.map.zh}" alt="LEGOLAND Japan 中文標註路線地圖" loading="lazy"></a>
-  <div class="actions"><a class="btn primary" href="${P.map.zh}" target="_blank" rel="noopener">放大地圖 ↗</a><a class="btn" href="${P.map.img}" target="_blank" rel="noopener">官方原圖 ↗</a><a class="btn" href="${P.map.page}" target="_blank" rel="noopener">官網地圖頁 ↗</a></div>
-  <p class="note">底圖是官方園區地圖（2026/10/01 版），區域名稱與路線是自己加的中文標註。設施位置以現場為準。</p></article>`;
+  <a href="${P.map.zh}" target="_blank" rel="noopener" class="pmap"><img src="${P.map.zh}" alt="${esc(P.map.alt||"中文標註路線地圖")}" loading="lazy"></a>
+  <div class="actions"><a class="btn primary" href="${P.map.zh}" target="_blank" rel="noopener">放大地圖 ↗</a>${P.map.img?`<a class="btn" href="${P.map.img}" target="_blank" rel="noopener">官方原圖 ↗</a>`:""}<a class="btn" href="${P.map.page}" target="_blank" rel="noopener">官網地圖頁 ↗</a></div>
+  <p class="note">${esc(P.map.note||"底圖是官方園區地圖（2026/10/01 版），區域名稱與路線是自己加的中文標註。設施位置以現場為準。")}</p></article>`;
   return h;
 }
 let parkTick = null;
 function bindPark(P){
   const root = $("#v-day");
-  root.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>{ store.set("lego-timer",{i:+b.dataset.start,at:Date.now()}); renderDay(); toast("開始計時"); });
-  root.querySelectorAll("[data-stop]").forEach(b=>b.onclick=()=>{ store.set("lego-timer",null); renderDay(); toast("這站完成 👍"); });
+  root.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>{ store.set(P.key||"lego-timer",{i:+b.dataset.start,at:Date.now()}); renderDay(); toast("開始計時"); });
+  root.querySelectorAll("[data-stop]").forEach(b=>b.onclick=()=>{ store.set(P.key||"lego-timer",null); renderDay(); toast("這站完成 👍"); });
   clearInterval(parkTick);
-  const T = store.get("lego-timer", null);
+  const T = store.get(P.key||"lego-timer", null);
   if (!T) return;
   parkTick = setInterval(()=>{
     const el = root.querySelector(`[data-left="${T.i}"]`);

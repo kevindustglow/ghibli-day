@@ -112,6 +112,27 @@ a{color:inherit}
 .pts li{display:flex;gap:10px;align-items:flex-start;font-size:1rem}
 .pts li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-top:.65em}
 .note{font-size:.85rem;color:var(--muted)}
+.must{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.must li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
+.must .rk{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--sun-soft);color:var(--sun);font-size:.9rem}
+.must li:first-child .rk{background:var(--sun);color:var(--card)}
+.must b,.stops b{font-weight:700;display:block}
+.jp{display:block;font-size:.85rem;color:var(--muted)}
+.must small,.stops small{display:block;font-size:.85rem;color:var(--muted)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}
+.stops{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.stops li{border:1px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.stops li.run{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.stops li.over{border-color:var(--sun);box-shadow:inset 0 0 0 1px var(--sun);background:var(--sun-soft)}
+.stops .sh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stops .t{font-size:1rem}
+.stops .skip{margin:4px 0 0;font-size:.85rem;color:var(--sun)}
+.stops .actions{justify-content:flex-start;margin-top:6px}
+.tbtn{min-width:150px}
+.pmap{display:block;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
+.pmap img{display:block;width:100%;height:auto}
+.pmap .fb{display:none;padding:20px;text-align:center;font-size:.9rem}
+.pmap.fail img{display:none}.pmap.fail .fb{display:block}
 .card h3{font-size:1.15rem}
 
 /* transport */
@@ -278,11 +299,38 @@ const DAYS = [
   links:[["動物園官網","https://www.higashiyama.city.nagoya.jp/"],["地圖",GM("東山動植物園")]]},
 
  {iso:"2026-11-09",md:"11/9",dow:"一",n:3,e:3,emoji:"🧱",title:"LEGOLAND",ja:"レゴランド・ジャパン（樂高樂園）", wear:"靠海空曠、風大，體感比市區冷。三人毛帽＋防風外套，推車小毯子帶著 🧣", exp:"sea", buy:"d0",
-  depart:"08:00",back:"17:30",departLabel:"出門",backLabel:"回飯店約",
-  plan:[["08:00","出門","門到門留 75–90 分"],["09:15","到入口排隊","10:00 開園；09:30 前到就排前段 🧱"],["10:00","🎉 入園","先玩 Amber 身高能玩的：DUPLO、Mini-land、Submarine Adventure"],["12:00","園內午餐、休息","人少時段先吃，避開排隊"],["16:00","離園","Amber 累了可提早；17:00 閉園"],["17:30","回到飯店","洗澡、早點睡"]],
+  depart:"08:00",back:"17:15",departLabel:"出門",backLabel:"回飯店約",
+  plan:[["08:00","出門","門到門留 75–90 分。昨天走了一整天，推車一定要帶（園區只租 4 歲以下）"],["09:30","到入口排隊","10:00 開園，09:30 前到就排前段 🧱"],["10:00","🎉 入園，直衝レゴ・シティ（樂高城市）","先玩兒童駕駛學校，詳細順序看下面「園內攻略」"],["11:15","提早吃午餐","避開 12 點人潮"],["15:45","離園","Amber 沒電就提早，不必玩完清單"],["17:15","回到飯店","洗澡、早點睡，明天水族館"]],
+  park:{
+    must:[
+      ["ジュニア・ドライビング・スクール","兒童駕駛學校","レゴ・シティ","只收 3–5 歲",true,"自己開車、考駕照，明年就不能玩，第一名"],
+      ["ドラゴン・アプレンティス","小龍雲霄飛車","ナイト・キングダム","105cm↑ 可自己坐",true,"兒童版雲霄飛車，刺激剛好"],
+      ["カーゴ・エース","貨運飛機","アドベンチャー","105cm↑ 可自己坐",true,"轉圈圈飛機，自己控制高低"],
+      ["アンカー・アウェイ！","擺盪船","パイレーツ・ショア","105cm↑ 可自己坐",true,"11/30 才暫停，明天有開"],
+      ["レスキュー・アカデミー","消防救援隊","レゴ・シティ","90–110cm 大人陪",false,"全家一起壓車、噴水滅火"],
+      ["マーリン・フライング・マシーン","梅林飛行器","ナイト・キングダム","90–120cm 大人陪",false,"踩踏板讓飛行器升高"],
+      ["ブリック・パーティ","樂高旋轉杯","ブリックトピア","110cm 以下大人陪",false,"不必排久，順路再玩"],
+      ["ザ・ドラゴン","大龍雲霄飛車","ナイト・キングダム","105–120cm 大人陪",false,"前段室內城堡、後段真的會衝，看她膽量"]],
+    stops:[
+      ["10:00",40,"ジュニア・ドライビング・スクール","兒童駕駛學校","レゴ・シティ","開園直衝。家長在外面看、拍照 📸","排隊超過 40 分 → 先玩消防救援，11:00 後再回來看"],
+      ["10:40",30,"レスキュー・アカデミー","消防救援隊","レゴ・シティ","大人陪，全家一起壓車","排隊超過 20 分 → 跳過"],
+      ["11:10",50,"午餐：Brick House Burgers","樂高城市漢堡店","レゴ・シティ","隔壁是 DUPLO Baby Care（免費尿布台、授乳室、廁所）","客滿 → 改 Knight's Table（騎士餐廳咖哩），往下一區順路"],
+      ["12:00",25,"ミニランド","樂高迷你日本街景","ミニランド","推車慢慢逛，日本各地街景都是樂高做的，不用排隊","Amber 想睡就讓她在推車上睡，這段剛好"],
+      ["12:25",30,"ドラゴン・アプレンティス","小龍雲霄飛車","ナイト・キングダム","可自己坐，也可以爸媽陪坐","排隊超過 30 分 → 先玩梅林飛行器，回頭再看"],
+      ["12:55",20,"マーリン・フライング・マシーン","梅林飛行器","ナイト・キングダム","大人陪","排隊超過 20 分 → 跳過"],
+      ["13:15",20,"ザ・ドラゴン（看膽量）","大龍雲霄飛車","ナイト・キングダム","大人陪。先問 Amber 要不要，不要就跳過","排隊超過 25 分或 Amber 會怕 → 跳過"],
+      ["13:35",25,"アンカー・アウェイ！","擺盪船","パイレーツ・ショア","可自己坐，爸媽在旁邊揮手","排隊超過 20 分 → 跳過"],
+      ["14:00",25,"カーゴ・エース","貨運飛機","アドベンチャー","可自己坐，按鈕控制升降","排隊超過 25 分 → 跳過"],
+      ["14:25",35,"點心＋レゴ・ファクトリー・ツアー","樂高工廠導覽（室內）","ファクトリー","吃點東西、坐下休息，看積木怎麼做出來。下雨也能來","Amber 很累 → 直接跳到買紀念品"],
+      ["15:00",20,"ブリック・パーティ","樂高旋轉杯","ブリックトピア","大人陪，最後一個小設施","排隊超過 15 分 → 跳過"],
+      ["15:20",25,"買紀念品","Big Shop（大商店）","ブリックトピア","最後再買，不用提著逛","15:45 離園"]],
+    backup:"昨天東山走了一整天，13:00 如果 Amber 明顯沒電：玩完小龍雲霄飛車就直接去樂高工廠、買紀念品，14:00 離園回飯店。玩到 5 個就很棒了 👍",
+    cut:"暫停或不能玩：ロスト・キングダム（失落王國，11/9–13 暫停）、ロイド・スピン術・スピナー（休止中）、ドライビング・スクール（6 歲以上）、スプラッシュ・バトル（會濕，11 月海邊冷）",
+    map:{img:"https://legoland.jp/media/vy3hp1u1/legoland_parkmap_20261001_en.jpg",page:"https://legoland.jp/resort-guide/legoland/resort-map/"}
+  },
   maybe:[["Maker's Pier 晚餐","車站旁商場，不想回榮再吃可以在這裡"]],
-  food:"園內午餐",
-  tip:"⚠️ 門票還沒買。官方日曆尚未確認 11/9 全天開園，出發前再查。ロストキングダム 11/9–11/13 暫停（非官方來源）。",
+  food:"園內：Brick House Burgers（漢堡）、Knight's Table（咖哩）、IRODORI（和食，可當天申請優先入店時間）",
+  tip:"⚠️ 門票還沒買。官網查證 2026-11-08：ロスト・キングダム 11/9–11/13 暫停（官方）。園內推車只租 1 個月–4 歲、18kg 以下（¥1,000），Amber 請帶自己的推車。閉園時間平日可能 17:00 或 18:00，出門前看官方 App。",
   rg:{nav:[HOTEL_Q,"LEGOLAND Japan"],title:"栄 → 金城ふ頭（75–90 分）",steps:[SAKAE_H,
     {k:"train",b:"東山線 → 名古屋 H08",s:"往「高畑」方向，2 站約 5 分"},
     {k:"walk",b:"名古屋站 轉あおなみ線",s:"出剪票口跟「あおなみ線」指標往太閤通口（JR 那側），跨站約 10 分；含電梯、買票留 20–25 分"},
@@ -290,7 +338,7 @@ const DAYS = [
     {k:"walk",b:"出站 → 樂高樂園入口",s:"沿指標過 Maker's Pier，平路步行約 10–15 分"}],
     fare:["地鐵 栄→名古屋 大人 ¥210","あおなみ線 名古屋→金城ふ頭 大人 ¥360","Amber 兩段都免費（大人陪同）","あおなみ線可用 Suica／manaca"]},
   rb:{nav:["LEGOLAND Japan",HOTEL_Q],title:"金城ふ頭 → 栄（75–90 分）",steps:[{k:"train",b:"あおなみ線 → 名古屋",s:"終點站，約 24 分"},{k:"walk",b:"名古屋站 轉東山線",s:"跟「地下鉄東山線」指標，留 20 分"},{k:"train",b:"東山線 → 栄 H10",s:"往「藤が丘」方向，2 站"}],fare:["同去程 ¥570／大人"]},
-  links:[["LEGOLAND 官網","https://www.legoland.jp/"],["營業日曆","https://www.legoland.jp/hours-and-calendar/"],["地圖",GM("LEGOLAND Japan")]]},
+  links:[["LEGOLAND 官網","https://legoland.jp/"],["營業時間","https://legoland.jp/operation/info/opening-hours/opening-hours-legoland-japan"],["暫停設施","https://legoland.jp/zh-hant/operation/info/closed"],["導航",GM("LEGOLAND Japan")]]},
 
  {iso:"2026-11-10",md:"11/10",dow:"二",n:4,e:2,emoji:"🐬",title:"名古屋港水族館",ja:"名古屋港水族館（なごやこう）", wear:"水族館靠海，館外風大、館內舒適。防風外套進館脫，推車小毯子帶著", exp:"sea", buy:"d1",
   depart:"08:30",back:"14:30",departLabel:"出門",backLabel:"離館",
@@ -499,6 +547,7 @@ function renderDay(){
     ${routeHTML(d.rg)}${routeHTML(d.rb)}
     ${d.links&&d.links.length?`<div class="actions">${d.links.map(([t,u])=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</div>`:""}
   </article>`;
+  if (d.park) h += parkHTML(d.park);
   if (d.maybe&&d.maybe.length) h += `<article class="card maybe"><div class="eyebrow"><span class="tag ghost">看情況 🤔</span></div><ul class="pts">${d.maybe.map(([b,s])=>`<li><div><b>${zh(esc(b))}</b>${s?`<small class="note" style="display:block">${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ul></article>`;
   if (d.food) h += `<article class="card"><div class="eyebrow"><span class="tag sun">吃什麼 🍽️</span><span>只是參考，當天想吃什麼就吃什麼</span></div><p>${zh(esc(d.food))}</p></article>`;
   // 準備頁「還沒買」打勾後，提醒改成已買（只看這支手機的勾選）
@@ -508,8 +557,53 @@ function renderDay(){
   const prev = DAYS[dayIdx-1], next = DAYS[dayIdx+1];
   h += `<div class="actions">${prev?`<button class="btn" data-day="${dayIdx-1}">← ${prev.md}</button>`:""}${next?`<button class="btn primary" data-day="${dayIdx+1}">${next.md} →</button>`:""}</div>`;
   $("#v-day").innerHTML = h;
+  if (d.park) bindPark(d.park);
   $("#v-day").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.day; show("day"); window.scrollTo({top:0,behavior:"smooth"});});
   $("#v-day").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+}
+
+// ===== 樂高園內攻略：必玩排名＋每站計時 =====
+const mmss = sec => { const a=Math.abs(Math.round(sec)); return (sec<0?"+":"")+String(Math.floor(a/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0"); };
+const AREA_ZH={"レゴ・シティ":"樂高城市","ナイト・キングダム":"騎士王國","アドベンチャー":"冒險區","パイレーツ・ショア":"海盜海岸","ブリックトピア":"積木烏托邦","ミニランド":"迷你世界","ファクトリー":"工廠"};
+const areaTxt = a => AREA_ZH[a] ? `${AREA_ZH[a]} ${a}` : a;
+function parkHTML(P){
+  const T = store.get("lego-timer", null);
+  let h = `<article class="card"><div class="eyebrow"><span class="tag sun">必玩排名 🏆</span><span>Amber 108cm・官網查證 11/8</span></div>
+  <ol class="must">${P.must.map(([ja,zhn,area,rule,solo,why],i)=>`<li><span class="rk mono">${i+1}</span><div><b>${esc(zhn)}</b><small class="jp">${esc(ja)}</small><span class="badges"><span class="tag ${solo?"":"sky"}">${solo?"自己坐 ✓":"大人陪"}</span><span class="tag ghost">${esc(rule)}</span></span><small>${esc(why)}・${esc(areaTxt(area))}</small></div></li>`).join("")}</ol>
+  <p class="note">${esc(P.cut)}</p></article>`;
+  h += `<article class="card"><div class="eyebrow"><span class="tag">園內攻略 ⏱️</span><span>照區域排，少走回頭路</span></div>
+  <p class="note">每站按左邊按鈕開始倒數，時間到就看「跳過規則」，不硬排。</p>
+  <ol class="stops">${P.stops.map(([t,min,ja,zhn,area,note,skip],i)=>{
+    const run = T && T.i===i;
+    return `<li class="${run?"run":""}" data-si="${i}">
+      <div class="sh"><span class="mono t">${esc(t)}</span><span class="tag ghost">${esc(areaTxt(area))}</span></div>
+      <b>${esc(zhn)}</b><small class="jp">${esc(ja)}</small>
+      <small>${esc(note)}</small>
+      <p class="skip">↪ ${esc(skip)}</p>
+      <div class="actions">${run?`<button class="btn primary tbtn" data-stop="${i}">■ 結束 <span class="mono tleft" data-left="${i}">${mmss(min*60-(Date.now()-T.at)/1000)}</span></button>`:`<button class="btn tbtn" data-start="${i}">▶ 開始 · ${min} 分</button>`}</div>
+    </li>`;}).join("")}</ol>
+  <div class="card warm" style="box-shadow:none"><p>🔋 ${esc(P.backup)}</p></div></article>`;
+  h += `<article class="card"><div class="eyebrow"><span class="tag sky">官方園區地圖 🗺️</span><span>2026/10/01 版</span></div>
+  <a href="${P.map.img}" target="_blank" rel="noopener" class="pmap"><img src="${P.map.img}" alt="LEGOLAND Japan 官方園區地圖" loading="lazy" onerror="this.parentElement.classList.add('fail')"><span class="fb">地圖載入不了，點這裡開官方圖檔 ↗</span></a>
+  <div class="actions"><a class="btn primary" href="${P.map.img}" target="_blank" rel="noopener">放大地圖 ↗</a><a class="btn" href="${P.map.page}" target="_blank" rel="noopener">官網地圖頁 ↗</a></div>
+  <p class="note">點地圖可以開大圖用手指放大。區域對照：ブリックトピア＝積木烏托邦、レゴ・シティ＝樂高城市、ミニランド＝迷你世界、ナイト・キングダム＝騎士王國、パイレーツ・ショア＝海盜海岸、アドベンチャー＝冒險區、ファクトリー＝工廠。</p></article>`;
+  return h;
+}
+let parkTick = null;
+function bindPark(P){
+  const root = $("#v-day");
+  root.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>{ store.set("lego-timer",{i:+b.dataset.start,at:Date.now()}); renderDay(); toast("開始計時"); });
+  root.querySelectorAll("[data-stop]").forEach(b=>b.onclick=()=>{ store.set("lego-timer",null); renderDay(); toast("這站完成 👍"); });
+  clearInterval(parkTick);
+  const T = store.get("lego-timer", null);
+  if (!T) return;
+  parkTick = setInterval(()=>{
+    const el = root.querySelector(`[data-left="${T.i}"]`);
+    if (!el){ clearInterval(parkTick); return; }
+    const left = P.stops[T.i][1]*60 - (Date.now()-T.at)/1000;
+    el.textContent = left<=0 ? "時間到 "+mmss(left) : mmss(left);
+    el.closest("li").classList.toggle("over", left<=0);
+  }, 1000);
 }
 
 // ===== 八天 =====

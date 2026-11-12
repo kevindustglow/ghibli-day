@@ -221,6 +221,27 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
 .toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:.9rem;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* dinner order sheet */
+.dn{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.dn li label{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px 12px;min-height:56px;cursor:pointer}
+.dn li input{width:22px;height:22px;accent-color:var(--ink);margin:0}
+.dn li.on label{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.dn b{display:block;font-weight:700}
+.dn .who{display:inline-block;margin-left:6px;vertical-align:1px}
+.dn .p{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.95rem;text-align:right;white-space:nowrap}
+.dn-h{font-size:.85rem;color:var(--muted);margin:6px 0 -2px}
+.dn-total{display:grid;grid-template-columns:1fr auto;gap:4px 12px;border-radius:16px;background:var(--bg);padding:12px 14px;font-size:.9rem}
+.dn-total .p{font-family:var(--f-mono);text-align:right}
+.dn-total .big{font-size:1.35rem;font-weight:700;color:var(--ink)}
+.dn-show{position:fixed;inset:0;z-index:9999;background:#FFFDF7;color:#1B2433;overflow:auto;padding:24px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.dn-show[hidden]{display:none}
+.dn-show h2{font-size:1.6rem;line-height:1.35}
+.dn-show ol{padding-left:1.4em;display:flex;flex-direction:column;gap:12px;font-size:1.45rem;line-height:1.35}
+.dn-show .say{font-size:1.25rem;line-height:1.5;border-top:2px dashed #D9D2C3;padding-top:14px}
+.dn-show small{display:block;font-size:.85rem;color:#6B7280}
+.dn-show .actions{justify-content:flex-start}
+.dn-show .btn{background:#1B2433;color:#FFFDF7;border-color:#1B2433}
 </style>
 </head>
 <body>
@@ -440,11 +461,11 @@ const DAYS = [
     fare:["同去程 大人 ¥710"]},
   links:[]},
 
- {iso:"2026-11-13",md:"11/13",dow:"五",n:7,e:1,emoji:"🏯",title:"名古屋城半天、中日大樓、飛驒牛晚餐",ja:"名古屋城・中日ビル・飛騨牛一頭家 馬喰一代", wear:"市區半天，白天 17–18° 薄外套就好；晚餐在室內", exp:"city",
-  depart:"08:45",back:"19:30",departLabel:"出門",backLabel:"晚餐結束約",
-  plan:[["08:45","出門（昨天吉卜力累的話 09:30 再出門也來得及）","2 站就到"],["09:30","🏯 入城：本丸御殿、城郭","天守閣整修中不開放；御殿要脫鞋、推車停門口。本丸御殿 16:00 前入場就好，不用趕"],["12:00","午餐、回榮","城內金シャチ横丁或回栄隨便吃"],["13:30","回飯店休息、先整理一部分行李","明天早上退房，先秤行李 🧳"],["15:00","🏢 中日大樓：7F 屋頂廣場看久屋大通、B1–5F 逛逛","飯店走路 5 分，栄地下街直結。11/13 松坂屋本館招待會不開放，所以改這裡"],["16:45","走路 5 分到 BINO栄 5F","中日大樓往北走，栄站 10 號出口直結那棟"],["17:00","🥩 飛騨牛一頭家 馬喰一代 名古屋栄 晚餐","已訂位。有包廂，小孩 OK"],["19:00","回飯店，收完行李早睡","明天 11:40 離開飯店"]],
+ {iso:"2026-11-13",md:"11/13",dow:"五",n:7,e:1,emoji:"🏯",title:"名古屋城半天、中日大樓、飛驒牛晚餐",ja:"名古屋城・中日ビル・飛騨牛一頭家 馬喰一代",dinner:true, wear:"市區半天，白天 17–18° 薄外套就好；晚餐在室內", exp:"city",
+  depart:"08:45",back:"19:00",departLabel:"出門",backLabel:"晚餐結束約",
+  plan:[["08:45","出門（昨天吉卜力累的話 09:30 再出門也來得及）","2 站就到"],["09:30","🏯 入城：本丸御殿、城郭","天守閣整修中不開放；御殿要脫鞋、推車停門口。本丸御殿 16:00 前入場就好，不用趕"],["12:00","午餐、回榮","城內金シャチ横丁或回栄隨便吃"],["13:30","回飯店休息、先整理一部分行李","明天早上退房，先秤行李 🧳"],["15:00","🏢 中日大樓：7F 屋頂廣場看久屋大通、B1–5F 逛逛","飯店走路 5 分，栄地下街直結。11/13 松坂屋本館招待會不開放，所以改這裡"],["16:45","走路 5 分到 BINO栄 5F","中日大樓往北走，栄站 10 號出口直結那棟"],["17:00","🥩 飛騨牛一頭家 馬喰一代 名古屋栄 晚餐","已訂位，用餐 2 小時。點法看下面的「點餐小抄」👇"],["18:00","吃到一半看看還餓不餓","還餓就加點，18:30 前點完"],["19:00","回飯店，收完行李早睡","明天 11:40 離開飯店"]],
   maybe:[["HARBS 栄本店 下午茶","中日大樓附近；晚餐 17:00 就別吃太多"],["寶可夢中心（PARCO 東館 2F）","11/11 沒去到就今天補，矢場町直結，到 21:00"]],
-  food:"午餐城內金シャチ横丁 或 回栄；晚餐 17:00 馬喰一代（飛驒牛，BINO栄 5F，11:30–23:00）",
+  food:"午餐城內金シャチ横丁 或 回栄；晚餐 17:00 馬喰一代（飛驒牛，BINO栄 5F）：必吃招牌紅肉拼盤，點法看上面的點餐小抄",
   tip:"名古屋城 09:00–16:30，本丸御殿 16:00 停止入場。成人約 ¥500、Amber 免費，以售票處為準。中日大樓 B1 跟栄地下街相通，下雨也不用淋。晚餐 17:00 要準時。",
   rg:{nav:[HOTEL_Q,"名古屋城 東門"],title:"栄 → 名古屋城（約 5 分車程）",steps:[SAKAE_H,
     {k:"train",b:"名城線 右回り → 名古屋城 M07",s:"往「大曽根」方向，2 站約 5 分"},
@@ -580,6 +601,61 @@ function wearText(d, w){
   const rain = w.rain>=60?"☔ 很可能下雨，雨衣＋推車雨罩":w.rain>=30?"🌂 可能有雨，帶摺疊傘":"";
   return [day+"、"+night, EXP[d.exp]||"", rain].filter(Boolean).join("。")+"。體感約比台灣同溫度暖 2–3°";
 }
+// ===== 11/13 晚餐點餐小抄（馬喰一代 名古屋栄）=====
+// 價格：ぐるなび店家菜單，查詢 2026-11-12，頁面未註明是否含稅；席料：一休／食べログ
+const DINNER = {
+  key:"dinner-1113",
+  items:[
+    // id, 日文, 中文, 價格(null=現場價), 誰吃, 必吃, 預設勾, 分組 a=先點 b=還餓再加
+    ["akami","飛騨牛「最とび」赤身盛り","招牌飛驒牛紅肉拼盤",9240,"全家",1,1,"a"],
+    ["tan","タン塩","鹽烤牛舌",1760,"全家",0,1,"a"],
+    ["pork","美濃けんとんの豚ロース","美濃豬里肌（烤全熟）",858,"Amber",0,1,"a"],
+    ["yasai","焼き野菜盛り合わせ","烤蔬菜拼盤",550,"全家",0,1,"a"],
+    ["imo","長芋のバター焼き","奶油烤山藥",638,"Amber",0,1,"a"],
+    ["rice","ライス（ごはん）","白飯 ×2（大人各一碗）",null,"大人",0,1,"a"],
+    ["harami","極上ハラミ","極上橫膈膜肉",3080,"大人",0,0,"b"],
+    ["tan2","タン塩（もう一皿）","再一份鹽烤牛舌",1760,"全家",0,0,"b"],
+    ["nigiri","炙りトロサーロイン一本にぎり","炙燒沙朗握壽司（大人吃，裡面是生的）",1078,"大人",1,0,"b"]],
+  seat:440, people:3,
+  avoid:[["Amber 不吃","牛刺し（生牛肉）、ユッケ（生拌牛肉）、生ハツ（生牛心）、魔法の卵（推測是沾肉的生蛋）、炙り握壽司"],["太太感冒中，少點","ネギカルビ（蔥鹽五花）、ホルモン（內臟）比較油；ニンニク（大蒜）類少一點"]],
+  say:[["子どもは生のお肉が食べられないので、よく焼いて大丈夫です。","小孩不能吃生肉，我們會烤全熟。"],["取り皿を一枚追加でお願いします。","請多給一個小盤子。"],["ラストオーダーは何時ですか？","最後點餐是幾點？"],["お会計お願いします。カードで。","麻煩結帳，刷卡。"]]
+};
+function dinnerHTML(D){
+  const st = store.get(D.key, null);
+  const on = id => st ? !!st[id] : !!D.items.find(x=>x[0]===id)[6];
+  const yen = n => "¥"+n.toLocaleString("en-US");
+  const row = ([id,ja,zhn,p,who,must]) => `<li class="${on(id)?"on":""}"><label><input type="checkbox" data-dn="${id}" ${on(id)?"checked":""}>
+    <div><b>${must?"⭐ ":""}${esc(zhn)}<span class="tag ${who==="Amber"?"rose":who==="大人"?"sky":"ghost"} who">${esc(who)}</span></b><small class="jp">${esc(ja)}</small></div>
+    <span class="p">${p==null?"現場價":yen(p)}</span></label></li>`;
+  const picked = D.items.filter(x=>on(x[0]));
+  const food = picked.reduce((a,x)=>a+(x[3]||0),0), seat = D.seat*D.people, unk = picked.some(x=>x[3]==null);
+  return `<article class="card" id="dn-card"><div class="eyebrow"><span class="tag sun">點餐小抄 🥩</span><span>勾選要點的，總價自動算</span></div>
+  <h3>先點這些，三人約 ¥15,000</h3>
+  <p class="note">肉量大約 7、8 分飽。18:00 吃到一半看看，還餓再勾下面的加點，最後點餐抓 18:30 前。</p>
+  <p class="dn-h">先點</p><ul class="dn">${D.items.filter(x=>x[7]==="a").map(row).join("")}</ul>
+  <p class="dn-h">18:00 還餓再加</p><ul class="dn">${D.items.filter(x=>x[7]==="b").map(row).join("")}</ul>
+  <div class="dn-total"><span>餐點</span><span class="p">${yen(food)}${unk?"＋飯":""}</span><span>席料 ¥${D.seat} × ${D.people}</span><span class="p">${yen(seat)}</span><span class="big">大約合計</span><span class="p big">${yen(food+seat)}</span></div>
+  <div class="actions"><button class="btn primary wide" id="dn-open">給店員看（日文大字）</button></div>
+  <ul class="pts">${D.avoid.map(([a,b])=>`<li><div><b>${esc(a)}</b><small class="note" style="display:block">${esc(b)}</small></div></li>`).join("")}</ul>
+  <p class="note">沒有兒童餐、沒有兒童椅；用餐 2 小時；可刷卡，不能用 IC 卡和 QR Code。菜單價格查詢 2026-11-12（ぐるなび），未註明含稅，以現場為準；Amber 要不要收席料待確認。</p>
+  <div class="dn-show" id="dn-show" hidden role="dialog" aria-label="給店員看的點餐單">
+    <div class="actions"><button class="btn" id="dn-close">← 收起來</button></div>
+    <h2>注文をお願いします 🙏</h2>
+    <ol>${picked.map(x=>`<li>${esc(x[1])}${x[0]==="rice"?" ×2":" ×1"}<small>${esc(x[2])}</small></li>`).join("")}</ol>
+    ${D.say.map(([j,z])=>`<p class="say">${esc(j)}<small>${esc(z)}</small></p>`).join("")}
+  </div></article>`;
+}
+function bindDinner(D){
+  const card = $("#dn-card"); if(!card) return;
+  card.querySelectorAll("[data-dn]").forEach(c=>c.onchange=()=>{
+    const st = {}; card.querySelectorAll("[data-dn]").forEach(x=>st[x.dataset.dn]=x.checked);
+    store.set(D.key, st); const y=window.scrollY; renderDay(); window.scrollTo(0,y);
+  });
+  document.querySelectorAll("body > .dn-show").forEach(x=>x.remove());
+  const sh=$("#dn-show"); document.body.appendChild(sh); // 移到 body，蓋過頂部與底部導覽列
+  $("#dn-open").onclick=()=>{sh.hidden=false;sh.scrollTop=0;document.body.style.overflow="hidden";};
+  $("#dn-close").onclick=()=>{sh.hidden=true;document.body.style.overflow="";};
+}
 function renderDay(){
   const d = DAYS[dayIdx];
   const before = TODAY < TRIP_START;
@@ -599,6 +675,7 @@ function renderDay(){
     ${d.links&&d.links.length?`<div class="actions">${d.links.map(([t,u])=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("")}</div>`:""}
   </article>`;
   if (d.park) h += parkHTML(d.park);
+  if (d.dinner) h += dinnerHTML(DINNER);
   if (d.maybe&&d.maybe.length) h += `<article class="card maybe"><div class="eyebrow"><span class="tag ghost">看情況 🤔</span></div><ul class="pts">${d.maybe.map(([b,s])=>`<li><div><b>${zh(esc(b))}</b>${s?`<small class="note" style="display:block">${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ul></article>`;
   if (d.food) h += `<article class="card"><div class="eyebrow"><span class="tag sun">吃什麼 🍽️</span><span>只是參考，當天想吃什麼就吃什麼</span></div><p>${zh(esc(d.food))}</p></article>`;
   // 準備頁「還沒買」打勾後，提醒改成已買（只看這支手機的勾選）
@@ -609,6 +686,7 @@ function renderDay(){
   h += `<div class="actions">${prev?`<button class="btn" data-day="${dayIdx-1}">← ${prev.md}</button>`:""}${next?`<button class="btn primary" data-day="${dayIdx+1}">${next.md} →</button>`:""}</div>`;
   $("#v-day").innerHTML = h;
   if (d.park) bindPark(d.park);
+  if (d.dinner) bindDinner(DINNER);
   $("#v-day").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.day; show("day"); window.scrollTo({top:0,behavior:"smooth"});});
   $("#v-day").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
 }

@@ -222,6 +222,20 @@ details.tr[open] summary .chev{transform:rotate(180deg)}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 
+/* tax refund card */
+.tf{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.tf li{display:grid;grid-template-columns:32px 1fr;gap:10px;border:1px solid var(--line);border-radius:16px;padding:12px}
+.tf .n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-weight:700;background:var(--rose-soft);color:var(--rose)}
+.tf b{display:block;font-weight:700;line-height:1.35}
+.tf small{display:block;font-size:.86rem;color:var(--muted);margin-top:3px;line-height:1.45}
+.tf .wifi{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.tf .wifi button{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:0 12px;font-family:var(--f-mono);font-size:.9rem;text-align:left;color:inherit;word-break:break-all}
+.tf .wifi button span{font-family:var(--f-body,inherit);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.tf-out{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tf-out div{border-radius:16px;padding:12px;font-size:.9rem;line-height:1.45}
+.tf-out .ok{background:var(--forest-soft)}
+.tf-out .ng{background:var(--sun-soft)}
+.tf-out b{display:block;margin-bottom:2px}
 /* dinner order sheet */
 .dn{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
 .dn li label{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:10px 12px;min-height:56px;cursor:pointer}
@@ -474,9 +488,9 @@ const DAYS = [
   rb:{nav:["名古屋城 東門",HOTEL_Q],title:"名古屋城 → 栄",steps:[{k:"train",b:"名城線 左回り → 栄 M05",s:"往「栄・金山」方向，2 站約 5 分，2 號出口旁就是飯店"}],fare:["大人 ¥210"]},
   links:[["名古屋城官網","https://www.nagoyajo.city.nagoya.jp/"],["名古屋城 地圖",GM("名古屋城 東門")],["中日大樓",GM("中日ビル 名古屋")],["馬喰一代 名古屋栄",GM("飛騨牛一頭家 馬喰一代 名古屋栄 BINO栄")]]},
 
- {iso:"2026-11-14",md:"11/14",dow:"六",n:8,e:2,emoji:"🛬",title:"回家囉",ja:"栄 → 金山 → 中部国際空港 → 台北", wear:"機場移動為主。早上退房 8–10° 穿外套出門，回台灣 19:10 約 22° 可脫", exp:"airport",
+ {iso:"2026-11-14",md:"11/14",dow:"六",n:8,e:2,emoji:"🛬",title:"回家囉",taxfree:true,ja:"栄 → 金山 → 中部国際空港 → 台北", wear:"機場移動為主。早上退房 8–10° 穿外套出門，回台灣 19:10 約 22° 可脫", exp:"airport",
   depart:"11:40",back:"21:30",departLabel:"離開飯店",backLabel:"到家約",
-  plan:[["11:00","退房，行李先寄櫃檯","最後逛逛或休息 ☕"],["11:25","領行李、上廁所",""],["11:40","出發，栄站 3 號月台","名城線 12:02 往金山"],["12:10","金山 轉名鐵，留 25 分","特急 322 12:35 → 機場 13:06"],["13:20","到 T1：先做免稅海關確認，再去國泰櫃檯","託運前到出境大廳的免稅 kiosk 刷護照（松坂屋買的免稅品要在手邊、不拆封）。14:10 開櫃，14:45 前完成托運"],["15:30","到登機口附近","15:40 是報到硬截止，不能當目標"],["16:40","✈️ CX531 起飛","名古屋 16:40 → 桃園 19:10"],["20:00","🚕 計程車接機","出關後聯繫司機，T1 → 家，到家 🏠"]],
+  plan:[["11:00","退房，行李先寄櫃檯","最後逛逛或休息 ☕"],["11:25","領行李、上廁所",""],["11:40","出發，栄站 3 號月台","名城線 12:02 往金山"],["12:10","金山 轉名鐵，留 25 分","特急 322 12:35 → 機場 13:06"],["13:20","到 T1 3F：先做退稅確認，再去國泰櫃檯","用 Visit Japan Web 按「Confirm」，步驟看下面的「退稅手續」卡片 👇 免稅品要在手邊。14:10 開櫃，14:45 前完成托運"],["15:30","到登機口附近","15:40 是報到硬截止，不能當目標"],["16:40","✈️ CX531 起飛","名古屋 16:40 → 桃園 19:10"],["20:00","🚕 計程車接機","出關後聯繫司機，T1 → 家，到家 🏠"]],
   maybe:[["機場逛逛","13:30–14:10 開櫃前的空檔，T1 有商店和餐廳"]],
   food:"機場或機上",
   tip:"11/14 是週六，名鐵用週末時刻表，班次以當天名鐵 App 為準；金山往機場的特急／μSKY 大約每 15 分一班，錯過就搭下一班。延誤就放棄逛街，報到優先 ✈️",
@@ -645,6 +659,33 @@ function dinnerHTML(D){
     ${D.say.map(([j,z])=>`<p class="say">${esc(j)}<small>${esc(z)}</small></p>`).join("")}
   </div></article>`;
 }
+// ===== 11/14 退稅手續（2026/11/1 起 リファンド方式；查證 2026-11-13：觀光廳、國稅廳、日本海關）=====
+const TF_WIFI=[["Wi-Fi","Customs_WiFi_For_TaxRefund"],["密碼","jcustoms"]];
+function taxfreeHTML(){
+  const st=[
+    ["到 T1 3F 國際線出境大廳，先不要託運","免稅品全部要在手邊。託運後就不能再辦，也不能把行李拿回來辦"],
+    ["手機連海關專用 Wi-Fi","上面是名稱、下面是密碼，點一下就能複製",true],
+    ["Visit Japan Web →「免稅購買・退稅手續」→「退稅手續」","打開後按一下重新整理，Step 2 的「Confirm」才會亮起來"],
+    ["核對購買紀錄，按「Confirm」","爸爸、媽媽各按一次（每個人的紀錄跟著自己的護照）。手機不行的話，改到出境大廳的免稅自助機（Kiosk）刷護照"],
+  ];
+  return `<article class="card" id="tf-card"><div class="eyebrow"><span class="tag rose">退稅手續 🧾</span><span>託運前做完，約 10–20 分</span></div>
+  <div class="actions" style="justify-content:flex-start"><a class="btn primary" href="https://vjw.digital.go.jp/" target="_blank" rel="noopener">打開 Visit Japan Web ↗</a></div>
+  <ol class="tf">${st.map(([b,s,w],i)=>`<li><span class="n">${i+1}</span><div><b>${esc(b)}</b><small>${esc(s)}</small>${w?`<div class="wifi">${TF_WIFI.map(([k,v])=>`<button data-copy="${esc(v)}">${esc(v)}<span>複製</span></button>`).join("")}</div>`:""}</div></li>`).join("")}</ol>
+  <div class="tf-out"><div class="ok"><b>✅ 完成／綠燈</b>直接去國泰櫃檯託運</div><div class="ng"><b>⚠️ 未完成／紅燈</b>帶免稅品去海關檢查處給海關看</div></div>
+  <ul class="pts">
+    <li><div><b>同一張收據少一件，整張都不退</b><small class="note" style="display:block">免稅品別拆、別吃、別先託運</small></div></li>
+    <li><div><b>店家漏登（清單裡沒有那張收據）</b><small class="note" style="display:block">拿收據和商品到海關檢查處說明；還是不行，回台灣拿收據聯絡那家店</small></div></li>
+    <li><div><b>錢由店家退</b><small class="note" style="display:block">金額用日幣算，照結帳時登記的方式退：信用卡（換成台幣入帳）、App，或出境審查後的現金退稅機（日幣現金）</small></div></li>
+  </ul>
+  <p class="note">查證 2026-11-13：觀光廳、國稅廳、日本海關官網。自助機位置以現場指標為準。</p></article>`;
+}
+function bindTaxfree(){
+  document.querySelectorAll("#tf-card [data-copy]").forEach(b=>b.onclick=()=>{
+    const v=b.dataset.copy, sp=b.querySelector("span"), old=sp.textContent;
+    const done=()=>{sp.textContent="已複製 ✓";setTimeout(()=>sp.textContent=old,1500);};
+    try{navigator.clipboard.writeText(v).then(done,done);}catch(e){done();}
+  });
+}
 function bindDinner(D){
   const card = $("#dn-card"); if(!card) return;
   card.querySelectorAll("[data-dn]").forEach(c=>c.onchange=()=>{
@@ -676,6 +717,7 @@ function renderDay(){
   </article>`;
   if (d.park) h += parkHTML(d.park);
   if (d.dinner) h += dinnerHTML(DINNER);
+  if (d.taxfree) h += taxfreeHTML();
   if (d.maybe&&d.maybe.length) h += `<article class="card maybe"><div class="eyebrow"><span class="tag ghost">看情況 🤔</span></div><ul class="pts">${d.maybe.map(([b,s])=>`<li><div><b>${zh(esc(b))}</b>${s?`<small class="note" style="display:block">${zh(esc(s))}</small>`:""}</div></li>`).join("")}</ul></article>`;
   if (d.food) h += `<article class="card"><div class="eyebrow"><span class="tag sun">吃什麼 🍽️</span><span>只是參考，當天想吃什麼就吃什麼</span></div><p>${zh(esc(d.food))}</p></article>`;
   // 準備頁「還沒買」打勾後，提醒改成已買（只看這支手機的勾選）
@@ -687,6 +729,7 @@ function renderDay(){
   $("#v-day").innerHTML = h;
   if (d.park) bindPark(d.park);
   if (d.dinner) bindDinner(DINNER);
+  if (d.taxfree) bindTaxfree();
   $("#v-day").querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.day; show("day"); window.scrollTo({top:0,behavior:"smooth"});});
   $("#v-day").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
 }
